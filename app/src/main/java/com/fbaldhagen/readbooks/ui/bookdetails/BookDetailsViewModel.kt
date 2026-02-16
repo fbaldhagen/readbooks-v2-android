@@ -9,6 +9,8 @@ import com.fbaldhagen.readbooks.common.result.onSuccess
 import com.fbaldhagen.readbooks.domain.model.BookDetailsState
 import com.fbaldhagen.readbooks.domain.model.ReadingStatus
 import com.fbaldhagen.readbooks.domain.usecase.DiscoverUseCases
+import com.fbaldhagen.readbooks.domain.usecase.DownloadBookUseCase
+import com.fbaldhagen.readbooks.domain.usecase.DownloadState
 import com.fbaldhagen.readbooks.domain.usecase.GetBookDetailsUseCase
 import com.fbaldhagen.readbooks.domain.usecase.LibraryUseCases
 import com.fbaldhagen.readbooks.navigation.Route
@@ -25,7 +27,8 @@ class BookDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getBookDetails: GetBookDetailsUseCase,
     private val libraryUseCases: LibraryUseCases,
-    private val discoverUseCases: DiscoverUseCases
+    private val discoverUseCases: DiscoverUseCases,
+    private val downloadBookUseCase: DownloadBookUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<BookDetailsUiState>(BookDetailsUiState.Loading)
@@ -97,6 +100,34 @@ class BookDetailsViewModel @Inject constructor(
     }
 
     fun onDownloadBook() {
-        // TODO: Implement download with WorkManager
+        val currentState = _state.value as? BookDetailsUiState.Success ?: return
+        val notInLibrary = currentState.details.state as? BookDetailsState.NotInLibrary ?: return
+
+        downloadBookUseCase.execute(notInLibrary.gutenbergId)
+        observeDownload(notInLibrary.gutenbergId)
+    }
+
+    private fun observeDownload(gutenbergId: Int) {
+        viewModelScope.launch {
+            downloadBookUseCase.observeDownloadState(gutenbergId)
+                .collect { downloadState ->
+                    val currentState = _state.value as? BookDetailsUiState.Success ?: return@collect
+                    when (downloadState) {
+                        is DownloadState.Running, is DownloadState.Enqueued -> {
+                            _state.value = BookDetailsUiState.Success(
+                                currentState.details.copy(state = BookDetailsState.Downloading)
+                            )
+                        }
+                        is DownloadState.Succeeded -> {
+                            // Switch to library flow
+                            loadFromLibrary(downloadState.bookId)
+                        }
+                        is DownloadState.Failed -> {
+                            _state.value = BookDetailsUiState.Error(downloadState.message)
+                        }
+                        is DownloadState.Idle -> { /* no-op */ }
+                    }
+                }
+        }
     }
 }
