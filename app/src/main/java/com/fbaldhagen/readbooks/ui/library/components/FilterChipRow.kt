@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.fbaldhagen.readbooks.domain.model.ReadingStatus
-import com.fbaldhagen.readbooks.ui.library.displayName
 
 @Composable
 fun FilterChipRow(
@@ -39,4 +38,10 @@ fun FilterChipRow(
             )
         }
     }
+}
+
+private fun ReadingStatus.displayName(): String = when (this) {
+    ReadingStatus.NOT_STARTED -> "Not Started"
+    ReadingStatus.READING -> "Reading"
+    ReadingStatus.FINISHED -> "Finished"
 }

@@ -5,7 +5,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import com.fbaldhagen.readbooks.domain.model.ReadingStatus
 import com.fbaldhagen.readbooks.domain.model.SortType
 
 @Composable
@@ -39,10 +38,4 @@ private fun SortType.displayName(): String = when (this) {
     SortType.AUTHOR -> "Author"
     SortType.RECENTLY_ADDED -> "Recently Added"
     SortType.LAST_READ -> "Last Read"
-}
-
-private fun ReadingStatus.displayName(): String = when (this) {
-    ReadingStatus.NOT_STARTED -> "Not Started"
-    ReadingStatus.READING -> "Reading"
-    ReadingStatus.FINISHED -> "Finished"
 }
