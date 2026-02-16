@@ -4,6 +4,8 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
+import com.fbaldhagen.readbooks.common.result.suspendRunCatching
+import com.fbaldhagen.readbooks.common.result.Result
 import com.fbaldhagen.readbooks.data.remote.api.GutendexApiService
 import com.fbaldhagen.readbooks.data.remote.dto.toDiscoverBook
 import com.fbaldhagen.readbooks.data.remote.paging.DiscoverPagingSource
@@ -28,6 +30,11 @@ class DiscoverRepositoryImpl @Inject constructor(
     override fun getPopular(): Flow<PagingData<DiscoverBook>> = createPager(
         sort = "popular"
     )
+
+    override suspend fun getBookById(gutenbergId: Int): Result<DiscoverBook> =
+        suspendRunCatching {
+            apiService.getBookById(gutenbergId).toDiscoverBook()
+        }
 
     private fun createPager(
         search: String? = null,

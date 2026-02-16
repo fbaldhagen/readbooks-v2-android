@@ -1,6 +1,7 @@
 package com.fbaldhagen.readbooks.domain.usecase
 
 import androidx.paging.PagingData
+import com.fbaldhagen.readbooks.common.result.Result
 import com.fbaldhagen.readbooks.domain.model.DiscoverBook
 import com.fbaldhagen.readbooks.domain.repository.DiscoverRepository
 import kotlinx.coroutines.flow.Flow
@@ -17,4 +18,7 @@ class DiscoverUseCases @Inject constructor(
 
     fun getPopular(): Flow<PagingData<DiscoverBook>> =
         discoverRepository.getPopular()
+
+    suspend fun getBookById(gutenbergId: Int): Result<DiscoverBook> =
+        discoverRepository.getBookById(gutenbergId)
 }
