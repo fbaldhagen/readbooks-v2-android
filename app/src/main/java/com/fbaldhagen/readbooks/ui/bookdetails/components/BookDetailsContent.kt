@@ -50,8 +50,8 @@ fun BookDetailsContent(
             Spacer(modifier = Modifier.height(16.dp))
         }
 
-        if (!details.description.isNullOrBlank()) {
-            DescriptionSection(description = details.description)
+        details.description?.takeIf { it.isNotBlank() }?.let { description ->
+            DescriptionSection(description = description)
             Spacer(modifier = Modifier.height(16.dp))
         }
 

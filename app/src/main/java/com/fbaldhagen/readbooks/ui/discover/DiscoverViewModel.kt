@@ -25,7 +25,7 @@ class DiscoverViewModel @Inject constructor(
     private val _state = MutableStateFlow(DiscoverState())
     val state: StateFlow<DiscoverState> = _state.asStateFlow()
 
-    private val _searchTrigger = MutableStateFlow(SearchTrigger.Popular)
+    private val _searchTrigger = MutableStateFlow<SearchTrigger>(SearchTrigger.Popular)
 
     val books: Flow<PagingData<DiscoverBook>> = _searchTrigger
         .flatMapLatest { trigger ->
