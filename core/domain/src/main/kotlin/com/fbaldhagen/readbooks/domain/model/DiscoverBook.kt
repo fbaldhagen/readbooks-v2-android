@@ -1,0 +1,12 @@
+package com.fbaldhagen.readbooks.domain.model
+
+data class DiscoverBook(
+    val gutenbergId: Int,
+    val title: String,
+    val authors: List<String>,
+    val coverUrl: String?,
+    val downloadUrl: String?,
+    val languages: List<String> = emptyList(),
+    val subjects: List<String> = emptyList(),
+    val downloadCount: Int = 0
+)
