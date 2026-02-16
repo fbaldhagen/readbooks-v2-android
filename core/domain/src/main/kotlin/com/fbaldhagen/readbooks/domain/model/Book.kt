@@ -4,6 +4,7 @@ data class Book(
     val id: Long = 0,
     val title: String,
     val authors: List<String>,
+    val description: String? = null,
     val coverUri: String? = null,
     val filePath: String? = null,
     val gutenbergId: Int? = null,

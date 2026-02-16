@@ -6,7 +6,7 @@ data class DiscoverBook(
     val authors: List<String>,
     val coverUrl: String?,
     val downloadUrl: String?,
-    val languages: List<String> = emptyList(),
+    val summary: String?,
     val subjects: List<String> = emptyList(),
     val downloadCount: Int = 0
 )
