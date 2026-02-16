@@ -9,10 +9,10 @@ plugins {
 
 android {
     namespace = "com.fbaldhagen.readbooks.data"
-    compileSdk = libs.versions.compileSdk.get().toInt()
+    compileSdk = 36
 
     defaultConfig {
-        minSdk = libs.versions.minSdk.get().toInt()
+        minSdk = 26
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
