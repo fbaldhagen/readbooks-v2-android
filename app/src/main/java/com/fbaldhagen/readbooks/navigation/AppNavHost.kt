@@ -5,7 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
+import com.fbaldhagen.readbooks.ui.bookdetails.BookDetailsScreen
 import com.fbaldhagen.readbooks.ui.discover.DiscoverScreen
 import com.fbaldhagen.readbooks.ui.home.HomeScreen
 import com.fbaldhagen.readbooks.ui.library.LibraryScreen
@@ -56,14 +56,22 @@ fun AppNavHost(
             )
         }
 
-        composable<Route.BookDetails> { backStackEntry ->
-            val route = backStackEntry.toRoute<Route.BookDetails>()
-            // BookDetailsScreen - coming later
+        composable<Route.BookDetails> {
+            BookDetailsScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onOpenReader = { bookId ->
+                    // TODO: Launch ReaderActivity
+                }
+            )
         }
 
-        composable<Route.DiscoverBookDetails> { backStackEntry ->
-            val route = backStackEntry.toRoute<Route.DiscoverBookDetails>()
-            // DiscoverBookDetailsScreen - coming later
+        composable<Route.DiscoverBookDetails> {
+            BookDetailsScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onOpenReader = { bookId ->
+                    // TODO: Launch ReaderActivity
+                }
+            )
         }
     }
 }
