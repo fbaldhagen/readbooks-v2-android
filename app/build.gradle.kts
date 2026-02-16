@@ -10,12 +10,12 @@ plugins {
 
 android {
     namespace = "com.fbaldhagen.readbooks"
-    compileSdk = libs.versions.compileSdk.get().toInt()
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.fbaldhagen.readbooks"
-        minSdk = libs.versions.minSdk.get().toInt()
-        targetSdk = libs.versions.targetSdk.get().toInt()
+        minSdk = 26
+        targetSdk = 36
         versionCode = 1
         versionName = "0.1.0"
 
@@ -48,8 +48,8 @@ android {
 
 dependencies {
     // Desugaring
-
     coreLibraryDesugaring(libs.tools.desugar.jdk.libs)
+
     // Project modules
     implementation(project(":core:common"))
     implementation(project(":core:domain"))
