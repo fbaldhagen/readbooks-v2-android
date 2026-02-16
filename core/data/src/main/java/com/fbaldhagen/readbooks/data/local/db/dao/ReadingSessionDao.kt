@@ -36,4 +36,7 @@ interface ReadingSessionDao {
                 "WHERE id = :sessionId"
     )
     suspend fun endSession(sessionId: Long, endTime: Long, durationMinutes: Int, pagesRead: Int)
+
+    @Query("SELECT * FROM reading_sessions WHERE id = :sessionId")
+    suspend fun getById(sessionId: Long): ReadingSessionEntity?
 }
