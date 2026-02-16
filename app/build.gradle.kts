@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
 }
@@ -54,6 +55,7 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:domain"))
     implementation(project(":core:data"))
+    implementation(project(":core:ui"))
 
     // Core Android
     implementation(libs.androidx.core.ktx)
@@ -86,6 +88,9 @@ dependencies {
 
     // Work
     implementation(libs.work.runtime.ktx)
+
+    // Serialization (for type-safe navigation)
+    implementation(libs.kotlinx.serialization.json)
 
     // Testing
     testImplementation(libs.bundles.testing)

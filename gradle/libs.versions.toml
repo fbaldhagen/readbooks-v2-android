@@ -28,6 +28,7 @@ datastore = "1.2.0"
 retrofit = "2.11.0"
 okhttp = "5.3.2"
 moshi = "1.15.2"
+kotlinxSerialization = "1.10.0"
 
 # Media
 media3 = "1.9.2"
@@ -96,6 +97,7 @@ okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor",
 moshi = { group = "com.squareup.moshi", name = "moshi", version.ref = "moshi" }
 moshi-kotlin = { group = "com.squareup.moshi", name = "moshi-kotlin", version.ref = "moshi" }
 moshi-codegen = { group = "com.squareup.moshi", name = "moshi-kotlin-codegen", version.ref = "moshi" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 
 # Media
 media3-session = { group = "androidx.media3", name = "media3-session", version.ref = "media3" }
@@ -181,3 +183,4 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 room = { id = "androidx.room", version.ref = "room" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
