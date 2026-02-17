@@ -10,6 +10,7 @@ import com.fbaldhagen.readbooks.ui.discover.DiscoverScreen
 import com.fbaldhagen.readbooks.ui.home.HomeScreen
 import com.fbaldhagen.readbooks.ui.library.LibraryScreen
 import com.fbaldhagen.readbooks.ui.profile.ProfileScreen
+import com.fbaldhagen.readbooks.ui.reader.ReaderActivity
 
 @Composable
 fun AppNavHost(
@@ -60,7 +61,8 @@ fun AppNavHost(
             BookDetailsScreen(
                 onNavigateBack = { navController.popBackStack() },
                 onOpenReader = { bookId ->
-                    // TODO: Launch ReaderActivity
+                    val intent = ReaderActivity.createIntent(navController.context, bookId)
+                    navController.context.startActivity(intent)
                 }
             )
         }
@@ -69,7 +71,8 @@ fun AppNavHost(
             BookDetailsScreen(
                 onNavigateBack = { navController.popBackStack() },
                 onOpenReader = { bookId ->
-                    // TODO: Launch ReaderActivity
+                    val intent = ReaderActivity.createIntent(navController.context, bookId)
+                    navController.context.startActivity(intent)
                 }
             )
         }

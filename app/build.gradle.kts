@@ -60,6 +60,8 @@ dependencies {
     // Core Android
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.fragment.ktx)
 
     // Compose
     implementation(platform(libs.compose.bom))
