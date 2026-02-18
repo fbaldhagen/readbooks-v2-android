@@ -18,6 +18,7 @@ import org.readium.r2.shared.ExperimentalReadiumApi
 import org.readium.r2.shared.util.AbsoluteUrl
 import androidx.core.net.toUri
 import com.fbaldhagen.readbooks.ui.reader.presentation.ReaderViewModel
+import org.readium.r2.navigator.epub.css.RsProperties
 import org.readium.r2.navigator.input.InputListener
 import org.readium.r2.navigator.input.TapEvent
 
@@ -48,7 +49,15 @@ class ReaderFragment : Fragment() {
             val fragmentFactory = factory.createFragmentFactory(
                 initialLocator = state.initialLocator,
                 initialPreferences = state.preferences.toEpubPreferences(),
-                listener = navigatorListener
+                listener = navigatorListener,
+                configuration = EpubNavigatorFragment.Configuration(
+                    readiumCssRsProperties = RsProperties(
+                        overrides = mapOf(
+                            "padding-top" to "40px",
+                            "padding-bottom" to "55px"
+                        )
+                    )
+                )
             )
 
             childFragmentManager.fragmentFactory = fragmentFactory
