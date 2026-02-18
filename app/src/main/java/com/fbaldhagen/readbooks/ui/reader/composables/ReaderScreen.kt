@@ -1,11 +1,9 @@
 package com.fbaldhagen.readbooks.ui.reader.composables
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,7 +13,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.fbaldhagen.readbooks.domain.model.Bookmark
 import com.fbaldhagen.readbooks.ui.components.LoadingIndicator
 import com.fbaldhagen.readbooks.ui.reader.presentation.ReaderPreferences
@@ -26,7 +23,6 @@ import com.fbaldhagen.readbooks.ui.reader.presentation.ReaderState
 fun ReaderScreen(
     state: ReaderState,
     fragmentContainerId: Int,
-    onBack: () -> Unit,
     onAddBookmark: () -> Unit,
     onUpdatePreferences: (ReaderPreferences) -> Unit,
     onDeleteBookmark: (Bookmark) -> Unit
@@ -56,28 +52,24 @@ fun ReaderScreen(
             fragmentContainerId = fragmentContainerId,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 24.dp)
         )
 
-        AnimatedVisibility(
-            visible = state.barsVisible,
-            modifier = Modifier.align(Alignment.TopCenter)
-        ) {
-            ReaderTopAppBar(
-                bookTitle = state.bookTitle,
-                chapterTitle = state.currentChapterTitle,
-                onBack = onBack,
-                onAddBookmark = onAddBookmark,
-                onOpenSettings = { showSettings = true }
-            )
-        }
+        ReaderOverlay(
+            theme = state.preferences.theme,
+            barsVisible = state.barsVisible,
+            chapterTitle = state.currentChapterTitle,
+            bookProgress = state.totalProgression,
+            onAddBookmark = onAddBookmark,
+            onOpenToc = { /* TODO */ },
+            onOpenSettings = { showSettings = true }
+        )
     }
 
     if (showSettings) {
         ReaderSettingsSheet(
             preferences = state.preferences,
             onPreferencesChanged = onUpdatePreferences,
-            onDismiss = { showSettings = false }
+            onDismiss = @Suppress("AssignedValueIsNeverRead"){ showSettings = false }
         )
     }
 
@@ -85,7 +77,7 @@ fun ReaderScreen(
         BookmarksSheet(
             bookmarks = state.bookmarks,
             onBookmarkDelete = onDeleteBookmark,
-            onDismiss = { showBookmarks = false }
+            onDismiss = @Suppress("AssignedValueIsNeverRead"){ showBookmarks = false }
         )
     }
 }

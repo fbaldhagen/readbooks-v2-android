@@ -2,6 +2,7 @@ package com.fbaldhagen.readbooks.ui.reader.composables
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -74,7 +75,7 @@ fun ReaderSettingsSheet(
             // Font Family
             Text("Font", style = MaterialTheme.typography.titleSmall)
             Spacer(modifier = Modifier.height(8.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 ReaderFontFamily.entries.forEach { font ->
                     FilterChip(
                         selected = preferences.fontFamily == font,
