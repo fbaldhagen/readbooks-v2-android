@@ -10,11 +10,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.fbaldhagen.readbooks.domain.model.UserProfileStats
+import com.fbaldhagen.readbooks.domain.model.ReadingAnalytics
 
 @Composable
 fun StatsCard(
-    stats: UserProfileStats,
+    analytics: ReadingAnalytics,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -29,10 +29,10 @@ fun StatsCard(
                 .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            StatItem(value = stats.totalBooks.toString(), label = "Books")
-            StatItem(value = stats.finishedBooks.toString(), label = "Finished")
-            StatItem(value = formatReadingTime(stats.totalReadingMinutes), label = "Read")
-            StatItem(value = "${stats.currentStreak}d", label = "Streak")
+            StatItem(value = analytics.totalBooks.toString(), label = "Books")
+            StatItem(value = analytics.totalBooksFinished.toString(), label = "Finished")
+            StatItem(value = formatReadingTime(analytics.totalReadingMinutes), label = "Read")
+            StatItem(value = "${analytics.currentStreak.currentDays}d", label = "Streak")
         }
     }
 }

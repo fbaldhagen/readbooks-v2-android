@@ -1,16 +1,19 @@
 package com.fbaldhagen.readbooks.ui.profile
 
+import com.fbaldhagen.readbooks.domain.model.ReadingAnalytics
+import com.fbaldhagen.readbooks.domain.model.ReadingStreak
 import com.fbaldhagen.readbooks.domain.model.UserPreferences
-import com.fbaldhagen.readbooks.domain.model.UserProfileStats
 
 data class ProfileState(
     val isLoading: Boolean = true,
     val preferences: UserPreferences = UserPreferences(),
-    val stats: UserProfileStats = UserProfileStats(
+    val analytics: ReadingAnalytics = ReadingAnalytics(
         totalBooks = 0,
-        finishedBooks = 0,
+        totalBooksFinished = 0,
         totalReadingMinutes = 0,
-        currentStreak = 0
+        averageMinutesPerDay = 0f,
+        currentStreak = ReadingStreak(currentDays = 0, longestDays = 0),
+        weeklyMinutes = emptyList()
     ),
     val error: String? = null
 )

@@ -18,8 +18,9 @@ class GetReadingAnalyticsUseCase @Inject constructor(
 ) {
     operator fun invoke(): Flow<Result<ReadingAnalytics>> = combine(
         sessionRepository.observeAll(),
-        bookRepository.observeFinishedCount()
-    ) { sessions, finishedCount ->
+        bookRepository.observeFinishedCount(),
+        bookRepository.observeTotalCount()
+    ) { sessions, finishedCount, totalCount ->
         suspendRunCatching {
             val totalMinutes = sessions.sumOf { it.durationMinutes }
 
@@ -51,6 +52,7 @@ class GetReadingAnalyticsUseCase @Inject constructor(
             val activeDays = daysWithReading.size.coerceAtLeast(1)
 
             ReadingAnalytics(
+                totalBooks = totalCount,
                 totalReadingMinutes = totalMinutes,
                 totalBooksFinished = finishedCount,
                 averageMinutesPerDay = totalMinutes.toFloat() / activeDays,

@@ -49,7 +49,7 @@ fun ProfileScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        StatsCard(stats = state.stats)
+        StatsCard(analytics = state.analytics)
 
         Spacer(modifier = Modifier.height(24.dp))
 

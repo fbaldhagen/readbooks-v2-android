@@ -1,8 +1,9 @@
 package com.fbaldhagen.readbooks.domain.model
 
 data class ReadingAnalytics(
-    val totalReadingMinutes: Int,
+    val totalBooks: Int,
     val totalBooksFinished: Int,
+    val totalReadingMinutes: Int,
     val averageMinutesPerDay: Float,
     val currentStreak: ReadingStreak,
     val weeklyMinutes: List<DailyReading>
