@@ -52,7 +52,8 @@ class ReaderActivity : AppCompatActivity() {
                     fragmentContainerId = fragmentContainerId,
                     onAddBookmark = viewModel::addBookmark,
                     onUpdatePreferences = viewModel::onUpdatePreferences,
-                    onDeleteBookmark = viewModel::deleteBookmark
+                    onDeleteBookmark = viewModel::deleteBookmark,
+                    onNavigateToTocEntry = viewModel::navigateToTocEntry
                 )
             }
         }

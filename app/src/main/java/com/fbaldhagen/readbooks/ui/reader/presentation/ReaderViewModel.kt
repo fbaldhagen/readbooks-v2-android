@@ -8,18 +8,23 @@ import com.fbaldhagen.readbooks.common.result.onError
 import com.fbaldhagen.readbooks.common.result.onSuccess
 import com.fbaldhagen.readbooks.domain.model.Bookmark
 import com.fbaldhagen.readbooks.domain.model.ReadingStatus
+import com.fbaldhagen.readbooks.domain.model.TocEntry
 import com.fbaldhagen.readbooks.domain.usecase.BookmarkUseCases
 import com.fbaldhagen.readbooks.domain.usecase.LibraryUseCases
 import com.fbaldhagen.readbooks.domain.usecase.ReadingSessionUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.json.JSONObject
+import org.readium.r2.shared.publication.Link
 import org.readium.r2.shared.publication.Locator
 import org.readium.r2.shared.publication.services.positions
 import org.readium.r2.shared.util.AbsoluteUrl
@@ -40,6 +45,9 @@ class ReaderViewModel @Inject constructor(
 
     private val _state = MutableStateFlow(ReaderState())
     val state: StateFlow<ReaderState> = _state.asStateFlow()
+
+    private val _navigationEvent = MutableSharedFlow<Link>(extraBufferCapacity = 1)
+    val navigationEvent: SharedFlow<Link> = _navigationEvent.asSharedFlow()
 
     private var sessionId: Long? = null
     private var startProgression: Float = 0f
@@ -107,7 +115,8 @@ class ReaderViewModel @Inject constructor(
                             publication = publication,
                             initialLocator = initialLocator,
                             bookTitle = book.title,
-                            isLoading = false
+                            isLoading = false,
+                            tableOfContents = publication.tableOfContents.map { link -> link.toTocEntry() }
                         )
                     }
 
@@ -131,6 +140,27 @@ class ReaderViewModel @Inject constructor(
                 }
         }
     }
+
+    fun navigateToTocEntry(entry: TocEntry) {
+        val publication = _state.value.publication ?: return
+        val link = findLink(publication.tableOfContents, entry.href) ?: return
+        _navigationEvent.tryEmit(link)
+        _state.update { it.copy(barsVisible = false) }
+    }
+
+    private fun findLink(links: List<Link>, href: String): Link? {
+        for (link in links) {
+            if (link.href.toString() == href) return link
+            findLink(link.children, href)?.let { return it }
+        }
+        return null
+    }
+
+    private fun Link.toTocEntry(): TocEntry = TocEntry(
+        title = title ?: "Untitled",
+        href = href.toString(),
+        children = children.map { it.toTocEntry() }
+    )
 
     fun onToggleBars() {
         _state.update { it.copy(barsVisible = !it.barsVisible) }

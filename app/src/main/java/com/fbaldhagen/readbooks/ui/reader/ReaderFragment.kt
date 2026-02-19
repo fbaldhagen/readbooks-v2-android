@@ -88,6 +88,12 @@ class ReaderFragment : Fragment() {
                 viewModel.onLocatorChanged(locator)
             }
             ?.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.navigationEvent
+            .onEach { link ->
+                navigator?.go(link, animated = true)
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     private val inputListener = object : InputListener {

@@ -14,6 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.fbaldhagen.readbooks.domain.model.Bookmark
+import com.fbaldhagen.readbooks.domain.model.TocEntry
 import com.fbaldhagen.readbooks.ui.components.LoadingIndicator
 import com.fbaldhagen.readbooks.ui.reader.presentation.ReaderPreferences
 import com.fbaldhagen.readbooks.ui.reader.presentation.ReaderState
@@ -25,11 +26,12 @@ fun ReaderScreen(
     fragmentContainerId: Int,
     onAddBookmark: () -> Unit,
     onUpdatePreferences: (ReaderPreferences) -> Unit,
-    onDeleteBookmark: (Bookmark) -> Unit
-)
- {
+    onDeleteBookmark: (Bookmark) -> Unit,
+    onNavigateToTocEntry: (TocEntry) -> Unit
+) {
     var showSettings by remember { mutableStateOf(false) }
     var showBookmarks by remember { mutableStateOf(false) }
+    var showToc by remember { mutableStateOf(false) }
 
     if (state.isLoading) {
         LoadingIndicator()
@@ -60,7 +62,7 @@ fun ReaderScreen(
             chapterTitle = state.currentChapterTitle,
             bookProgress = state.totalProgression,
             onAddBookmark = onAddBookmark,
-            onOpenToc = { /* TODO */ },
+            onOpenToc = { showToc = true },
             onOpenSettings = { showSettings = true }
         )
     }
@@ -78,6 +80,15 @@ fun ReaderScreen(
             bookmarks = state.bookmarks,
             onBookmarkDelete = onDeleteBookmark,
             onDismiss = @Suppress("AssignedValueIsNeverRead"){ showBookmarks = false }
+        )
+    }
+
+    if (showToc) {
+        TocSheet(
+            entries = state.tableOfContents,
+            currentChapterTitle = state.currentChapterTitle,
+            onEntryClick = onNavigateToTocEntry,
+            onDismiss = @Suppress("AssignedValueIsNeverRead"){ showToc = false }
         )
     }
 }
