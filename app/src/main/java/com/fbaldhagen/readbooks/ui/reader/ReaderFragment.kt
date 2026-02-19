@@ -5,22 +5,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import com.fbaldhagen.readbooks.ui.reader.presentation.ReaderNavigationEvent
+import com.fbaldhagen.readbooks.ui.reader.presentation.ReaderViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.readium.r2.navigator.epub.EpubNavigatorFactory
 import org.readium.r2.navigator.epub.EpubNavigatorFragment
-import org.readium.r2.shared.ExperimentalReadiumApi
-import org.readium.r2.shared.util.AbsoluteUrl
-import androidx.core.net.toUri
-import com.fbaldhagen.readbooks.ui.reader.presentation.ReaderViewModel
 import org.readium.r2.navigator.epub.css.RsProperties
 import org.readium.r2.navigator.input.InputListener
 import org.readium.r2.navigator.input.TapEvent
+import org.readium.r2.shared.ExperimentalReadiumApi
+import org.readium.r2.shared.util.AbsoluteUrl
 
 @OptIn(ExperimentalReadiumApi::class)
 @AndroidEntryPoint
@@ -90,8 +91,11 @@ class ReaderFragment : Fragment() {
             ?.launchIn(viewLifecycleOwner.lifecycleScope)
 
         viewModel.navigationEvent
-            .onEach { link ->
-                navigator?.go(link, animated = true)
+            .onEach { event ->
+                when (event) {
+                    is ReaderNavigationEvent.ToLink -> navigator?.go(event.link, animated = true)
+                    is ReaderNavigationEvent.ToLocator -> navigator?.go(event.locator, animated = true)
+                }
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
     }

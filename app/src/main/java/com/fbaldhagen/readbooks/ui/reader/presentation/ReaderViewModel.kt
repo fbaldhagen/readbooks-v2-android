@@ -1,6 +1,5 @@
 package com.fbaldhagen.readbooks.ui.reader.presentation
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -46,8 +45,8 @@ class ReaderViewModel @Inject constructor(
     private val _state = MutableStateFlow(ReaderState())
     val state: StateFlow<ReaderState> = _state.asStateFlow()
 
-    private val _navigationEvent = MutableSharedFlow<Link>(extraBufferCapacity = 1)
-    val navigationEvent: SharedFlow<Link> = _navigationEvent.asSharedFlow()
+    private val _navigationEvent = MutableSharedFlow<ReaderNavigationEvent>(extraBufferCapacity = 1)
+    val navigationEvent: SharedFlow<ReaderNavigationEvent> = _navigationEvent.asSharedFlow()
 
     private var sessionId: Long? = null
     private var startProgression: Float = 0f
@@ -137,14 +136,27 @@ class ReaderViewModel @Inject constructor(
                 .catch { /* ignore */ }
                 .collect { bookmarks ->
                     _state.update { it.copy(bookmarks = bookmarks) }
+                    updateCurrentPageBookmark()
                 }
+        }
+    }
+
+    fun navigateToBookmark(bookmark: Bookmark) {
+        val locator = parseLocator(bookmark.locator) ?: return
+        _navigationEvent.tryEmit(ReaderNavigationEvent.ToLocator(locator))
+        _state.update { it.copy(barsVisible = false) }
+    }
+
+    fun updateBookmarkNote(bookmark: Bookmark, note: String) {
+        viewModelScope.launch {
+            bookmarkUseCases.update(bookmark.copy(note = note.ifBlank { null }))
         }
     }
 
     fun navigateToTocEntry(entry: TocEntry) {
         val publication = _state.value.publication ?: return
         val link = findLink(publication.tableOfContents, entry.href) ?: return
-        _navigationEvent.tryEmit(link)
+        _navigationEvent.tryEmit(ReaderNavigationEvent.ToLink(link))
         _state.update { it.copy(barsVisible = false) }
     }
 
@@ -171,11 +183,15 @@ class ReaderViewModel @Inject constructor(
     }
 
     fun onLocatorChanged(locator: Locator) {
+        val chapterTitle = locator.title
+            ?: resolveChapterTitle(locator)
+            ?: _state.value.currentChapterTitle
+
         _state.update {
             it.copy(
                 currentLocator = locator,
                 totalProgression = locator.locations.totalProgression?.toFloat() ?: it.totalProgression,
-                currentChapterTitle = locator.title ?: it.currentChapterTitle
+                currentChapterTitle = chapterTitle
             )
         }
         viewModelScope.launch {
@@ -185,16 +201,40 @@ class ReaderViewModel @Inject constructor(
                 progress = locator.locations.totalProgression?.toFloat() ?: 0f
             )
         }
+        updateCurrentPageBookmark()
+    }
+
+    private fun resolveChapterTitle(locator: Locator): String? {
+        return findTocEntryForHref(
+            entries = _state.value.tableOfContents,
+            href = locator.href.toString()
+        )?.title
+    }
+
+    private fun findTocEntryForHref(entries: List<TocEntry>, href: String): TocEntry? {
+        for (entry in entries) {
+            if (href.startsWith(entry.href) || entry.href.startsWith(href)) return entry
+            findTocEntryForHref(entry.children, href)?.let { return it }
+        }
+        return null
     }
 
     fun addBookmark() {
         val locator = _state.value.currentLocator ?: return
+        val chapterTitle = _state.value.currentChapterTitle
+        val progression = locator.locations.progression
+        val title = buildString {
+            append(chapterTitle ?: "Bookmark")
+            if (progression != null) {
+                append(" — ${(progression * 100).toInt()}%")
+            }
+        }
         viewModelScope.launch {
             bookmarkUseCases.add(
                 Bookmark(
                     bookId = bookId,
                     locator = locator.toJSON().toString(),
-                    title = locator.title
+                    title = title
                 )
             )
         }
@@ -204,6 +244,34 @@ class ReaderViewModel @Inject constructor(
         viewModelScope.launch {
             bookmarkUseCases.delete(bookmark.id)
         }
+    }
+
+    fun toggleBookmark() {
+        val existing = _state.value.currentPageBookmark
+        if (existing != null) {
+            deleteBookmark(existing)
+        } else {
+            addBookmark()
+        }
+    }
+
+    private fun updateCurrentPageBookmark() {
+        val currentLocator = _state.value.currentLocator ?: return
+        val currentHref = currentLocator.href.toString()
+        val currentProgression = currentLocator.locations.progression
+
+        val bookmark = _state.value.bookmarks.find { bm ->
+            val locator = parseLocator(bm.locator) ?: return@find false
+            if (locator.href.toString() != currentHref) return@find false
+
+            val bmProgression = locator.locations.progression
+            if (currentProgression != null && bmProgression != null) {
+                kotlin.math.abs(currentProgression - bmProgression) < 0.01
+            } else {
+                true
+            }
+        }
+        _state.update { it.copy(currentPageBookmark = bookmark) }
     }
 
     fun endSession() {
@@ -238,4 +306,9 @@ class ReaderViewModel @Inject constructor(
         super.onCleared()
         endSession()
     }
+}
+
+sealed interface ReaderNavigationEvent {
+    data class ToLink(val link: Link) : ReaderNavigationEvent
+    data class ToLocator(val locator: Locator) : ReaderNavigationEvent
 }

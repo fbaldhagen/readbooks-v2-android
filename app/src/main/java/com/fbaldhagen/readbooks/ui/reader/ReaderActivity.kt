@@ -50,10 +50,12 @@ class ReaderActivity : AppCompatActivity() {
                 ReaderScreen(
                     state = state,
                     fragmentContainerId = fragmentContainerId,
-                    onAddBookmark = viewModel::addBookmark,
+                    onToggleBookmark = viewModel::toggleBookmark,
                     onUpdatePreferences = viewModel::onUpdatePreferences,
                     onDeleteBookmark = viewModel::deleteBookmark,
-                    onNavigateToTocEntry = viewModel::navigateToTocEntry
+                    onNavigateToTocEntry = viewModel::navigateToTocEntry,
+                    onNavigateToBookmark = viewModel::navigateToBookmark,
+                    onUpdateBookmarkNote = viewModel::updateBookmarkNote
                 )
             }
         }

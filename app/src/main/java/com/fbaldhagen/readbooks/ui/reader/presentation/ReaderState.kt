@@ -13,6 +13,7 @@ data class ReaderState(
     val isLoading: Boolean = true,
     val error: String? = null,
     val bookmarks: List<Bookmark> = emptyList(),
+    val currentPageBookmark: Bookmark? = null,
     val currentLocator: Locator? = null,
     val preferences: ReaderPreferences = ReaderPreferences(),
     val currentChapterTitle: String? = null,

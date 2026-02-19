@@ -24,10 +24,12 @@ import com.fbaldhagen.readbooks.ui.reader.presentation.ReaderState
 fun ReaderScreen(
     state: ReaderState,
     fragmentContainerId: Int,
-    onAddBookmark: () -> Unit,
+    onToggleBookmark: () -> Unit,
     onUpdatePreferences: (ReaderPreferences) -> Unit,
     onDeleteBookmark: (Bookmark) -> Unit,
-    onNavigateToTocEntry: (TocEntry) -> Unit
+    onNavigateToTocEntry: (TocEntry) -> Unit,
+    onNavigateToBookmark: (Bookmark) -> Unit,
+    onUpdateBookmarkNote: (Bookmark, String) -> Unit
 ) {
     var showSettings by remember { mutableStateOf(false) }
     var showBookmarks by remember { mutableStateOf(false) }
@@ -61,7 +63,9 @@ fun ReaderScreen(
             barsVisible = state.barsVisible,
             chapterTitle = state.currentChapterTitle,
             bookProgress = state.totalProgression,
-            onAddBookmark = onAddBookmark,
+            isCurrentPageBookmarked = state.currentPageBookmark != null,
+            onToggleBookmark = onToggleBookmark,
+            onOpenBookmarks = { showBookmarks = true },
             onOpenToc = { showToc = true },
             onOpenSettings = { showSettings = true }
         )
@@ -79,7 +83,9 @@ fun ReaderScreen(
         BookmarksSheet(
             bookmarks = state.bookmarks,
             onBookmarkDelete = onDeleteBookmark,
-            onDismiss = @Suppress("AssignedValueIsNeverRead"){ showBookmarks = false }
+            onDismiss = @Suppress("AssignedValueIsNeverRead"){ showBookmarks = false },
+            onBookmarkClick = onNavigateToBookmark,
+            onBookmarkNoteUpdate = onUpdateBookmarkNote
         )
     }
 
