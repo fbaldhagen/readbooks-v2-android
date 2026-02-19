@@ -19,8 +19,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.List
 import androidx.compose.material.icons.automirrored.outlined.VolumeUp
+import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.BookmarkBorder
+import androidx.compose.material.icons.outlined.Bookmarks
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.DropdownMenu
@@ -52,7 +54,9 @@ fun ReaderOverlay(
     barsVisible: Boolean,
     chapterTitle: String?,
     bookProgress: Float,
-    onAddBookmark: () -> Unit,
+    isCurrentPageBookmarked: Boolean,
+    onToggleBookmark: () -> Unit,
+    onOpenBookmarks: () -> Unit,
     onOpenToc: () -> Unit,
     onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier
@@ -67,7 +71,9 @@ fun ReaderOverlay(
             TopOverlay(
                 theme = theme,
                 chapterTitle = chapterTitle,
-                onAddBookmark = onAddBookmark,
+                isCurrentPageBookmarked = isCurrentPageBookmarked,
+                onToggleBookmark = onToggleBookmark,
+                onOpenBookmarks = onOpenBookmarks,
                 onOpenToc = onOpenToc,
                 onOpenSettings = onOpenSettings
             )
@@ -103,7 +109,9 @@ private data class OverlayColors(
 private fun TopOverlay(
     theme: ReaderTheme,
     chapterTitle: String?,
-    onAddBookmark: () -> Unit,
+    isCurrentPageBookmarked: Boolean,
+    onToggleBookmark: () -> Unit,
+    onOpenBookmarks: () -> Unit,
     onOpenToc: () -> Unit,
     onOpenSettings: () -> Unit
 ) {
@@ -141,10 +149,12 @@ private fun TopOverlay(
                 modifier = Modifier.align(Alignment.Center),
                 horizontalArrangement = Arrangement.spacedBy(24.dp)
             ) {
-                IconButton(onClick = onAddBookmark) {
+                IconButton(onClick = onToggleBookmark) {
                     Icon(
-                        imageVector = Icons.Outlined.BookmarkBorder,
-                        contentDescription = "Bookmark",
+                        imageVector = if (isCurrentPageBookmarked) Icons.Default.Bookmark
+                        else Icons.Outlined.BookmarkBorder,
+                        contentDescription = if (isCurrentPageBookmarked) "Remove bookmark"
+                        else "Add bookmark",
                         tint = colors.content
                     )
                 }
@@ -176,6 +186,16 @@ private fun TopOverlay(
                     expanded = showOverflowMenu,
                     onDismissRequest = { showOverflowMenu = false }
                 ) {
+                    DropdownMenuItem(
+                        text = { Text("Bookmarks") },
+                        onClick = {
+                            showOverflowMenu = false
+                            onOpenBookmarks()
+                        },
+                        leadingIcon = {
+                            Icon(Icons.Outlined.Bookmarks, contentDescription = null)
+                        }
+                    )
                     DropdownMenuItem(
                         text = { Text("Text to Speech") },
                         onClick = { showOverflowMenu = false },
