@@ -39,4 +39,7 @@ interface ReadingSessionDao {
 
     @Query("SELECT * FROM reading_sessions WHERE id = :sessionId")
     suspend fun getById(sessionId: Long): ReadingSessionEntity?
+
+    @Query("SELECT * FROM reading_sessions WHERE book_id = :bookId ORDER BY start_time DESC")
+    suspend fun getForBook(bookId: Long): List<ReadingSessionEntity>
 }

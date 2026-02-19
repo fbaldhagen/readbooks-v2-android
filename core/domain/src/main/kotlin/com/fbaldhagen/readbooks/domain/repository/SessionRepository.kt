@@ -17,4 +17,6 @@ interface SessionRepository {
     suspend fun start(bookId: Long): Result<Long>
 
     suspend fun end(sessionId: Long, pagesRead: Int = 0): Result<Unit>
+
+    suspend fun getForBook(bookId: Long): Result<List<ReadingSession>>
 }
