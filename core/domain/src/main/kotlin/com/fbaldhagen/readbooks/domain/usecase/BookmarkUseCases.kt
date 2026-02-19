@@ -17,4 +17,7 @@ class BookmarkUseCases @Inject constructor(
 
     suspend fun delete(bookmarkId: Long): Result<Unit> =
         bookmarkRepository.delete(bookmarkId)
+
+    suspend fun update(bookmark: Bookmark): Result<Unit> =
+        bookmarkRepository.update(bookmark)
 }

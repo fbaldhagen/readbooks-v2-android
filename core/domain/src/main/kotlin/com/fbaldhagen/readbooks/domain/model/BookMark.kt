@@ -5,5 +5,6 @@ data class Bookmark(
     val bookId: Long,
     val locator: String,
     val title: String?,
+    val note: String? = null,
     val createdAt: Long = System.currentTimeMillis()
 )

@@ -8,6 +8,7 @@ fun BookmarkEntity.toDomain(): Bookmark = Bookmark(
     bookId = bookId,
     locator = locator,
     title = title,
+    note = note,
     createdAt = createdAt
 )
 
@@ -16,5 +17,6 @@ fun Bookmark.toEntity(): BookmarkEntity = BookmarkEntity(
     bookId = bookId,
     locator = locator,
     title = title,
+    note = note,
     createdAt = createdAt
 )

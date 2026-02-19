@@ -26,7 +26,9 @@ object DatabaseModule {
             context,
             AppDatabase::class.java,
             "readbooks.db"
-        ).build()
+        )
+            .fallbackToDestructiveMigration(false)
+            .build()
 
     @Provides
     fun provideBookDao(database: AppDatabase): BookDao = database.bookDao()

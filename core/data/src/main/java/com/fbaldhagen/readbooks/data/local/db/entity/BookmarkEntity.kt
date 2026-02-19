@@ -25,6 +25,7 @@ data class BookmarkEntity(
     val bookId: Long,
     val locator: String,
     val title: String?,
+    val note: String? = null,
     @ColumnInfo(name = "created_at")
     val createdAt: Long = System.currentTimeMillis()
 )

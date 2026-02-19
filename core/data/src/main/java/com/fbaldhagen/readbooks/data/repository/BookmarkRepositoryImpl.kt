@@ -25,4 +25,8 @@ class BookmarkRepositoryImpl @Inject constructor(
     override suspend fun delete(bookmarkId: Long): Result<Unit> = suspendRunCatching {
         bookmarkDao.delete(bookmarkId)
     }
+
+    override suspend fun update(bookmark: Bookmark): Result<Unit> = suspendRunCatching {
+        bookmarkDao.update(bookmark.toEntity())
+    }
 }
