@@ -88,11 +88,18 @@ class ReaderActivity : AppCompatActivity() {
             .commit()
     }
 
+    override fun onStart() {
+        super.onStart()
+        viewModel.resumeSessionIfNeeded()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        viewModel.endSession()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        if (isFinishing) {
-            viewModel.endSession()
-        }
     }
 
     companion object {

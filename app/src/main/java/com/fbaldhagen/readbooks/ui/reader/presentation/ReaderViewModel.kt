@@ -1,5 +1,6 @@
 package com.fbaldhagen.readbooks.ui.reader.presentation
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,6 +12,7 @@ import com.fbaldhagen.readbooks.domain.usecase.BookmarkUseCases
 import com.fbaldhagen.readbooks.domain.usecase.LibraryUseCases
 import com.fbaldhagen.readbooks.domain.usecase.ReadingSessionUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,6 +21,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import org.readium.r2.shared.publication.Locator
+import org.readium.r2.shared.publication.services.positions
 import org.readium.r2.shared.util.AbsoluteUrl
 import org.readium.r2.shared.util.asset.AssetRetriever
 import org.readium.r2.shared.util.getOrElse
@@ -39,6 +42,8 @@ class ReaderViewModel @Inject constructor(
     val state: StateFlow<ReaderState> = _state.asStateFlow()
 
     private var sessionId: Long? = null
+    private var startProgression: Float = 0f
+    private var estimatedPageCount: Int = 0
 
     val bookId: Long = savedStateHandle.get<Long>("book_id") ?: 0
 
@@ -94,6 +99,9 @@ class ReaderViewModel @Inject constructor(
                         parseLocator(it)
                     }
 
+                    startProgression = book.progress
+                    estimatedPageCount = publication.positions().size
+
                     _state.update {
                         it.copy(
                             publication = publication,
@@ -103,7 +111,6 @@ class ReaderViewModel @Inject constructor(
                         )
                     }
 
-                    // Start reading session
                     libraryUseCases.updateReadingStatus(bookId, ReadingStatus.READING)
                     readingSessionUseCases.start(bookId).onSuccess { id ->
                         sessionId = id
@@ -116,7 +123,6 @@ class ReaderViewModel @Inject constructor(
                 }
         }
 
-        // Observe bookmarks
         viewModelScope.launch {
             bookmarkUseCases.observeForBook(bookId)
                 .catch { /* ignore */ }
@@ -172,8 +178,22 @@ class ReaderViewModel @Inject constructor(
 
     fun endSession() {
         val id = sessionId ?: return
+        sessionId = null
+        val currentProgression = _state.value.totalProgression
+        val progressionDelta = (currentProgression - startProgression).coerceAtLeast(0f)
+        val pagesRead = (progressionDelta * estimatedPageCount).toInt()
+        viewModelScope.launch(NonCancellable) {
+            readingSessionUseCases.end(id, pagesRead)
+        }
+    }
+
+    fun resumeSessionIfNeeded() {
+        if (sessionId != null || _state.value.publication == null) return
+        startProgression = _state.value.totalProgression
         viewModelScope.launch {
-            readingSessionUseCases.end(id)
+            readingSessionUseCases.start(bookId).onSuccess { id ->
+                sessionId = id
+            }
         }
     }
 
