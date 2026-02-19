@@ -1,5 +1,6 @@
 package com.fbaldhagen.readbooks.domain.usecase
 
+import com.fbaldhagen.readbooks.common.result.getOrNull
 import com.fbaldhagen.readbooks.domain.model.BookDetails
 import com.fbaldhagen.readbooks.domain.model.BookDetailsState
 import com.fbaldhagen.readbooks.domain.model.DiscoverBook
@@ -53,6 +54,10 @@ class GetBookDetailsUseCase @Inject constructor(
         val existingBook = bookRepository.getByGutenbergId(discoverBook.gutenbergId)
 
         return if (existingBook != null) {
+            val sessions = sessionRepository.getForBook(existingBook.id)
+                .getOrNull()
+                ?: emptyList()
+
             BookDetails(
                 title = existingBook.title,
                 authors = existingBook.authors,
@@ -67,7 +72,7 @@ class GetBookDetailsUseCase @Inject constructor(
                     rating = existingBook.rating,
                     currentLocator = existingBook.currentLocator,
                     collections = emptyList(),
-                    totalReadingMinutes = 0
+                    totalReadingMinutes = sessions.sumOf { it.durationMinutes }
                 )
             )
         } else {
