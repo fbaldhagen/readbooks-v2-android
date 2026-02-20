@@ -17,7 +17,8 @@ interface BookDao {
     @Query("SELECT * FROM books WHERE id = :bookId")
     fun observeById(bookId: Long): Flow<BookEntity?>
 
-    @Query("SELECT * FROM books WHERE reading_status = :status AND is_archived = 0")
+    @Query("SELECT * FROM books WHERE reading_status = :status AND is_archived = 0 " +
+            "ORDER BY last_read_at DESC")
     fun observeByStatus(status: String): Flow<List<BookEntity>>
 
     @Query(
