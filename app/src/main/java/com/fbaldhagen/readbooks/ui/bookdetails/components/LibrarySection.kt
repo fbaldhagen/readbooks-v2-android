@@ -6,8 +6,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -32,29 +37,29 @@ fun LibrarySection(
         // Status chips
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             ReadingStatus.entries.forEach { status ->
-                OutlinedButton(
+                FilterChip(
+                    selected = state.readingStatus == status,
                     onClick = { onStatusChanged(status) },
-                    border = if (state.readingStatus == status) {
-                        androidx.compose.foundation.BorderStroke(
-                            2.dp,
-                            MaterialTheme.colorScheme.primary
+                    label = {
+                        Text(
+                            text = when (status) {
+                                ReadingStatus.NOT_STARTED -> "Not Started"
+                                ReadingStatus.READING -> "Reading"
+                                ReadingStatus.FINISHED -> "Finished"
+                            },
+                            style = MaterialTheme.typography.labelMedium
                         )
-                    } else {
-                        androidx.compose.foundation.BorderStroke(
-                            1.dp,
-                            MaterialTheme.colorScheme.outline
-                        )
-                    }
-                ) {
-                    Text(
-                        text = when (status) {
-                            ReadingStatus.NOT_STARTED -> "Not Started"
-                            ReadingStatus.READING -> "Reading"
-                            ReadingStatus.FINISHED -> "Finished"
-                        },
-                        style = MaterialTheme.typography.labelMedium
-                    )
-                }
+                    },
+                    leadingIcon = if (state.readingStatus == status) {
+                        {
+                            Icon(
+                                imageVector = Icons.Default.Check,
+                                contentDescription = null,
+                                modifier = Modifier.size(FilterChipDefaults.IconSize)
+                            )
+                        }
+                    } else null
+                )
             }
         }
 
