@@ -7,53 +7,40 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
-private val LightColorScheme = lightColorScheme(
-    primary = Primary,
-    onPrimary = OnPrimary,
-    primaryContainer = PrimaryContainer,
-    onPrimaryContainer = OnPrimaryContainer,
-    secondary = Secondary,
-    onSecondary = OnSecondary,
-    secondaryContainer = SecondaryContainer,
-    onSecondaryContainer = OnSecondaryContainer,
-    tertiary = Tertiary,
-    onTertiary = OnTertiary,
-    tertiaryContainer = TertiaryContainer,
-    onTertiaryContainer = OnTertiaryContainer,
-    error = Error,
-    onError = OnError,
-    errorContainer = ErrorContainer,
-    onErrorContainer = OnErrorContainer,
-    surface = Surface,
-    onSurface = OnSurface,
-    surfaceVariant = SurfaceVariant,
-    onSurfaceVariant = OnSurfaceVariant
+private val DarkColorScheme = darkColorScheme(
+    primary = Color(0xFFE8C46A),
+    onPrimary = Color(0xFF3B2A00),
+    primaryContainer = Color(0xFF553E00),
+    onPrimaryContainer = Color(0xFFFFDF9B),
+    secondary = Color(0xFFBFAAA0),
+    onSecondary = Color(0xFF322016),
+    background = Color(0xFF1A1611),
+    onBackground = Color(0xFFEDE0D4),
+    surface = Color(0xFF1A1611),
+    onSurface = Color(0xFFEDE0D4),
+    surfaceVariant = Color(0xFF4A4030),
+    onSurfaceVariant = Color(0xFFCDB99A),
+    outline = Color(0xFF7A6A55),
 )
 
-private val DarkColorScheme = darkColorScheme(
-    primary = PrimaryDark,
-    onPrimary = OnPrimaryDark,
-    primaryContainer = PrimaryContainerDark,
-    onPrimaryContainer = OnPrimaryContainerDark,
-    secondary = SecondaryDark,
-    onSecondary = OnSecondaryDark,
-    secondaryContainer = SecondaryContainerDark,
-    onSecondaryContainer = OnSecondaryContainerDark,
-    tertiary = TertiaryDark,
-    onTertiary = OnTertiaryDark,
-    tertiaryContainer = TertiaryContainerDark,
-    onTertiaryContainer = OnTertiaryContainerDark,
-    error = ErrorDark,
-    onError = OnErrorDark,
-    errorContainer = ErrorContainerDark,
-    onErrorContainer = OnErrorContainerDark,
-    surface = SurfaceDark,
-    onSurface = OnSurfaceDark,
-    surfaceVariant = SurfaceVariantDark,
-    onSurfaceVariant = OnSurfaceVariantDark
+private val LightColorScheme = lightColorScheme(
+    primary = Color(0xFF6B4F00),
+    onPrimary = Color(0xFFFFFFFF),
+    primaryContainer = Color(0xFFFFDF9B),
+    onPrimaryContainer = Color(0xFF221600),
+    secondary = Color(0xFF6B5C45),
+    onSecondary = Color(0xFFFFFFFF),
+    background = Color(0xFFFFF8F0),
+    onBackground = Color(0xFF1E1B16),
+    surface = Color(0xFFFFF8F0),
+    onSurface = Color(0xFF1E1B16),
+    surfaceVariant = Color(0xFFF0E0C8),
+    onSurfaceVariant = Color(0xFF4E4539),
+    outline = Color(0xFF7A6A55),
 )
 
 @Composable
