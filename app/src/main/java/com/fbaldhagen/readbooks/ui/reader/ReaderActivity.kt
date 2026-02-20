@@ -10,8 +10,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import com.fbaldhagen.readbooks.R
 import com.fbaldhagen.readbooks.ui.reader.composables.ReaderScreen
 import com.fbaldhagen.readbooks.ui.reader.presentation.ReaderTheme
 import com.fbaldhagen.readbooks.ui.reader.presentation.ReaderViewModel
@@ -25,7 +28,7 @@ import kotlinx.coroutines.launch
 class ReaderActivity : AppCompatActivity() {
 
     private val viewModel: ReaderViewModel by viewModels()
-    private val fragmentContainerId = android.view.View.generateViewId()
+    private val fragmentContainerId = R.id.reader_fragment_container
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -77,11 +80,11 @@ class ReaderActivity : AppCompatActivity() {
     private fun setImmersiveMode(immersive: Boolean) {
         val insetsController = WindowCompat.getInsetsController(window, window.decorView)
         if (immersive) {
-            insetsController.hide(androidx.core.view.WindowInsetsCompat.Type.systemBars())
+            insetsController.hide(WindowInsetsCompat.Type.systemBars())
             insetsController.systemBarsBehavior =
-                androidx.core.view.WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         } else {
-            insetsController.show(androidx.core.view.WindowInsetsCompat.Type.systemBars())
+            insetsController.show(WindowInsetsCompat.Type.systemBars())
         }
     }
 
@@ -99,10 +102,6 @@ class ReaderActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         viewModel.endSession()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
     }
 
     companion object {
