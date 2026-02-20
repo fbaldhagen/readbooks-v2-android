@@ -1,10 +1,14 @@
 package com.fbaldhagen.readbooks.ui.home.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -24,15 +28,30 @@ fun HomeContent(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(top = 16.dp)
+            .padding(top = 24.dp)
+            .padding(bottom = 16.dp)
     ) {
+        val hour = java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY)
+        val greeting = when {
+            hour < 4 -> "Late night reading?"
+            hour < 12 -> "Good morning"
+            hour < 18 -> "Good afternoon"
+            else      -> "Good evening"
+        }
+
+        Text(
+            text = greeting,
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
         Text(
             text = "ReadBooks",
-            style = MaterialTheme.typography.headlineMedium,
+            style = MaterialTheme.typography.displaySmall,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         state.readingGoalProgress?.let { progress ->
             ReadingGoalCard(progress = progress)
@@ -40,11 +59,30 @@ fun HomeContent(
         }
 
         if (state.currentlyReading.isNotEmpty()) {
-            HomeBookRow(
-                title = "Continue Reading",
-                books = state.currentlyReading,
-                onBookClick = onBookClick
+            Text(
+                text = "Continue Reading",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(horizontal = 16.dp)
             )
+            Spacer(modifier = Modifier.height(10.dp))
+
+            CurrentlyReadingCard(
+                book = state.currentlyReading.first(),
+                onClick = { onBookClick(state.currentlyReading.first().id) },
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+
+            if (state.currentlyReading.size > 1) {
+                Spacer(modifier = Modifier.height(10.dp))
+                LazyRow(
+                    contentPadding = PaddingValues(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(state.currentlyReading.drop(1), key = { it.id }) { book ->
+                        HomeBookItem(book = book, onClick = { onBookClick(book.id) })
+                    }
+                }
+            }
             Spacer(modifier = Modifier.height(24.dp))
         }
 
