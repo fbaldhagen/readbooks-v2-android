@@ -14,8 +14,10 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.CancellationException
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.coroutines.executeAsync
 
 @HiltWorker
 class DownloadBookWorker @AssistedInject constructor(
@@ -24,7 +26,8 @@ class DownloadBookWorker @AssistedInject constructor(
     private val apiService: GutendexApiService,
     private val bookDao: BookDao,
     private val bookFileManager: BookFileManager,
-    private val okHttpClient: OkHttpClient
+    private val okHttpClient: OkHttpClient,
+    private val moshi: Moshi
 ) : CoroutineWorker(appContext, params) {
 
     override suspend fun doWork(): Result {
@@ -43,7 +46,7 @@ class DownloadBookWorker @AssistedInject constructor(
 
             // Download EPUB
             val epubRequest = Request.Builder().url(downloadUrl).build()
-            val epubResponse = okHttpClient.newCall(epubRequest).execute()
+            val epubResponse = okHttpClient.newCall(epubRequest).executeAsync()
             if (!epubResponse.isSuccessful) {
                 return Result.failure(
                     workDataOf(KEY_ERROR to "Download failed: ${epubResponse.code}")
@@ -59,7 +62,7 @@ class DownloadBookWorker @AssistedInject constructor(
             discoverBook.coverUrl?.let { coverUrl ->
                 try {
                     val coverRequest = Request.Builder().url(coverUrl).build()
-                    val coverResponse = okHttpClient.newCall(coverRequest).execute()
+                    val coverResponse = okHttpClient.newCall(coverRequest).executeAsync()
                     if (coverResponse.isSuccessful) {
                         coverResponse.body.byteStream().use { stream ->
                             val coverFile = bookFileManager.saveCover(gutenbergId, stream)
@@ -71,22 +74,11 @@ class DownloadBookWorker @AssistedInject constructor(
                 }
             }
 
-            // Save to database
-            val authors = Moshi.Builder().build()
-                .adapter<List<String>>(
-                    Types.newParameterizedType(
-                        List::class.java, String::class.java
-                    )
-                )
-                .toJson(discoverBook.authors)
-
-            val subjects = Moshi.Builder().build()
-                .adapter<List<String>>(
-                    Types.newParameterizedType(
-                        List::class.java, String::class.java
-                    )
-                )
-                .toJson(discoverBook.subjects)
+            val listAdapter = moshi.adapter<List<String>>(
+                Types.newParameterizedType(List::class.java, String::class.java)
+            )
+            val authors = listAdapter.toJson(discoverBook.authors)
+            val subjects = listAdapter.toJson(discoverBook.subjects)
 
             val bookId = bookDao.insert(
                 BookEntity(
@@ -101,6 +93,8 @@ class DownloadBookWorker @AssistedInject constructor(
             )
 
             Result.success(workDataOf(KEY_BOOK_ID to bookId))
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             if (runAttemptCount < 2) {
                 Result.retry()
