@@ -1,5 +1,7 @@
 package com.fbaldhagen.readbooks.navigation
 
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -15,6 +17,7 @@ import com.fbaldhagen.readbooks.ui.reader.ReaderActivity
 @Composable
 fun AppNavHost(
     navController: NavHostController,
+    innerPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
     NavHost(
@@ -24,6 +27,7 @@ fun AppNavHost(
     ) {
         composable<Route.Home> {
             HomeScreen(
+                modifier = Modifier.padding(innerPadding),
                 onNavigateToBookDetails = { bookId ->
                     navController.navigate(Route.BookDetails(bookId))
                 }
@@ -32,6 +36,7 @@ fun AppNavHost(
 
         composable<Route.Library> {
             LibraryScreen(
+                modifier = Modifier.padding(innerPadding),
                 onNavigateToBookDetails = { bookId ->
                     navController.navigate(Route.BookDetails(bookId))
                 }
@@ -40,6 +45,7 @@ fun AppNavHost(
 
         composable<Route.Discover> {
             DiscoverScreen(
+                modifier = Modifier.padding(innerPadding),
                 onNavigateToBookDetails = { gutenbergId ->
                     navController.navigate(Route.DiscoverBookDetails(gutenbergId))
                 }
@@ -48,6 +54,7 @@ fun AppNavHost(
 
         composable<Route.Profile> {
             ProfileScreen(
+                modifier = Modifier.padding(innerPadding),
                 onNavigateToSettings = {
                     navController.navigate(Route.Settings)
                 },

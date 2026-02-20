@@ -1,6 +1,5 @@
 package com.fbaldhagen.readbooks.ui.app
 
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -8,7 +7,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -47,7 +45,7 @@ fun ReadBooksApp() {
     ) { innerPadding ->
         AppNavHost(
             navController = navController,
-            modifier = Modifier.padding(innerPadding)
+            innerPadding = innerPadding
         )
     }
 }
