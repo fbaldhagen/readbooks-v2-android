@@ -7,11 +7,12 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.luminance
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.fbaldhagen.readbooks.R
@@ -37,6 +38,7 @@ class ReaderActivity : AppCompatActivity() {
         setContent {
             ReadBooksTheme {
                 val state by viewModel.state.collectAsStateWithLifecycle()
+                val surfaceColor = MaterialTheme.colorScheme.surface
 
                 LaunchedEffect(state.barsVisible) {
                     setImmersiveMode(!state.barsVisible)
@@ -44,9 +46,13 @@ class ReaderActivity : AppCompatActivity() {
 
                 LaunchedEffect(state.preferences.theme, state.barsVisible) {
                     val controller = WindowCompat.getInsetsController(window, window.decorView)
-                    controller.isAppearanceLightStatusBars = when (state.preferences.theme) {
-                        ReaderTheme.LIGHT, ReaderTheme.SEPIA -> true
-                        ReaderTheme.DARK -> false
+                    controller.isAppearanceLightStatusBars = if (state.barsVisible) {
+                        surfaceColor.luminance() > 0.5f
+                    } else {
+                        when (state.preferences.theme) {
+                            ReaderTheme.LIGHT, ReaderTheme.SEPIA -> true
+                            ReaderTheme.DARK -> false
+                        }
                     }
                 }
 
@@ -81,8 +87,6 @@ class ReaderActivity : AppCompatActivity() {
         val insetsController = WindowCompat.getInsetsController(window, window.decorView)
         if (immersive) {
             insetsController.hide(WindowInsetsCompat.Type.systemBars())
-            insetsController.systemBarsBehavior =
-                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         } else {
             insetsController.show(WindowInsetsCompat.Type.systemBars())
         }
