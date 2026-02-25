@@ -14,4 +14,6 @@ interface UserPreferencesRepository {
     suspend fun getAuthToken(): String?
     suspend fun saveUserInfo(email: String, userId: Long)
     suspend fun clearAuthData()
+    suspend fun updateBio(bio: String?)
+    suspend fun setYearlyBooksGoal(goal: Int)
 }

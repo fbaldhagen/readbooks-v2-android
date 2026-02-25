@@ -23,4 +23,10 @@ class UserPreferencesUseCases @Inject constructor(
 
     suspend fun setThemeMode(mode: ThemeMode) =
         preferencesRepository.setThemeMode(mode)
+
+    suspend fun updateBio(bio: String?) =
+        preferencesRepository.updateBio(bio)
+
+    suspend fun setYearlyBooksGoal(goal: Int) =
+        preferencesRepository.setYearlyBooksGoal(goal)
 }

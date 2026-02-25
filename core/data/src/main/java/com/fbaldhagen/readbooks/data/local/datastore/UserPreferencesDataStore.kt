@@ -30,6 +30,8 @@ class UserPreferencesDataStore @Inject constructor(
         val AUTH_TOKEN = stringPreferencesKey("auth_token")
         val USER_EMAIL = stringPreferencesKey("user_email")
         val USER_ID = longPreferencesKey("user_id")
+        val BIO = stringPreferencesKey("bio")
+        val YEARLY_BOOKS_GOAL = intPreferencesKey("yearly_books_goal")
     }
 
     val preferences: Flow<UserPreferences> = context.dataStore.data.map { prefs ->
@@ -45,7 +47,9 @@ class UserPreferencesDataStore @Inject constructor(
                 }
             } ?: ThemeMode.SYSTEM,
             authToken = prefs[Keys.AUTH_TOKEN],
-            email = prefs[Keys.USER_EMAIL]
+            email = prefs[Keys.USER_EMAIL],
+            bio = prefs[Keys.BIO],
+            yearlyBooksGoal = prefs[Keys.YEARLY_BOOKS_GOAL] ?: 12
         )
     }
 
@@ -101,6 +105,19 @@ class UserPreferencesDataStore @Inject constructor(
             prefs.remove(Keys.AUTH_TOKEN)
             prefs.remove(Keys.USER_EMAIL)
             prefs.remove(Keys.USER_ID)
+        }
+    }
+
+    suspend fun updateBio(bio: String?) {
+        context.dataStore.edit { prefs ->
+            if (bio != null) prefs[Keys.BIO] = bio
+            else prefs.remove(Keys.BIO)
+        }
+    }
+
+    suspend fun setYearlyBooksGoal(goal: Int) {
+        context.dataStore.edit { prefs ->
+            prefs[Keys.YEARLY_BOOKS_GOAL] = goal
         }
     }
 }

@@ -28,4 +28,8 @@ class UserPreferencesRepositoryImpl @Inject constructor(
     override suspend fun saveUserInfo(email: String, userId: Long) = dataStore.saveUserInfo(email, userId)
 
     override suspend fun clearAuthData() = dataStore.clearAuthData()
+
+    override suspend fun updateBio(bio: String?) = dataStore.updateBio(bio)
+
+    override suspend fun setYearlyBooksGoal(goal: Int) = dataStore.setYearlyBooksGoal(goal)
 }

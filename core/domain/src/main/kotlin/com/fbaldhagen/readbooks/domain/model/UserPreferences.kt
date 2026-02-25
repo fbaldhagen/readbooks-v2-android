@@ -6,7 +6,9 @@ data class UserPreferences(
     val dailyReadingGoalMinutes: Int = 30,
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val authToken: String? = null,
-    val email: String? = null
+    val email: String? = null,
+    val bio: String? = null,
+    val yearlyBooksGoal: Int = 12
 )
 
 enum class ThemeMode {
