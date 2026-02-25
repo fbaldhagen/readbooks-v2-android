@@ -20,12 +20,6 @@ sealed interface Route {
     data object Profile : Route
 
     @Serializable
-    data object Settings : Route
-
-    @Serializable
-    data object Progress : Route
-
-    @Serializable
     data class BookDetails(val bookId: Long) : Route
 
     @Serializable

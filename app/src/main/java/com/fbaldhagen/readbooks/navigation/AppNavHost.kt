@@ -67,12 +67,6 @@ fun AppNavHost(
         composable<Route.Profile> {
             ProfileScreen(
                 modifier = Modifier.padding(innerPadding),
-                onNavigateToSettings = {
-                    navController.navigate(Route.Settings)
-                },
-                onNavigateToProgress = {
-                    navController.navigate(Route.Progress)
-                },
                 onLogout = {
                     navController.navigate(Route.Auth) {
                         popUpTo(0) { inclusive = true }
