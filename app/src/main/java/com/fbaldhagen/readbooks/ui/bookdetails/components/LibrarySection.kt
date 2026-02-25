@@ -23,14 +23,14 @@ import com.fbaldhagen.readbooks.domain.model.ReadingStatus
 @Composable
 fun LibrarySection(
     state: BookDetailsState.InLibrary,
-    onRatingChanged: (Int?) -> Unit,
     onStatusChanged: (ReadingStatus) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
             text = "Your Progress",
-            style = MaterialTheme.typography.titleMedium
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -63,36 +63,23 @@ fun LibrarySection(
             }
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // Rating
-        Text(
-            text = "Rating",
-            style = MaterialTheme.typography.titleSmall
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        RatingBar(
-            rating = state.rating ?: 0,
-            onRatingChanged = { rating ->
-                onRatingChanged(if (rating == state.rating) null else rating)
-            }
-        )
-
         if (state.totalReadingMinutes > 0) {
             Spacer(modifier = Modifier.height(12.dp))
             Text(
                 text = "Time spent reading: ${formatMinutes(state.totalReadingMinutes)}",
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onBackground
             )
         }
+
+        Spacer(modifier = Modifier.height(12.dp))
 
         if (state.collections.isNotEmpty()) {
             Spacer(modifier = Modifier.height(12.dp))
             Text(
                 text = "In collections: ${state.collections.joinToString(", ") { it.name }}",
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onBackground
             )
         }
     }

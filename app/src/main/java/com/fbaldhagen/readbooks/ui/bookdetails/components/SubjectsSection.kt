@@ -23,7 +23,8 @@ fun SubjectsSection(
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
             text = "Subjects",
-            style = MaterialTheme.typography.titleMedium
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(modifier = Modifier.height(8.dp))
         FlowRow(

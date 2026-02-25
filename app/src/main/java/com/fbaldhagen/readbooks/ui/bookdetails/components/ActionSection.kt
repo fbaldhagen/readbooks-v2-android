@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.Download
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -35,7 +36,10 @@ fun ActionSection(
                         contentDescription = null
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Download")
+                    Text(
+                        text = "Download",
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
                 }
             }
             is BookDetailsState.Downloading -> {
@@ -44,9 +48,14 @@ fun ActionSection(
                     enabled = false,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Downloading...")
+                    Text(
+                        text = "Downloading...",
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
                 }
-                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+                LinearProgressIndicator(
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
             is BookDetailsState.InLibrary -> {
                 Button(
@@ -59,7 +68,8 @@ fun ActionSection(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        if (state.progress > 0f) "Continue Reading" else "Start Reading"
+                        text = if (state.progress > 0f) "Continue Reading" else "Start Reading",
+                        color = MaterialTheme.colorScheme.onPrimary
                     )
                 }
             }
