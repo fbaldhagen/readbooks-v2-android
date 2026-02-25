@@ -5,11 +5,13 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.fbaldhagen.readbooks.domain.model.ThemeMode
 import com.fbaldhagen.readbooks.domain.model.UserPreferences
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -25,6 +27,9 @@ class UserPreferencesDataStore @Inject constructor(
         val AVATAR_URI = stringPreferencesKey("avatar_uri")
         val DAILY_READING_GOAL = intPreferencesKey("daily_reading_goal_minutes")
         val THEME_MODE = stringPreferencesKey("theme_mode")
+        val AUTH_TOKEN = stringPreferencesKey("auth_token")
+        val USER_EMAIL = stringPreferencesKey("user_email")
+        val USER_ID = longPreferencesKey("user_id")
     }
 
     val preferences: Flow<UserPreferences> = context.dataStore.data.map { prefs ->
@@ -38,7 +43,9 @@ class UserPreferencesDataStore @Inject constructor(
                 } catch (_: IllegalArgumentException) {
                     ThemeMode.SYSTEM
                 }
-            } ?: ThemeMode.SYSTEM
+            } ?: ThemeMode.SYSTEM,
+            authToken = prefs[Keys.AUTH_TOKEN],
+            email = prefs[Keys.USER_EMAIL]
         )
     }
 
@@ -67,6 +74,33 @@ class UserPreferencesDataStore @Inject constructor(
     suspend fun setThemeMode(mode: ThemeMode) {
         context.dataStore.edit { prefs ->
             prefs[Keys.THEME_MODE] = mode.name
+        }
+    }
+
+    suspend fun saveAuthToken(token: String) {
+        context.dataStore.edit { prefs ->
+            prefs[Keys.AUTH_TOKEN] = token
+        }
+    }
+
+    suspend fun getAuthToken(): String? {
+        return context.dataStore.data.map { prefs ->
+            prefs[Keys.AUTH_TOKEN]
+        }.first()
+    }
+
+    suspend fun saveUserInfo(email: String, userId: Long) {
+        context.dataStore.edit { prefs ->
+            prefs[Keys.USER_EMAIL] = email
+            prefs[Keys.USER_ID] = userId
+        }
+    }
+
+    suspend fun clearAuthData() {
+        context.dataStore.edit { prefs ->
+            prefs.remove(Keys.AUTH_TOKEN)
+            prefs.remove(Keys.USER_EMAIL)
+            prefs.remove(Keys.USER_ID)
         }
     }
 }

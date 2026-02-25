@@ -1,6 +1,8 @@
 package com.fbaldhagen.readbooks.data.di
 
+import com.fbaldhagen.readbooks.data.remote.AuthInterceptor
 import com.fbaldhagen.readbooks.data.remote.api.GutendexApiService
+import com.fbaldhagen.readbooks.data.remote.api.ReadBooksApiService
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -38,14 +40,48 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(okHttpClient: OkHttpClient, moshi: Moshi): Retrofit = Retrofit.Builder()
-        .baseUrl(GutendexApiService.BASE_URL)
+    @GutendexRetrofit
+    fun provideGutendexRetrofit(okHttpClient: OkHttpClient, moshi: Moshi): Retrofit =
+        Retrofit.Builder()
+            .baseUrl(GutendexApiService.BASE_URL)
+            .client(okHttpClient)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .build()
+
+    @Provides
+    @Singleton
+    fun provideGutendexApiService(@GutendexRetrofit retrofit: Retrofit): GutendexApiService =
+        retrofit.create(GutendexApiService::class.java)
+
+    @Provides
+    @Singleton
+    @ReadBooksOkHttp
+    fun provideReadBooksOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient =
+        OkHttpClient.Builder()
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .addInterceptor(authInterceptor)
+            .addInterceptor(
+                HttpLoggingInterceptor().apply {
+                    level = HttpLoggingInterceptor.Level.BASIC
+                }
+            )
+            .build()
+
+    @Provides
+    @Singleton
+    @ReadBooksRetrofit
+    fun provideReadBooksRetrofit(
+        @ReadBooksOkHttp okHttpClient: OkHttpClient,
+        moshi: Moshi
+    ): Retrofit = Retrofit.Builder()
+        .baseUrl(ReadBooksApiService.BASE_URL)
         .client(okHttpClient)
         .addConverterFactory(MoshiConverterFactory.create(moshi))
         .build()
 
     @Provides
     @Singleton
-    fun provideGutendexApiService(retrofit: Retrofit): GutendexApiService =
-        retrofit.create(GutendexApiService::class.java)
+    fun provideReadBooksApiService(@ReadBooksRetrofit retrofit: Retrofit): ReadBooksApiService =
+        retrofit.create(ReadBooksApiService::class.java)
 }

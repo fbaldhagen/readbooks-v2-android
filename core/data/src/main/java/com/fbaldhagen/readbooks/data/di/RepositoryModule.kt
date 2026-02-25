@@ -1,6 +1,7 @@
 package com.fbaldhagen.readbooks.data.di
 
 import com.fbaldhagen.readbooks.data.repository.AchievementRepositoryImpl
+import com.fbaldhagen.readbooks.data.repository.AuthRepositoryImpl
 import com.fbaldhagen.readbooks.data.repository.BookRepositoryImpl
 import com.fbaldhagen.readbooks.data.repository.BookmarkRepositoryImpl
 import com.fbaldhagen.readbooks.data.repository.CollectionRepositoryImpl
@@ -9,6 +10,7 @@ import com.fbaldhagen.readbooks.data.repository.SessionRepositoryImpl
 import com.fbaldhagen.readbooks.data.repository.UserPreferencesRepositoryImpl
 import com.fbaldhagen.readbooks.data.worker.WorkManagerBookDownloadManager
 import com.fbaldhagen.readbooks.domain.repository.AchievementRepository
+import com.fbaldhagen.readbooks.domain.repository.AuthRepository
 import com.fbaldhagen.readbooks.domain.repository.BookRepository
 import com.fbaldhagen.readbooks.domain.repository.BookmarkRepository
 import com.fbaldhagen.readbooks.domain.repository.CollectionRepository
@@ -61,4 +63,8 @@ abstract class RepositoryModule {
     abstract fun bindBookDownloadManager(
         impl: WorkManagerBookDownloadManager
     ): BookDownloadManager
+
+    @Binds
+    @Singleton
+    abstract fun bindAuthRepository(impl: AuthRepositoryImpl): AuthRepository
 }
