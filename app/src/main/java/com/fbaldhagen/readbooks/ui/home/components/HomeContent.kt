@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.fbaldhagen.readbooks.ui.home.HomeState
+import java.util.Calendar
 
 @Composable
 fun HomeContent(
@@ -31,7 +32,7 @@ fun HomeContent(
             .padding(top = 24.dp)
             .padding(bottom = 16.dp)
     ) {
-        val hour = java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY)
+        val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
         val greeting = when {
             hour < 4 -> "Late night reading?"
             hour < 12 -> "Good morning"
@@ -42,7 +43,7 @@ fun HomeContent(
         Text(
             text = greeting,
             style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
         Text(
@@ -62,18 +63,21 @@ fun HomeContent(
             Text(
                 text = "Continue Reading",
                 style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(horizontal = 16.dp)
+                modifier = Modifier.padding(horizontal = 16.dp),
+                color = MaterialTheme.colorScheme.onBackground
             )
             Spacer(modifier = Modifier.height(10.dp))
 
             CurrentlyReadingCard(
                 book = state.currentlyReading.first(),
                 onClick = { onBookClick(state.currentlyReading.first().id) },
-                modifier = Modifier.padding(horizontal = 16.dp)
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .glowEffect(color = MaterialTheme.colorScheme.primary)
             )
 
             if (state.currentlyReading.size > 1) {
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(16.dp))
                 LazyRow(
                     contentPadding = PaddingValues(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)

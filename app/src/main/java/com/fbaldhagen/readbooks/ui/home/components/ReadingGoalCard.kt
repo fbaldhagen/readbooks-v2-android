@@ -30,7 +30,7 @@ fun ReadingGoalCard(
             .padding(horizontal = 16.dp),
         shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
+            containerColor = MaterialTheme.colorScheme.surface
         )
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -42,12 +42,12 @@ fun ReadingGoalCard(
                 Text(
                     text = "Today's Reading Goal",
                     style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
                     text = "${progress.todayMinutes} / ${progress.goalMinutes} min",
                     style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                 )
             }
             Spacer(modifier = Modifier.height(10.dp))
@@ -58,14 +58,14 @@ fun ReadingGoalCard(
                     .height(8.dp)
                     .clip(MaterialTheme.shapes.small),
                 color = MaterialTheme.colorScheme.primary,
-                trackColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.15f)
+                trackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f)
             )
             if (progress.progressFraction >= 1f) {
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
                     text = "Goal reached! 🎉",
                     style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
         }
