@@ -15,5 +15,8 @@ data class ProfileState(
         currentStreak = ReadingStreak(currentDays = 0, longestDays = 0),
         weeklyMinutes = emptyList()
     ),
+    val showSettings: Boolean = false,
+    val showEditProfile: Boolean = false,
+    val showAvatarOptions: Boolean = false,
     val error: String? = null
 )

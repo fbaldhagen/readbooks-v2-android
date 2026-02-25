@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+
+    <!-- Material 3 surface container background -->
+    <path
+        android:fillColor="#E0E0E0"
+        android:pathData="M60,0 A60,60 0 1,1 59.999,0 Z" />
+
+    <!-- Connected head + shoulders silhouette -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="
+            M60,38
+            a18,18 0 1,1 -0.001,0
+
+            M24,100
+            a36,28 0 0,1 72,0
+            a8,8 0 0,1 -8,8
+            H32
+            a8,8 0 0,1 -8,-8
+            Z" />
+
+</vector>
