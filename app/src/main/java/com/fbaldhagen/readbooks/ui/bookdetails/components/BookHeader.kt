@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,6 +19,7 @@ import com.fbaldhagen.readbooks.ui.components.BookCoverImage
 @Composable
 fun BookHeader(
     details: BookDetails,
+    onRatingChanged: (Int?) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(modifier = modifier.fillMaxWidth()) {
@@ -40,25 +40,20 @@ fun BookHeader(
             Text(
                 text = details.authors.joinToString(", "),
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = MaterialTheme.colorScheme.onBackground,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
 
             if (details.state is BookDetailsState.InLibrary) {
-                val libraryState = details.state as BookDetailsState.InLibrary
-                if (libraryState.progress > 0f) {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    LinearProgressIndicator(
-                        progress = { libraryState.progress },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Text(
-                        text = "${(libraryState.progress * 100).toInt()}%",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
+                Spacer(modifier = Modifier.height(12.dp))
+                RatingBar(
+                    rating = (details.state as BookDetailsState.InLibrary).rating ?: 0,
+                    onRatingChanged = { rating ->
+                        onRatingChanged(if (rating == (details.state as BookDetailsState.InLibrary).rating) null else rating)
+                    },
+                    starSize = 28.dp
+                )
             }
         }
     }

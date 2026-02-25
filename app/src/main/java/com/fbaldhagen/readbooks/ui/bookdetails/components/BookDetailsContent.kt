@@ -29,7 +29,10 @@ fun BookDetailsContent(
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 16.dp)
     ) {
-        BookHeader(details = details)
+        BookHeader(
+            details = details,
+            onRatingChanged = onRatingChanged,
+            )
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -44,7 +47,6 @@ fun BookDetailsContent(
         if (details.state is BookDetailsState.InLibrary) {
             LibrarySection(
                 state = details.state as BookDetailsState.InLibrary,
-                onRatingChanged = onRatingChanged,
                 onStatusChanged = onStatusChanged
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -54,6 +56,14 @@ fun BookDetailsContent(
             DescriptionSection(description = description)
             Spacer(modifier = Modifier.height(16.dp))
         }
+
+        RatingSection(
+            rating = if (details.state is BookDetailsState.InLibrary) {
+                (details.state as BookDetailsState.InLibrary).rating ?: 0
+            } else {
+                0
+            }
+        )
 
         if (details.subjects.isNotEmpty()) {
             SubjectsSection(subjects = details.subjects)
