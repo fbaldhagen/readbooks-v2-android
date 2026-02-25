@@ -23,6 +23,6 @@ interface GutendexApiService {
     ): GutendexBookDto
 
     companion object {
-        const val BASE_URL = "https://gutendex.com/"
+        const val BASE_URL = "https://books.fbaldhagen.dev/"
     }
 }
