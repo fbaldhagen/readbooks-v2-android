@@ -12,6 +12,6 @@ fun GutendexBookDto.toDiscoverBook(): DiscoverBook = DiscoverBook(
     coverUrl = formats[IMAGE_MIME],
     downloadUrl = formats[EPUB_MIME],
     summary = summaries?.firstOrNull(),
-    subjects = subjects,
+    subjects = bookshelves,
     downloadCount = downloadCount
 )
