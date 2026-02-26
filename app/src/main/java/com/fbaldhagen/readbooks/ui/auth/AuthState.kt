@@ -7,5 +7,8 @@ data class AuthState(
     val email: String = "",
     val password: String = "",
     val displayName: String = "",
-    val error: String? = null
+    val error: String? = null,
+    val registrationPending: Boolean = false,
+    val confirmPassword: String = "",
+    val passwordsMatch: Boolean = true
 )

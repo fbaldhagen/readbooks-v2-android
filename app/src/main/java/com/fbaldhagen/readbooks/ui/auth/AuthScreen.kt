@@ -16,11 +16,15 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MarkEmailUnread
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -36,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -83,20 +88,6 @@ fun AuthScreen(
             modifier = Modifier.padding(bottom = 32.dp)
         )
 
-        if (!isLoginMode) {
-            OutlinedTextField(
-                value = state.displayName,
-                onValueChange = viewModel::onDisplayNameChange,
-                label = { Text("Display Name") },
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                keyboardActions = KeyboardActions(
-                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
-                ),
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-
         OutlinedTextField(
             value = state.email,
             onValueChange = viewModel::onEmailChange,
@@ -127,6 +118,28 @@ fun AuthScreen(
             ),
             modifier = Modifier.fillMaxWidth()
         )
+
+        if (!isLoginMode) {
+            Spacer(modifier = Modifier.height(8.dp))
+            OutlinedTextField(
+                value = state.confirmPassword,
+                onValueChange = viewModel::onConfirmPasswordChange,
+                label = { Text("Confirm Password") },
+                visualTransformation = PasswordVisualTransformation(),
+                isError = !state.passwordsMatch,
+                supportingText = if (!state.passwordsMatch) {
+                    { Text("Passwords don't match", color = MaterialTheme.colorScheme.error) }
+                } else null,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = { viewModel.register() }
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -170,8 +183,43 @@ fun AuthScreen(
                 modifier = Modifier.clickable {
                     isLoginMode = !isLoginMode
                     viewModel.dismissError()
+                    viewModel.clearPasswordConfirmation()
                 }
             )
+        }
+
+        if (state.registrationPending) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.MarkEmailUnread,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(64.dp)
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+                Text(
+                    text = "Check your email",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "We sent a verification link to ${state.email}",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+                TextButton(onClick = { viewModel.dismissRegistrationPending() }) {
+                    Text("Back to sign in")
+                }
+            }
+            return
         }
     }
 }
