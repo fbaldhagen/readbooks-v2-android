@@ -16,7 +16,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ReadBooksTheme {
-                ReadBooksApp()
+                ReadBooksApp(intent = intent)
             }
         }
     }
@@ -24,5 +24,10 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
+        setContent {
+            ReadBooksTheme {
+                ReadBooksApp(intent = intent)
+            }
+        }
     }
 }
