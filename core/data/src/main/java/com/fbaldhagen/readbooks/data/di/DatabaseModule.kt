@@ -27,7 +27,7 @@ object DatabaseModule {
             AppDatabase::class.java,
             "readbooks.db"
         )
-            .fallbackToDestructiveMigration(false)
+            .fallbackToDestructiveMigration(true)
             .build()
 
     @Provides
