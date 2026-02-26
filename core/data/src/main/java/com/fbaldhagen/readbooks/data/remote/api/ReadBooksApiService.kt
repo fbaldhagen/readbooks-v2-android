@@ -3,6 +3,7 @@ package com.fbaldhagen.readbooks.data.remote.api
 import com.fbaldhagen.readbooks.data.remote.dto.AuthResponse
 import com.fbaldhagen.readbooks.data.remote.dto.LoginRequest
 import com.fbaldhagen.readbooks.data.remote.dto.RegisterRequest
+import com.fbaldhagen.readbooks.data.remote.dto.RegisterResponse
 import com.fbaldhagen.readbooks.data.remote.dto.RemoteBookRequest
 import com.fbaldhagen.readbooks.data.remote.dto.RemoteBookResponse
 import retrofit2.http.Body
@@ -11,11 +12,15 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ReadBooksApiService {
 
     @POST("api/auth/register")
-    suspend fun register(@Body request: RegisterRequest): AuthResponse
+    suspend fun register(@Body request: RegisterRequest): RegisterResponse
+
+    @GET("api/auth/verify")
+    suspend fun verifyEmail(@Query("token") token: String): AuthResponse
 
     @POST("api/auth/login")
     suspend fun login(@Body request: LoginRequest): AuthResponse

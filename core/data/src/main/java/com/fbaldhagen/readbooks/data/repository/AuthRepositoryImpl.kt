@@ -20,9 +20,7 @@ class AuthRepositoryImpl @Inject constructor(
         displayName: String?
     ): Result<Unit> {
         return try {
-            val response = apiService.register(RegisterRequest(email, password, displayName))
-            userPreferencesRepository.saveAuthToken(response.token)
-            userPreferencesRepository.saveUserInfo(email, 0L)
+            apiService.register(RegisterRequest(email, password, displayName))
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
@@ -46,5 +44,16 @@ class AuthRepositoryImpl @Inject constructor(
 
     override fun isLoggedIn(): Flow<Boolean> {
         return userPreferencesRepository.observe().map { it.authToken != null }
+    }
+
+    override suspend fun verifyEmail(token: String): Result<Unit> {
+        return try {
+            val response = apiService.verifyEmail(token)
+            userPreferencesRepository.saveAuthToken(response.token)
+            userPreferencesRepository.saveUserInfo(response.email, 0L)
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 }

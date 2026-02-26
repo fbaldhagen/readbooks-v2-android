@@ -6,6 +6,8 @@ data class RegisterRequest(
     val displayName: String? = null
 )
 
+data class RegisterResponse(val message: String)
+
 data class LoginRequest(
     val email: String,
     val password: String
