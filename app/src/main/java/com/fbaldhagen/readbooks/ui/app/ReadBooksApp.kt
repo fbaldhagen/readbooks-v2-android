@@ -1,15 +1,16 @@
 package com.fbaldhagen.readbooks.ui.app
 
+import android.content.Intent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,13 +27,22 @@ import com.fbaldhagen.readbooks.navigation.TopLevelDestination
 import com.fbaldhagen.readbooks.ui.auth.AuthViewModel
 
 @Composable
-fun ReadBooksApp() {
+fun ReadBooksApp(intent: Intent? = null) {
     val navController = rememberNavController()
+    val authViewModel: AuthViewModel = hiltViewModel()
+    val authState by authViewModel.state.collectAsStateWithLifecycle()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-    val authViewModel: AuthViewModel = hiltViewModel()
-    val authState by authViewModel.state.collectAsStateWithLifecycle()
+    // Handle verification deep link
+    LaunchedEffect(intent) {
+        intent?.data?.let { uri ->
+            val token = uri.getQueryParameter("token")
+            if (token != null) {
+                authViewModel.verifyEmail(token)
+            }
+        }
+    }
 
     if (authState.isCheckingAuth) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -76,9 +86,7 @@ private fun ReadBooksBottomBar(
     currentDestination: NavDestination?,
     onNavigate: (TopLevelDestination) -> Unit
 ) {
-    NavigationBar(
-
-    ) {
+    NavigationBar {
         TopLevelDestination.entries.forEach { destination ->
             val selected = currentDestination?.hierarchy?.any {
                 it.hasRoute(destination.route::class)
