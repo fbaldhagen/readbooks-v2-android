@@ -1,6 +1,7 @@
 package com.fbaldhagen.readbooks.domain.model
 
 data class UserPreferences(
+    val isGuest: Boolean = false,
     val userName: String = "",
     val avatarUri: String? = null,
     val dailyReadingGoalMinutes: Int = 30,

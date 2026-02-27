@@ -13,6 +13,10 @@ class AuthRepositoryImpl @Inject constructor(
     private val apiService: ReadBooksApiService,
     private val userPreferencesRepository: UserPreferencesRepository
 ) : AuthRepository {
+    override suspend fun continueAsGuest() {
+        userPreferencesRepository.setGuestMode(true)
+    }
+
 
     override suspend fun register(
         email: String,
@@ -40,10 +44,15 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun logout() {
         userPreferencesRepository.clearAuthData()
+        userPreferencesRepository.setGuestMode(false)
     }
 
     override fun isLoggedIn(): Flow<Boolean> {
         return userPreferencesRepository.observe().map { it.authToken != null }
+    }
+
+    override fun isGuest(): Flow<Boolean> {
+        return userPreferencesRepository.observe().map { it.isGuest }
     }
 
     override suspend fun verifyEmail(token: String): Result<Unit> {

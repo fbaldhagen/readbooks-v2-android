@@ -2,6 +2,7 @@ package com.fbaldhagen.readbooks.ui.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fbaldhagen.readbooks.domain.usecase.ContinueAsGuestUseCase
 import com.fbaldhagen.readbooks.domain.usecase.LoginUseCase
 import com.fbaldhagen.readbooks.domain.usecase.ObserveAuthStateUseCase
 import com.fbaldhagen.readbooks.domain.usecase.RegisterUseCase
@@ -10,6 +11,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,7 +20,8 @@ class AuthViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
     private val registerUseCase: RegisterUseCase,
     private val verifyEmailUseCase: VerifyEmailUseCase,
-    private val observeAuthState: ObserveAuthStateUseCase
+    private val observeAuthState: ObserveAuthStateUseCase,
+    private val continueAsGuest: ContinueAsGuestUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(AuthState())
@@ -30,93 +33,69 @@ class AuthViewModel @Inject constructor(
 
     private fun observeLoginState() {
         viewModelScope.launch {
-            observeAuthState().collect { isLoggedIn ->
-                _state.value = _state.value.copy(
-                    isLoggedIn = isLoggedIn,
-                    isCheckingAuth = false
-                )
+            observeAuthState().collect { status ->
+                _state.update { it.copy(authStatus = status) }
             }
         }
     }
 
-    fun onEmailChange(email: String) {
-        _state.value = _state.value.copy(email = email)
-    }
-
-    fun onPasswordChange(password: String) {
-        _state.value = _state.value.copy(password = password)
-    }
-
-    fun onDisplayNameChange(displayName: String) {
-        _state.value = _state.value.copy(displayName = displayName)
-    }
-
     fun login() {
         viewModelScope.launch {
-            _state.value = _state.value.copy(isLoading = true, error = null)
+            _state.update { it.copy(isLoading = true, error = null) }
             val result = loginUseCase(_state.value.email, _state.value.password)
-            _state.value = _state.value.copy(isLoading = false)
+            _state.update { it.copy(isLoading = false) }
             result.onFailure { e ->
-                _state.value = _state.value.copy(error = e.message ?: "Login failed")
+                _state.update { it.copy(error = e.message ?: "Login failed") }
             }
         }
     }
 
     fun register() {
         if (_state.value.password != _state.value.confirmPassword) {
-            _state.value = _state.value.copy(passwordsMatch = false)
+            _state.update { it.copy(passwordsMatch = false) }
             return
         }
         viewModelScope.launch {
-            _state.value = _state.value.copy(isLoading = true, error = null)
+            _state.update { it.copy(isLoading = true, error = null) }
             val result = registerUseCase(
                 _state.value.email,
                 _state.value.password,
                 _state.value.displayName.ifBlank { null }
             )
-            _state.value = _state.value.copy(isLoading = false)
+            _state.update { it.copy(isLoading = false) }
             result.onSuccess {
-                _state.value = _state.value.copy(registrationPending = true)
+                _state.update { it.copy(registrationPending = true) }
             }.onFailure { e ->
-                _state.value = _state.value.copy(error = e.message ?: "Registration failed")
+                _state.update { it.copy(error = e.message ?: "Registration failed") }
             }
         }
     }
 
     fun verifyEmail(token: String) {
         viewModelScope.launch {
-            _state.value = _state.value.copy(isLoading = true)
+            _state.update { it.copy(isLoading = true) }
             val result = verifyEmailUseCase(token)
-            result.onSuccess {
-                _state.value = _state.value.copy(isLoading = false)
-            }.onFailure { e ->
-                _state.value = _state.value.copy(
-                    isLoading = false,
-                    error = e.message ?: "Verification failed"
-                )
+            _state.update { it.copy(isLoading = false) }
+            result.onFailure { e ->
+                _state.update { it.copy(error = e.message ?: "Verification failed") }
             }
         }
     }
 
-    fun dismissError() {
-        _state.value = _state.value.copy(error = null)
+    fun onContinueAsGuest() {
+        viewModelScope.launch { continueAsGuest() }
     }
 
-    fun dismissRegistrationPending() {
-        _state.value = _state.value.copy(registrationPending = false)
-    }
-
+    fun onEmailChange(email: String) { _state.update { it.copy(email = email) } }
+    fun onPasswordChange(password: String) { _state.update { it.copy(password = password) } }
     fun onConfirmPasswordChange(confirmPassword: String) {
-        _state.value = _state.value.copy(
+        _state.update { it.copy(
             confirmPassword = confirmPassword,
             passwordsMatch = _state.value.password == confirmPassword
-        )
+        )}
     }
 
-    fun clearPasswordConfirmation() {
-        _state.value = _state.value.copy(
-            confirmPassword = "",
-            passwordsMatch = true
-        )
-    }
+    fun dismissError() { _state.update { it.copy(error = null) } }
+    fun dismissRegistrationPending() { _state.update { it.copy(registrationPending = false) } }
+    fun clearPasswordConfirmation() { _state.update { it.copy(confirmPassword = "", passwordsMatch = true) } }
 }

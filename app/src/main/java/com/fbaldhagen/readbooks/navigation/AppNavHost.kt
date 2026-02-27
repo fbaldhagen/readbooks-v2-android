@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.fbaldhagen.readbooks.domain.usecase.AuthStatus
 import com.fbaldhagen.readbooks.ui.auth.AuthScreen
 import com.fbaldhagen.readbooks.ui.bookdetails.BookDetailsScreen
 import com.fbaldhagen.readbooks.ui.discover.DiscoverScreen
@@ -19,12 +20,12 @@ import com.fbaldhagen.readbooks.ui.reader.ReaderActivity
 fun AppNavHost(
     navController: NavHostController,
     innerPadding: PaddingValues,
-    isLoggedIn: Boolean,
+    authStatus: AuthStatus,
     modifier: Modifier = Modifier
 ) {
     NavHost(
         navController = navController,
-        startDestination = if (isLoggedIn) Route.Home else Route.Auth,
+        startDestination = if (authStatus != AuthStatus.UNAUTHENTICATED) Route.Home else Route.Auth,
         modifier = modifier
     ) {
         composable<Route.Auth> {
@@ -68,6 +69,11 @@ fun AppNavHost(
             ProfileScreen(
                 modifier = Modifier.padding(innerPadding),
                 onLogout = {
+                    navController.navigate(Route.Auth) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                },
+                onNavigateToCreateAccount = {
                     navController.navigate(Route.Auth) {
                         popUpTo(0) { inclusive = true }
                     }

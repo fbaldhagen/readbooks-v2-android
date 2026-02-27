@@ -22,6 +22,7 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.fbaldhagen.readbooks.domain.usecase.AuthStatus
 import com.fbaldhagen.readbooks.navigation.AppNavHost
 import com.fbaldhagen.readbooks.navigation.TopLevelDestination
 import com.fbaldhagen.readbooks.ui.auth.AuthViewModel
@@ -31,10 +32,17 @@ fun ReadBooksApp(intent: Intent? = null) {
     val navController = rememberNavController()
     val authViewModel: AuthViewModel = hiltViewModel()
     val authState by authViewModel.state.collectAsStateWithLifecycle()
+
+    if (authState.authStatus == AuthStatus.LOADING) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+        return
+    }
+
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-    // Handle verification deep link
     LaunchedEffect(intent) {
         intent?.data?.let { uri ->
             val token = uri.getQueryParameter("token")
@@ -42,13 +50,6 @@ fun ReadBooksApp(intent: Intent? = null) {
                 authViewModel.verifyEmail(token)
             }
         }
-    }
-
-    if (authState.isCheckingAuth) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
-        }
-        return
     }
 
     val showBottomBar = TopLevelDestination.entries.any { destination ->
@@ -76,7 +77,7 @@ fun ReadBooksApp(intent: Intent? = null) {
         AppNavHost(
             navController = navController,
             innerPadding = innerPadding,
-            isLoggedIn = authState.isLoggedIn
+            authStatus = authState.authStatus
         )
     }
 }

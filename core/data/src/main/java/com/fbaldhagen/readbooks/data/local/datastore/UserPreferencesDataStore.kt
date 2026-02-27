@@ -3,6 +3,7 @@ package com.fbaldhagen.readbooks.data.local.datastore
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
@@ -23,6 +24,7 @@ class UserPreferencesDataStore @Inject constructor(
     private val context: Context
 ) {
     private object Keys {
+        val IS_GUEST = booleanPreferencesKey("is_guest")
         val USER_NAME = stringPreferencesKey("user_name")
         val AVATAR_URI = stringPreferencesKey("avatar_uri")
         val DAILY_READING_GOAL = intPreferencesKey("daily_reading_goal_minutes")
@@ -36,6 +38,7 @@ class UserPreferencesDataStore @Inject constructor(
 
     val preferences: Flow<UserPreferences> = context.dataStore.data.map { prefs ->
         UserPreferences(
+            isGuest = prefs[Keys.IS_GUEST] ?: false,
             userName = prefs[Keys.USER_NAME] ?: "",
             avatarUri = prefs[Keys.AVATAR_URI],
             dailyReadingGoalMinutes = prefs[Keys.DAILY_READING_GOAL] ?: 30,
@@ -51,6 +54,12 @@ class UserPreferencesDataStore @Inject constructor(
             bio = prefs[Keys.BIO],
             yearlyBooksGoal = prefs[Keys.YEARLY_BOOKS_GOAL] ?: 12
         )
+    }
+
+    suspend fun setGuestMode(isGuest: Boolean) {
+        context.dataStore.edit { prefs ->
+            prefs[Keys.IS_GUEST] = isGuest
+        }
     }
 
     suspend fun updateUserName(name: String) {

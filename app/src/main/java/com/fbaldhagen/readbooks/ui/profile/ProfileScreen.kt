@@ -35,19 +35,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.fbaldhagen.readbooks.ui.utils.createTempImageUri
 import com.fbaldhagen.readbooks.ui.profile.components.AchievementsCard
 import com.fbaldhagen.readbooks.ui.profile.components.AvatarOptionsSheet
 import com.fbaldhagen.readbooks.ui.profile.components.BookClubsCard
 import com.fbaldhagen.readbooks.ui.profile.components.EditProfileSheet
+import com.fbaldhagen.readbooks.ui.profile.components.GuestProfileCard
+import com.fbaldhagen.readbooks.ui.profile.components.LockedFeatureOverlay
 import com.fbaldhagen.readbooks.ui.profile.components.ProfileHeaderCard
 import com.fbaldhagen.readbooks.ui.profile.components.QuickActionsCard
 import com.fbaldhagen.readbooks.ui.profile.components.ReadingGoalCard
 import com.fbaldhagen.readbooks.ui.profile.components.SettingsOverlay
+import com.fbaldhagen.readbooks.ui.utils.createTempImageUri
 
 @Composable
 fun ProfileScreen(
     onLogout: () -> Unit,
+    onNavigateToCreateAccount: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
@@ -102,26 +105,55 @@ fun ProfileScreen(
                 )
             }
 
-            ProfileHeaderCard(
-                userName = state.preferences.userName,
-                email = state.preferences.email,
-                avatarUri = state.preferences.avatarUri,
-                bio = state.preferences.bio,
-                totalBooks = state.analytics.totalBooks,
-                totalBooksFinished = state.analytics.totalBooksFinished,
-                currentStreak = state.analytics.currentStreak.currentDays,
-                onAvatarClick = { viewModel.onToggleAvatarOptions() },
-                onEditClick = { viewModel.onToggleEditProfile() }
-            )
+            if (state.preferences.isGuest) {
+                GuestProfileCard(
+                    onCreateAccount = {
+                        viewModel.onNavigateToCreateAccount()
+                        onNavigateToCreateAccount()
+                    }
+                )
+            } else {
+                ProfileHeaderCard(
+                    userName = state.preferences.userName,
+                    email = state.preferences.email,
+                    avatarUri = state.preferences.avatarUri,
+                    bio = state.preferences.bio,
+                    totalBooks = state.analytics.totalBooks,
+                    totalBooksFinished = state.analytics.totalBooksFinished,
+                    currentStreak = state.analytics.currentStreak.currentDays,
+                    onAvatarClick = { viewModel.onToggleAvatarOptions() },
+                    onEditClick = { viewModel.onToggleEditProfile() }
+                )
 
-            ReadingGoalCard(
-                booksFinished = state.analytics.totalBooksFinished,
-                yearlyGoal = state.preferences.yearlyBooksGoal
-            )
+                ReadingGoalCard(
+                    booksFinished = state.analytics.totalBooksFinished,
+                    yearlyGoal = state.preferences.yearlyBooksGoal
+                )
+            }
 
-            AchievementsCard()
-            BookClubsCard()
-            QuickActionsCard()
+            if (state.preferences.isGuest) {
+                LockedFeatureOverlay(
+                    message = "Create an account to unlock achievements"
+                )
+            } else {
+                AchievementsCard()
+            }
+
+            if (state.preferences.isGuest) {
+                LockedFeatureOverlay(
+                    message = "Create an account to join book clubs"
+                )
+            } else {
+                BookClubsCard()
+            }
+
+            if (state.preferences.isGuest) {
+                LockedFeatureOverlay(
+                    message = "Create an account to get access to more features!"
+                )
+            } else {
+                QuickActionsCard()
+            }
         }
 
         if (state.showSettings) {

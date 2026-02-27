@@ -108,4 +108,10 @@ class ProfileViewModel @Inject constructor(
             logout()
         }
     }
+
+    fun onNavigateToCreateAccount() {
+        viewModelScope.launch {
+            logout()
+        }
+    }
 }

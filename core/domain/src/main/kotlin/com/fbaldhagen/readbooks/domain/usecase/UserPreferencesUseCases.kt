@@ -29,4 +29,7 @@ class UserPreferencesUseCases @Inject constructor(
 
     suspend fun setYearlyBooksGoal(goal: Int) =
         preferencesRepository.setYearlyBooksGoal(goal)
+
+    suspend fun setGuestMode(isGuest: Boolean) =
+        preferencesRepository.setGuestMode(isGuest)
 }

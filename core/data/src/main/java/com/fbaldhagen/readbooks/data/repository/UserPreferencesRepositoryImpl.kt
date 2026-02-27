@@ -17,7 +17,8 @@ class UserPreferencesRepositoryImpl @Inject constructor(
 
     override suspend fun updateAvatarUri(uri: String?) = dataStore.updateAvatarUri(uri)
 
-    override suspend fun setDailyReadingGoal(minutes: Int) = dataStore.setDailyReadingGoal(minutes)
+    override suspend fun setDailyReadingGoal(minutes: Int) =
+        dataStore.setDailyReadingGoal(minutes)
 
     override suspend fun setThemeMode(mode: ThemeMode) = dataStore.setThemeMode(mode)
 
@@ -25,11 +26,13 @@ class UserPreferencesRepositoryImpl @Inject constructor(
 
     override suspend fun getAuthToken(): String? = dataStore.getAuthToken()
 
-    override suspend fun saveUserInfo(email: String, userId: Long) = dataStore.saveUserInfo(email, userId)
+    override suspend fun saveUserInfo(email: String, userId: Long) =
+        dataStore.saveUserInfo(email, userId)
 
     override suspend fun clearAuthData() = dataStore.clearAuthData()
 
     override suspend fun updateBio(bio: String?) = dataStore.updateBio(bio)
 
     override suspend fun setYearlyBooksGoal(goal: Int) = dataStore.setYearlyBooksGoal(goal)
+    override suspend fun setGuestMode(isGuest: Boolean) = dataStore.setGuestMode(isGuest)
 }
