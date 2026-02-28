@@ -27,6 +27,7 @@ class GetBookDetailsUseCase @Inject constructor(
     ) { book, collections, sessions ->
         book?.let {
             BookDetails(
+                gutenbergId = book.gutenbergId,
                 title = it.title,
                 authors = it.authors,
                 coverUrl = it.coverUri,
@@ -59,6 +60,7 @@ class GetBookDetailsUseCase @Inject constructor(
                 ?: emptyList()
 
             BookDetails(
+                gutenbergId = existingBook.gutenbergId,
                 title = existingBook.title,
                 authors = existingBook.authors,
                 coverUrl = existingBook.coverUri ?: discoverBook.coverUrl,
@@ -77,6 +79,7 @@ class GetBookDetailsUseCase @Inject constructor(
             )
         } else {
             BookDetails(
+                gutenbergId = discoverBook.gutenbergId,
                 title = discoverBook.title,
                 authors = discoverBook.authors,
                 coverUrl = discoverBook.coverUrl,

@@ -26,11 +26,13 @@ import com.fbaldhagen.readbooks.ui.components.LoadingIndicator
 fun BookDetailsScreen(
     onNavigateBack: () -> Unit,
     onOpenReader: (Long) -> Unit,
+    onAuthorBookClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: BookDetailsViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    val authorBooks by viewModel.authorBooks.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
@@ -67,7 +69,9 @@ fun BookDetailsScreen(
                 onDownload = viewModel::onDownloadBook,
                 onRatingChanged = viewModel::onUpdateRating,
                 onStatusChanged = viewModel::onUpdateReadingStatus,
-                modifier = Modifier.padding(innerPadding)
+                modifier = Modifier.padding(innerPadding),
+                authorBooks = authorBooks,
+                onAuthorBookClick = onAuthorBookClick
             )
         }
     }

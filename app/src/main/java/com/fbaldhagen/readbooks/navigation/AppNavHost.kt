@@ -90,6 +90,9 @@ fun AppNavHost(
                 onOpenReader = { bookId ->
                     val intent = ReaderActivity.createIntent(navController.context, bookId)
                     navController.context.startActivity(intent)
+                },
+                onAuthorBookClick = { gutenbergId ->
+                    navController.navigate(Route.DiscoverBookDetails(gutenbergId))
                 }
             )
         }
@@ -100,6 +103,9 @@ fun AppNavHost(
                 onOpenReader = { bookId ->
                     val intent = ReaderActivity.createIntent(navController.context, bookId)
                     navController.context.startActivity(intent)
+                },
+                onAuthorBookClick = { gutenbergId ->
+                    navController.navigate(Route.DiscoverBookDetails(gutenbergId))
                 }
             )
         }

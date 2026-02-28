@@ -6,7 +6,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.fbaldhagen.readbooks.common.result.onError
 import com.fbaldhagen.readbooks.common.result.onSuccess
+import com.fbaldhagen.readbooks.domain.model.BookDetails
 import com.fbaldhagen.readbooks.domain.model.BookDetailsState
+import com.fbaldhagen.readbooks.domain.model.DiscoverBook
 import com.fbaldhagen.readbooks.domain.model.ReadingStatus
 import com.fbaldhagen.readbooks.domain.usecase.DiscoverUseCases
 import com.fbaldhagen.readbooks.domain.usecase.DownloadBookUseCase
@@ -33,6 +35,9 @@ class BookDetailsViewModel @Inject constructor(
 
     private val _state = MutableStateFlow<BookDetailsUiState>(BookDetailsUiState.Loading)
     val state: StateFlow<BookDetailsUiState> = _state.asStateFlow()
+
+    private val _authorBooks = MutableStateFlow<List<DiscoverBook>>(emptyList())
+    val authorBooks: StateFlow<List<DiscoverBook>> = _authorBooks.asStateFlow()
 
     // Determine entry point from saved state
     private val libraryBookId: Long? = try {
@@ -65,6 +70,7 @@ class BookDetailsViewModel @Inject constructor(
                 }
                 .collect { details ->
                     _state.value = BookDetailsUiState.Success(details)
+                    if (_authorBooks.value.isEmpty()) loadAuthorBooks(details)
                 }
         }
     }
@@ -76,6 +82,7 @@ class BookDetailsViewModel @Inject constructor(
                 .onSuccess { discoverBook ->
                     val details = getBookDetails.fromDiscover(discoverBook)
                     _state.value = BookDetailsUiState.Success(details)
+                    loadAuthorBooks(details)
                 }
                 .onError { error ->
                     _state.value = BookDetailsUiState.Error(error.message)
@@ -128,6 +135,15 @@ class BookDetailsViewModel @Inject constructor(
                         is DownloadState.Idle -> { /* no-op */ }
                     }
                 }
+        }
+    }
+
+    private fun loadAuthorBooks(details: BookDetails) {
+        val authorName = details.authors.firstOrNull() ?: return
+        val excludeId = details.gutenbergId ?: return
+        viewModelScope.launch {
+            discoverUseCases.getBooksByAuthor(authorName, excludeId)
+                .onSuccess { _authorBooks.value = it }
         }
     }
 }

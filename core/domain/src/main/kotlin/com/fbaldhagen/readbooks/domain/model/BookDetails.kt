@@ -1,6 +1,7 @@
 package com.fbaldhagen.readbooks.domain.model
 
 data class BookDetails(
+    val gutenbergId: Int?,
     val title: String,
     val authors: List<String>,
     val coverUrl: String?,

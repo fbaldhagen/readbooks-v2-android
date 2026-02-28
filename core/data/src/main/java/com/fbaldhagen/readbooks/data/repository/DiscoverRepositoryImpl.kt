@@ -36,6 +36,19 @@ class DiscoverRepositoryImpl @Inject constructor(
             apiService.getBookById(gutenbergId).toDiscoverBook()
         }
 
+    override suspend fun getBooksByAuthor(
+        authorName: String,
+        excludeId: Int
+    ): Result<List<DiscoverBook>> = suspendRunCatching {
+        apiService.getBooks(search = authorName)
+            .results
+            .filter { dto ->
+                dto.id != excludeId &&
+                        dto.authors.any { it.name == authorName }
+            }
+            .map { it.toDiscoverBook() }
+    }
+
     private fun createPager(
         search: String? = null,
         topic: String? = null,

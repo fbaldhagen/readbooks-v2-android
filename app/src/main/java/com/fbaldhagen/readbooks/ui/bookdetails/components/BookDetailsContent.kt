@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.fbaldhagen.readbooks.domain.model.BookDetails
 import com.fbaldhagen.readbooks.domain.model.BookDetailsState
+import com.fbaldhagen.readbooks.domain.model.DiscoverBook
 import com.fbaldhagen.readbooks.domain.model.ReadingStatus
 
 @Composable
@@ -21,7 +22,9 @@ fun BookDetailsContent(
     onDownload: () -> Unit,
     onRatingChanged: (Int?) -> Unit,
     onStatusChanged: (ReadingStatus) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    authorBooks: List<DiscoverBook> = emptyList(),
+    onAuthorBookClick: (Int) -> Unit
 ) {
     Column(
         modifier = modifier
@@ -67,6 +70,15 @@ fun BookDetailsContent(
 
         if (details.subjects.isNotEmpty()) {
             SubjectsSection(subjects = details.subjects)
+            Spacer(modifier = Modifier.height(24.dp))
+        }
+
+        if (authorBooks.isNotEmpty()) {
+            MoreByAuthorSection(
+                authorName = details.authors.first(),
+                books = authorBooks,
+                onBookClick = onAuthorBookClick
+            )
             Spacer(modifier = Modifier.height(24.dp))
         }
     }

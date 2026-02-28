@@ -21,4 +21,7 @@ class DiscoverUseCases @Inject constructor(
 
     suspend fun getBookById(gutenbergId: Int): Result<DiscoverBook> =
         discoverRepository.getBookById(gutenbergId)
+
+    suspend fun getBooksByAuthor(authorName: String, excludeId: Int): Result<List<DiscoverBook>> =
+        discoverRepository.getBooksByAuthor(authorName, excludeId)
 }
