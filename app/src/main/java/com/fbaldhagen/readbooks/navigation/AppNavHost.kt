@@ -1,5 +1,6 @@
 package com.fbaldhagen.readbooks.navigation
 
+import android.graphics.Rect
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -21,7 +22,8 @@ fun AppNavHost(
     navController: NavHostController,
     innerPadding: PaddingValues,
     authStatus: AuthStatus,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onLogoPositioned: ((Rect) -> Unit)? = null
 ) {
     NavHost(
         navController = navController,
@@ -34,7 +36,8 @@ fun AppNavHost(
                     navController.navigate(Route.Home) {
                         popUpTo(Route.Auth) { inclusive = true }
                     }
-                }
+                },
+                onLogoPositioned = onLogoPositioned
             )
         }
 

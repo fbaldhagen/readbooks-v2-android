@@ -2,4 +2,10 @@
 <resources>
 
     <style name="Theme.ReadBooks" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.ReadBooks.SplashScreen" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#1C1917</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="postSplashScreenTheme">@style/Theme.ReadBooks</item>
+    </style>
 </resources>

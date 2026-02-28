@@ -1,6 +1,7 @@
 package com.fbaldhagen.readbooks.ui.app
 
 import android.content.Intent
+import android.graphics.Rect
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
@@ -28,7 +29,10 @@ import com.fbaldhagen.readbooks.navigation.TopLevelDestination
 import com.fbaldhagen.readbooks.ui.auth.AuthViewModel
 
 @Composable
-fun ReadBooksApp(intent: Intent? = null) {
+fun ReadBooksApp(
+    intent: Intent? = null,
+    onLogoPositioned: ((Rect) -> Unit)? = null
+) {
     val navController = rememberNavController()
     val authViewModel: AuthViewModel = hiltViewModel()
     val authState by authViewModel.state.collectAsStateWithLifecycle()
@@ -77,7 +81,8 @@ fun ReadBooksApp(intent: Intent? = null) {
         AppNavHost(
             navController = navController,
             innerPadding = innerPadding,
-            authStatus = authState.authStatus
+            authStatus = authState.authStatus,
+            onLogoPositioned = onLogoPositioned
         )
     }
 }

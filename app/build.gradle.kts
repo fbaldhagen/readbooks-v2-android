@@ -62,6 +62,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.core.splashscreen)
 
     // Compose
     implementation(platform(libs.compose.bom))

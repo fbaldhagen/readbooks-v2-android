@@ -1,5 +1,6 @@
 package com.fbaldhagen.readbooks.ui.auth
 
+import android.graphics.Rect
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -33,6 +34,7 @@ import com.fbaldhagen.readbooks.ui.auth.components.RegisterForm
 @Composable
 fun AuthScreen(
     onAuthSuccess: () -> Unit,
+    onLogoPositioned: ((Rect) -> Unit)? = null,
     viewModel: AuthViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -65,7 +67,8 @@ fun AuthScreen(
         verticalArrangement = Arrangement.Center
     ) {
         AuthHeader(
-            subtitle = if (isLoginMode) "Welcome back" else "Create an account"
+            subtitle = if (isLoginMode) "Welcome back" else "Create an account",
+            onLogoPositioned = onLogoPositioned
         )
 
         Spacer(modifier = Modifier.height(32.dp))
