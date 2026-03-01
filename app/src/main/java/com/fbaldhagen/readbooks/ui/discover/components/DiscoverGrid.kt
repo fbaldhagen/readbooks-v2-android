@@ -22,6 +22,7 @@ import com.fbaldhagen.readbooks.ui.components.ErrorMessage
 fun DiscoverGrid(
     books: LazyPagingItems<DiscoverBook>,
     onBookClick: (Int) -> Unit,
+    libraryGutenbergIds: Set<Int>,
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
@@ -38,7 +39,7 @@ fun DiscoverGrid(
                     authors = book.authors,
                     coverUrl = book.coverUrl,
                     onClick = { onBookClick(book.gutenbergId) },
-                    showInLibraryBadge = false,
+                    showInLibraryBadge = book.gutenbergId in libraryGutenbergIds,
                     modifier = modifier
                 )
             }

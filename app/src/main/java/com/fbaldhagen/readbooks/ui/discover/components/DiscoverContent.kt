@@ -15,7 +15,8 @@ import com.fbaldhagen.readbooks.ui.components.ErrorMessage
 fun DiscoverContent(
     books: LazyPagingItems<DiscoverBook>,
     onBookClick: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    libraryGutenbergIds: Set<Int> = emptySet()
 ) {
     when (val refreshState = books.loadState.refresh) {
         is LoadState.Loading -> {
@@ -41,7 +42,8 @@ fun DiscoverContent(
                 DiscoverGrid(
                     books = books,
                     onBookClick = onBookClick,
-                    modifier = modifier
+                    modifier = modifier,
+                    libraryGutenbergIds = libraryGutenbergIds
                 )
             }
         }

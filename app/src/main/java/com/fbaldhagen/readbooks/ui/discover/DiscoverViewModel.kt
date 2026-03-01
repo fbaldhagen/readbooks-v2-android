@@ -6,20 +6,25 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.fbaldhagen.readbooks.domain.model.DiscoverBook
 import com.fbaldhagen.readbooks.domain.usecase.DiscoverUseCases
+import com.fbaldhagen.readbooks.domain.usecase.LibraryUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class DiscoverViewModel @Inject constructor(
-    private val discoverUseCases: DiscoverUseCases
+    private val discoverUseCases: DiscoverUseCases,
+    private val libraryUseCases: LibraryUseCases
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(DiscoverState())
@@ -37,9 +42,18 @@ class DiscoverViewModel @Inject constructor(
         }
         .cachedIn(viewModelScope)
 
+    val libraryGutenbergIds: StateFlow<Set<Int>> = libraryUseCases.observeAll()
+        .map { books -> books.mapNotNull { it.gutenbergId }.toSet() }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptySet()
+        )
+
     fun onSearchQueryChanged(query: String) {
         _state.update { it.copy(searchQuery = query) }
     }
+
 
     fun onSearchSubmit() {
         val query = _state.value.searchQuery.trim()
