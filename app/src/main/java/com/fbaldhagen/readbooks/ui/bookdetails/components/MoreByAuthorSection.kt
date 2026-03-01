@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.fbaldhagen.readbooks.domain.model.DiscoverBook
 import com.fbaldhagen.readbooks.ui.components.BookCoverImage
+import com.fbaldhagen.readbooks.ui.components.BookItem
 
 @Composable
 fun MoreByAuthorSection(
@@ -38,7 +39,15 @@ fun MoreByAuthorSection(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(books) { book ->
-                AuthorBookItem(book = book, onClick = { onBookClick(book.gutenbergId) })
+                BookItem(
+                    title = book.title,
+                    authors = book.authors,
+                    coverUrl = book.coverUrl,
+                    onClick = { onBookClick(book.gutenbergId) },
+                    centerAlign = true,
+                    showAuthor = false,
+                    modifier = Modifier.width(90.dp)
+                )
             }
         }
     }

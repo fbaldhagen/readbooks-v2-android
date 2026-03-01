@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import com.fbaldhagen.readbooks.domain.model.DiscoverBook
+import com.fbaldhagen.readbooks.ui.components.BookItem
 import com.fbaldhagen.readbooks.ui.components.ErrorMessage
 
 @Composable
@@ -32,9 +33,13 @@ fun DiscoverGrid(
     ) {
         items(count = books.itemCount) { index ->
             books[index]?.let { book ->
-                DiscoverBookItem(
-                    book = book,
-                    onClick = { onBookClick(book.gutenbergId) }
+                BookItem(
+                    title = book.title,
+                    authors = book.authors,
+                    coverUrl = book.coverUrl,
+                    onClick = { onBookClick(book.gutenbergId) },
+                    showInLibraryBadge = false,
+                    modifier = modifier
                 )
             }
         }

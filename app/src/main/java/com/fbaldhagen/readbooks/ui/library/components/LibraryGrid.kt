@@ -3,6 +3,7 @@ package com.fbaldhagen.readbooks.ui.library.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -10,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.fbaldhagen.readbooks.domain.model.Book
+import com.fbaldhagen.readbooks.ui.components.BookItem
 
 @Composable
 fun LibraryGrid(
@@ -25,9 +27,13 @@ fun LibraryGrid(
         modifier = modifier.fillMaxSize()
     ) {
         items(books, key = { it.id }) { book ->
-            LibraryBookItem(
-                book = book,
-                onClick = { onBookClick(book.id) }
+            BookItem(
+                title = book.title,
+                authors = book.authors,
+                coverUrl = book.coverUri,
+                onClick = { onBookClick(book.id) },
+                showAuthor = true,
+                modifier = Modifier.width(90.dp)
             )
         }
     }

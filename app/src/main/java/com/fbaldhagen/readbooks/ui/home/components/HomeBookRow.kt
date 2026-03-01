@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
@@ -14,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.fbaldhagen.readbooks.domain.model.Book
+import com.fbaldhagen.readbooks.ui.components.BookItem
 
 @Composable
 fun HomeBookRow(
@@ -34,9 +36,13 @@ fun HomeBookRow(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(books, key = { it.id }) { book ->
-                HomeBookItem(
-                    book = book,
-                    onClick = { onBookClick(book.id) }
+                BookItem(
+                    title = book.title,
+                    authors = book.authors,
+                    coverUrl = book.coverUri,
+                    onClick = { onBookClick(book.id) },
+                    centerAlign = true,
+                    modifier = Modifier.width(90.dp)
                 )
             }
         }

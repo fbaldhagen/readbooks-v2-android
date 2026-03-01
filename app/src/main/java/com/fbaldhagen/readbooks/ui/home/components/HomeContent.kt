@@ -1,14 +1,10 @@
 package com.fbaldhagen.readbooks.ui.home.components
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -77,17 +73,14 @@ fun HomeContent(
             )
 
             if (state.currentlyReading.size > 1) {
-                Spacer(modifier = Modifier.height(16.dp))
-                LazyRow(
-                    contentPadding = PaddingValues(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    items(state.currentlyReading.drop(1), key = { it.id }) { book ->
-                        HomeBookItem(book = book, onClick = { onBookClick(book.id) })
-                    }
-                }
+                Spacer(modifier = Modifier.height(24.dp))
+                HomeBookRow(
+                    title = "Other books you've started",
+                    books = state.currentlyReading.drop(n = 1),
+                    onBookClick = onBookClick
+                )
+                Spacer(modifier = Modifier.height(24.dp))
             }
-            Spacer(modifier = Modifier.height(24.dp))
         }
 
         if (state.recentBooks.isNotEmpty()) {
