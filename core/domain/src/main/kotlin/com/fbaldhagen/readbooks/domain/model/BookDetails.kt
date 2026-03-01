@@ -22,6 +22,7 @@ sealed interface BookDetailsState {
     data class InLibrary(
         val bookId: Long,
         val filePath: String?,
+        val isArchived: Boolean,
         val readingStatus: ReadingStatus,
         val progress: Float,
         val rating: Int?,

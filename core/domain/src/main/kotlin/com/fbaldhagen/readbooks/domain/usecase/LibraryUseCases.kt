@@ -47,8 +47,8 @@ class LibraryUseCases @Inject constructor(
     suspend fun updateRating(bookId: Long, rating: Int?): Result<Unit> =
         bookRepository.updateRating(bookId, rating)
 
-    suspend fun toggleArchived(bookId: Long): Result<Unit> =
-        bookRepository.toggleArchived(bookId)
+    suspend fun archiveBook(bookId: Long): Result<Unit> =
+        bookRepository.archiveBook(bookId)
 
     suspend fun resetProgress(bookId: Long): Result<Unit> =
         bookRepository.resetProgress(bookId)

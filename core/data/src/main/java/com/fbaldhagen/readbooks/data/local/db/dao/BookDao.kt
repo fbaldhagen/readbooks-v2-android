@@ -91,4 +91,7 @@ interface BookDao {
                 "current_locator = NULL, last_read_at = NULL WHERE id = :bookId"
     )
     suspend fun resetProgress(bookId: Long)
+
+    @Query("UPDATE books SET is_archived = 1, file_path = NULL WHERE id = :bookId")
+    suspend fun archiveBook(bookId: Long)
 }

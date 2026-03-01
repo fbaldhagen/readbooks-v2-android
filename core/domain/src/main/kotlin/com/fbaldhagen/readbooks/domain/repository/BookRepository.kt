@@ -40,7 +40,7 @@ interface BookRepository {
 
     suspend fun updateRating(bookId: Long, rating: Int?): Result<Unit>
 
-    suspend fun toggleArchived(bookId: Long): Result<Unit>
+    suspend fun archiveBook(bookId: Long): Result<Unit>
 
     suspend fun resetProgress(bookId: Long): Result<Unit>
 }

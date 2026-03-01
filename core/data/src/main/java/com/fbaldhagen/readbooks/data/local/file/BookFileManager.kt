@@ -42,6 +42,10 @@ class BookFileManager @Inject constructor(
         getCoverFile(gutenbergId).delete()
     }
 
+    fun archiveBook(gutenbergId: Int) {
+        getEpubFile(gutenbergId).delete()
+    }
+
     fun epubExists(gutenbergId: Int): Boolean =
         getEpubFile(gutenbergId).exists()
 }

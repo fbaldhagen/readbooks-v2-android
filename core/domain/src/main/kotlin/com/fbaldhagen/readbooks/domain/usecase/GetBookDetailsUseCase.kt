@@ -36,6 +36,7 @@ class GetBookDetailsUseCase @Inject constructor(
                 state = BookDetailsState.InLibrary(
                     bookId = it.id,
                     filePath = it.filePath,
+                    isArchived = it.isArchived,
                     readingStatus = it.readingStatus,
                     progress = it.progress,
                     rating = it.rating,
@@ -69,6 +70,7 @@ class GetBookDetailsUseCase @Inject constructor(
                 state = BookDetailsState.InLibrary(
                     bookId = existingBook.id,
                     filePath = existingBook.filePath,
+                    isArchived = existingBook.isArchived,
                     readingStatus = existingBook.readingStatus,
                     progress = existingBook.progress,
                     rating = existingBook.rating,

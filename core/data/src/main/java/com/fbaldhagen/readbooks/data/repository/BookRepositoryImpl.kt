@@ -3,6 +3,7 @@ package com.fbaldhagen.readbooks.data.repository
 import com.fbaldhagen.readbooks.common.result.Result
 import com.fbaldhagen.readbooks.common.result.suspendRunCatching
 import com.fbaldhagen.readbooks.data.local.db.dao.BookDao
+import com.fbaldhagen.readbooks.data.local.file.BookFileManager
 import com.fbaldhagen.readbooks.data.mapper.toDomain
 import com.fbaldhagen.readbooks.data.mapper.toEntity
 import com.fbaldhagen.readbooks.domain.model.Book
@@ -14,7 +15,8 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class BookRepositoryImpl @Inject constructor(
-    private val bookDao: BookDao
+    private val bookDao: BookDao,
+    private val bookFileManager: BookFileManager
 ) : BookRepository {
 
     override fun observeAll(): Flow<List<Book>> =
@@ -60,6 +62,8 @@ class BookRepositoryImpl @Inject constructor(
     }
 
     override suspend fun delete(bookId: Long): Result<Unit> = suspendRunCatching {
+        val entity = bookDao.getById(bookId) ?: return@suspendRunCatching
+        entity.gutenbergId?.let { bookFileManager.deleteBookFiles(it) }
         bookDao.delete(bookId)
     }
 
@@ -86,8 +90,10 @@ class BookRepositoryImpl @Inject constructor(
             bookDao.updateRating(bookId, rating)
         }
 
-    override suspend fun toggleArchived(bookId: Long): Result<Unit> = suspendRunCatching {
-        bookDao.toggleArchived(bookId)
+    override suspend fun archiveBook(bookId: Long): Result<Unit> = suspendRunCatching {
+        val entity = bookDao.getById(bookId) ?: return@suspendRunCatching
+        entity.gutenbergId?.let { bookFileManager.archiveBook(it) }
+        bookDao.archiveBook(bookId)
     }
 
     override suspend fun resetProgress(bookId: Long): Result<Unit> = suspendRunCatching {

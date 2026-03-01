@@ -17,12 +17,17 @@ import com.fbaldhagen.readbooks.domain.usecase.GetBookDetailsUseCase
 import com.fbaldhagen.readbooks.domain.usecase.LibraryUseCases
 import com.fbaldhagen.readbooks.navigation.Route
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+enum class ConfirmationDialog { None, Archive, Delete }
 
 @HiltViewModel
 class BookDetailsViewModel @Inject constructor(
@@ -38,6 +43,13 @@ class BookDetailsViewModel @Inject constructor(
 
     private val _authorBooks = MutableStateFlow<List<DiscoverBook>>(emptyList())
     val authorBooks: StateFlow<List<DiscoverBook>> = _authorBooks.asStateFlow()
+
+    private val _confirmationDialog = MutableStateFlow(ConfirmationDialog.None)
+    val confirmationDialog: StateFlow<ConfirmationDialog> = _confirmationDialog.asStateFlow()
+
+    private val _navigateBack = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val navigateBack: SharedFlow<Unit> = _navigateBack.asSharedFlow()
+
 
     // Determine entry point from saved state
     private val libraryBookId: Long? = try {
@@ -146,4 +158,32 @@ class BookDetailsViewModel @Inject constructor(
                 .onSuccess { _authorBooks.value = it }
         }
     }
+
+    fun onArchiveBookClick() { _confirmationDialog.value = ConfirmationDialog.Archive }
+    fun onDeleteBookClick() { _confirmationDialog.value = ConfirmationDialog.Delete }
+    fun onDismissConfirmation() { _confirmationDialog.value = ConfirmationDialog.None }
+
+    fun onConfirmArchive() {
+        val bookId = currentBookId() ?: return
+        _confirmationDialog.value = ConfirmationDialog.None
+        viewModelScope.launch {
+            libraryUseCases.archiveBook(bookId)
+        }
+    }
+
+    fun onConfirmDelete() {
+        val bookId = currentBookId() ?: return
+        _confirmationDialog.value = ConfirmationDialog.None
+        viewModelScope.launch {
+            libraryUseCases.deleteBook(bookId).onSuccess {
+                _navigateBack.emit(Unit)
+            }
+        }
+    }
+
+    private fun currentBookId(): Long? =
+        (_state.value as? BookDetailsUiState.Success)
+            ?.details?.state
+            ?.let { it as? BookDetailsState.InLibrary }
+            ?.bookId
 }
