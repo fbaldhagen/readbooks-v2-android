@@ -40,10 +40,11 @@ class SessionRepositoryImpl @Inject constructor(
         sessionDao.getMinutesSince(todayStart)
     }
 
-    override suspend fun start(bookId: Long): Result<Long> = suspendRunCatching {
+    override suspend fun start(bookId: Long, gutenbergId: Int?): Result<Long> = suspendRunCatching {
         sessionDao.insert(
             ReadingSessionEntity(
                 bookId = bookId,
+                gutenbergId = gutenbergId,
                 startTime = System.currentTimeMillis()
             )
         )

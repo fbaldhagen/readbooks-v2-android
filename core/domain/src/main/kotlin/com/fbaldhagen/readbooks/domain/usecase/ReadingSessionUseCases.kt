@@ -21,8 +21,8 @@ class ReadingSessionUseCases @Inject constructor(
     suspend fun getTodayMinutes(): Result<Int> =
         sessionRepository.getTodayMinutes()
 
-    suspend fun start(bookId: Long): Result<Long> =
-        sessionRepository.start(bookId)
+    suspend fun start(bookId: Long, gutenbergId: Int?): Result<Long> =
+        sessionRepository.start(bookId, gutenbergId)
 
     suspend fun end(sessionId: Long, pagesRead: Int = 0): Result<Unit> =
         sessionRepository.end(sessionId, pagesRead)

@@ -13,7 +13,7 @@ import androidx.room.PrimaryKey
             entity = BookEntity::class,
             parentColumns = ["id"],
             childColumns = ["book_id"],
-            onDelete = ForeignKey.CASCADE
+            onDelete = ForeignKey.SET_NULL
         )
     ],
     indices = [Index("book_id")]
@@ -22,7 +22,9 @@ data class ReadingSessionEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     @ColumnInfo(name = "book_id")
-    val bookId: Long,
+    val bookId: Long?,
+    @ColumnInfo(name = "gutenberg_id")
+    val gutenbergId: Int? = null,
     @ColumnInfo(name = "start_time")
     val startTime: Long,
     @ColumnInfo(name = "end_time")

@@ -44,11 +44,11 @@ class ReaderViewModel @Inject constructor(
 
     private val _state = MutableStateFlow(ReaderState())
     val state: StateFlow<ReaderState> = _state.asStateFlow()
-
     private val _navigationEvent = MutableSharedFlow<ReaderNavigationEvent>(extraBufferCapacity = 1)
     val navigationEvent: SharedFlow<ReaderNavigationEvent> = _navigationEvent.asSharedFlow()
 
     private var sessionId: Long? = null
+    private var gutenbergId: Int? = null
     private var startProgression: Float = 0f
     private var estimatedPageCount: Int = 0
 
@@ -64,7 +64,7 @@ class ReaderViewModel @Inject constructor(
 
     private fun openBook(bookId: Long) {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true, bookId = bookId) }
+            _state.update { it.copy(isLoading = true) }
 
             libraryUseCases.getById(bookId)
                 .onSuccess { book ->
@@ -120,7 +120,8 @@ class ReaderViewModel @Inject constructor(
                     }
 
                     libraryUseCases.updateReadingStatus(bookId, ReadingStatus.READING)
-                    readingSessionUseCases.start(bookId).onSuccess { id ->
+                    gutenbergId = book.gutenbergId
+                    readingSessionUseCases.start(bookId, book.gutenbergId).onSuccess { id ->
                         sessionId = id
                     }
                 }
@@ -289,7 +290,7 @@ class ReaderViewModel @Inject constructor(
         if (sessionId != null || _state.value.publication == null) return
         startProgression = _state.value.totalProgression
         viewModelScope.launch {
-            readingSessionUseCases.start(bookId).onSuccess { id ->
+            readingSessionUseCases.start(bookId, gutenbergId).onSuccess { id ->
                 sessionId = id
             }
         }

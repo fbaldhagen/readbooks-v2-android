@@ -14,7 +14,7 @@ interface SessionRepository {
 
     suspend fun getTodayMinutes(): Result<Int>
 
-    suspend fun start(bookId: Long): Result<Long>
+    suspend fun start(bookId: Long, gutenbergId: Int?): Result<Long>
 
     suspend fun end(sessionId: Long, pagesRead: Int = 0): Result<Unit>
 

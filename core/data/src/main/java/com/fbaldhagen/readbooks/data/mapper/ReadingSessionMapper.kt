@@ -6,6 +6,7 @@ import com.fbaldhagen.readbooks.domain.model.ReadingSession
 fun ReadingSessionEntity.toDomain(): ReadingSession = ReadingSession(
     id = id,
     bookId = bookId,
+    gutenbergId = gutenbergId,
     startTime = startTime,
     endTime = endTime,
     durationMinutes = durationMinutes,
@@ -15,6 +16,7 @@ fun ReadingSessionEntity.toDomain(): ReadingSession = ReadingSession(
 fun ReadingSession.toEntity(): ReadingSessionEntity = ReadingSessionEntity(
     id = id,
     bookId = bookId,
+    gutenbergId = gutenbergId,
     startTime = startTime,
     endTime = endTime,
     durationMinutes = durationMinutes,

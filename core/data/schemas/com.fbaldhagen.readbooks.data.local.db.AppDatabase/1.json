@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "7d91c24415f4e16614860627043caddc",
+    "identityHash": "4da5e560643973aefd0d22d8bfc98fb3",
     "entities": [
       {
         "tableName": "books",
@@ -275,7 +275,7 @@
       },
       {
         "tableName": "reading_sessions",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `book_id` INTEGER NOT NULL, `start_time` INTEGER NOT NULL, `end_time` INTEGER, `duration_minutes` INTEGER NOT NULL, `pages_read` INTEGER NOT NULL, FOREIGN KEY(`book_id`) REFERENCES `books`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `book_id` INTEGER, `gutenberg_id` INTEGER, `start_time` INTEGER NOT NULL, `end_time` INTEGER, `duration_minutes` INTEGER NOT NULL, `pages_read` INTEGER NOT NULL, FOREIGN KEY(`book_id`) REFERENCES `books`(`id`) ON UPDATE NO ACTION ON DELETE SET NULL )",
         "fields": [
           {
             "fieldPath": "id",
@@ -286,8 +286,12 @@
           {
             "fieldPath": "bookId",
             "columnName": "book_id",
-            "affinity": "INTEGER",
-            "notNull": true
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "gutenbergId",
+            "columnName": "gutenberg_id",
+            "affinity": "INTEGER"
           },
           {
             "fieldPath": "startTime",
@@ -333,7 +337,7 @@
         "foreignKeys": [
           {
             "table": "books",
-            "onDelete": "CASCADE",
+            "onDelete": "SET NULL",
             "onUpdate": "NO ACTION",
             "columns": [
               "book_id"
@@ -400,7 +404,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7d91c24415f4e16614860627043caddc')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4da5e560643973aefd0d22d8bfc98fb3')"
     ]
   }
 }

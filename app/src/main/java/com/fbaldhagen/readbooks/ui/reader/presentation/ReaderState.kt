@@ -8,7 +8,6 @@ import org.readium.r2.shared.publication.Publication
 data class ReaderState(
     val publication: Publication? = null,
     val initialLocator: Locator? = null,
-    val bookId: Long = 0,
     val bookTitle: String = "",
     val isLoading: Boolean = true,
     val error: String? = null,
