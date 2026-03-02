@@ -32,6 +32,8 @@ fun LibraryGrid(
                 authors = book.authors,
                 coverUrl = book.coverUri,
                 onClick = { onBookClick(book.id) },
+                progress = book.progress,
+                isArchived = book.isArchived,
                 showAuthor = true,
                 modifier = Modifier.width(90.dp)
             )

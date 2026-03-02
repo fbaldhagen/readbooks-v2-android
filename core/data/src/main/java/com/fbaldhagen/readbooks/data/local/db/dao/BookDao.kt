@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface BookDao {
 
-    @Query("SELECT * FROM books WHERE is_archived = 0 ORDER BY added_at DESC")
+    @Query("SELECT * FROM books ORDER BY added_at DESC")
     fun observeAll(): Flow<List<BookEntity>>
 
     @Query("SELECT * FROM books WHERE id = :bookId")
@@ -42,12 +42,12 @@ interface BookDao {
     @Query(
         """
         SELECT * FROM books 
-        WHERE is_archived = :showArchived
+        WHERE (:showArchived = 0 OR is_archived = 1)
         AND (:searchQuery = '' OR title LIKE '%' || :searchQuery || '%' OR authors LIKE '%' || :searchQuery || '%')
         AND (:readingStatus IS NULL OR reading_status = :readingStatus)
         ORDER BY 
             CASE WHEN :sortType = 'TITLE' THEN title END ASC,
-            CASE WHEN :sortType = 'AUTHOR' THEN authors END ASC,
+            CASE WHEN :sortType = 'AUTHOR' THEN json_extract(authors, '$[0]') END ASC,
             CASE WHEN :sortType = 'RECENTLY_ADDED' THEN added_at END DESC,
             CASE WHEN :sortType = 'LAST_READ' THEN last_read_at END DESC
         """

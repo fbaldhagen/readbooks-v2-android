@@ -1,9 +1,11 @@
 package com.fbaldhagen.readbooks.ui.library.components
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,20 +17,28 @@ import com.fbaldhagen.readbooks.domain.model.ReadingStatus
 fun FilterChipRow(
     selectedStatus: ReadingStatus?,
     onStatusSelected: (ReadingStatus?) -> Unit,
+    showArchived: Boolean,
+    onToggleArchived: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Row(
+    LazyRow(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 4.dp),
+            .padding(vertical = 4.dp),
+        contentPadding = PaddingValues(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        FilterChip(
-            selected = selectedStatus == null,
-            onClick = { onStatusSelected(null) },
-            label = { Text("All") }
-        )
-        ReadingStatus.entries.forEach { status ->
+        item {
+            FilterChip(
+                selected = selectedStatus == null && !showArchived,
+                onClick = {
+                    onStatusSelected(null)
+                    if (showArchived) onToggleArchived()
+                },
+                label = { Text("All") }
+            )
+        }
+        items(ReadingStatus.entries) { status ->
             FilterChip(
                 selected = selectedStatus == status,
                 onClick = {
@@ -37,11 +47,21 @@ fun FilterChipRow(
                 label = { Text(status.displayName()) }
             )
         }
+        item {
+            FilterChip(
+                selected = showArchived,
+                onClick = {
+                    onToggleArchived()
+                    if (!showArchived) onStatusSelected(null)
+                },
+                label = { Text("Archived") }
+            )
+        }
     }
 }
 
 private fun ReadingStatus.displayName(): String = when (this) {
-    ReadingStatus.NOT_STARTED -> "Not Started"
-    ReadingStatus.READING -> "Reading"
-    ReadingStatus.FINISHED -> "Finished"
+    ReadingStatus.NOT_STARTED -> "New"
+    ReadingStatus.READING -> "Started"
+    ReadingStatus.FINISHED -> "Done"
 }
