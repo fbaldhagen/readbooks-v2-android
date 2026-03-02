@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.fbaldhagen.readbooks.domain.model.Book
 import com.fbaldhagen.readbooks.domain.model.DiscoverBook
 import com.fbaldhagen.readbooks.domain.usecase.DiscoverUseCases
 import com.fbaldhagen.readbooks.domain.usecase.LibraryUseCases
@@ -24,7 +25,7 @@ import javax.inject.Inject
 @HiltViewModel
 class DiscoverViewModel @Inject constructor(
     private val discoverUseCases: DiscoverUseCases,
-    private val libraryUseCases: LibraryUseCases
+    libraryUseCases: LibraryUseCases
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(DiscoverState())
@@ -42,8 +43,23 @@ class DiscoverViewModel @Inject constructor(
         }
         .cachedIn(viewModelScope)
 
-    val libraryGutenbergIds: StateFlow<Set<Int>> = libraryUseCases.observeAll()
-        .map { books -> books.mapNotNull { it.gutenbergId }.toSet() }
+    private val libraryBooks: StateFlow<List<Book>> = libraryUseCases.observeAll()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+
+    val libraryGutenbergIds: StateFlow<Set<Int>> = libraryBooks
+        .map { books -> books.filter { !it.isArchived }.mapNotNull { it.gutenbergId }.toSet() }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptySet()
+        )
+
+    val archivedGutenbergIds: StateFlow<Set<Int>> = libraryBooks
+        .map { books -> books.filter { it.isArchived }.mapNotNull { it.gutenbergId }.toSet() }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),

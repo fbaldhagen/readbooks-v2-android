@@ -11,12 +11,14 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import com.fbaldhagen.readbooks.domain.model.DiscoverBook
 import com.fbaldhagen.readbooks.ui.components.ErrorMessage
+
 @Composable
 fun DiscoverContent(
     books: LazyPagingItems<DiscoverBook>,
     onBookClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
-    libraryGutenbergIds: Set<Int> = emptySet()
+    libraryGutenbergIds: Set<Int> = emptySet(),
+    archivedGutenbergIds: Set<Int> = emptySet()
 ) {
     when (val refreshState = books.loadState.refresh) {
         is LoadState.Loading -> {
@@ -43,7 +45,8 @@ fun DiscoverContent(
                     books = books,
                     onBookClick = onBookClick,
                     modifier = modifier,
-                    libraryGutenbergIds = libraryGutenbergIds
+                    libraryGutenbergIds = libraryGutenbergIds,
+                    archivedGutenbergIds = archivedGutenbergIds
                 )
             }
         }

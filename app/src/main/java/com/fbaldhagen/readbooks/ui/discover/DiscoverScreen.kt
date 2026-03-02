@@ -21,6 +21,7 @@ fun DiscoverScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val books = viewModel.books.collectAsLazyPagingItems()
     val libraryGutenbergIds by viewModel.libraryGutenbergIds.collectAsStateWithLifecycle()
+    val archivedGutenbergIds by viewModel.archivedGutenbergIds.collectAsStateWithLifecycle()
 
     Column(modifier = modifier.fillMaxSize()) {
         DiscoverTopBar(
@@ -40,7 +41,8 @@ fun DiscoverScreen(
         DiscoverContent(
             books = books,
             onBookClick = onNavigateToBookDetails,
-            libraryGutenbergIds = libraryGutenbergIds
+            libraryGutenbergIds = libraryGutenbergIds,
+            archivedGutenbergIds = archivedGutenbergIds
         )
     }
 }

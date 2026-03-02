@@ -23,6 +23,7 @@ fun DiscoverGrid(
     books: LazyPagingItems<DiscoverBook>,
     onBookClick: (Int) -> Unit,
     libraryGutenbergIds: Set<Int>,
+    archivedGutenbergIds: Set<Int>,
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
@@ -40,6 +41,7 @@ fun DiscoverGrid(
                     coverUrl = book.coverUrl,
                     onClick = { onBookClick(book.gutenbergId) },
                     showInLibraryBadge = book.gutenbergId in libraryGutenbergIds,
+                    isArchived = book.gutenbergId in archivedGutenbergIds,
                     modifier = modifier
                 )
             }
