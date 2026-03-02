@@ -12,4 +12,8 @@ annotation class ReadBooksRetrofit
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
+annotation class OpenLibraryRetrofit
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
 annotation class ReadBooksOkHttp

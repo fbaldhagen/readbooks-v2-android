@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.fbaldhagen.readbooks.domain.usecase.AuthStatus
 import com.fbaldhagen.readbooks.ui.auth.AuthScreen
+import com.fbaldhagen.readbooks.ui.author.AuthorScreen
 import com.fbaldhagen.readbooks.ui.bookdetails.BookDetailsScreen
 import com.fbaldhagen.readbooks.ui.discover.DiscoverScreen
 import com.fbaldhagen.readbooks.ui.discover.DiscoverTopicScreen
@@ -109,6 +110,9 @@ fun AppNavHost(
                 },
                 onAuthorBookClick = { gutenbergId ->
                     navController.navigate(Route.DiscoverBookDetails(gutenbergId))
+                },
+                onNavigateToAuthor = { authorName, gutenbergId ->
+                    navController.navigate(Route.Author(authorName, gutenbergId))
                 }
             )
         }
@@ -121,6 +125,18 @@ fun AppNavHost(
                     navController.context.startActivity(intent)
                 },
                 onAuthorBookClick = { gutenbergId ->
+                    navController.navigate(Route.DiscoverBookDetails(gutenbergId))
+                },
+                onNavigateToAuthor = { authorName, gutenbergId ->
+                    navController.navigate(Route.Author(authorName, gutenbergId))
+                }
+            )
+        }
+
+        composable<Route.Author> {
+            AuthorScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onBookClick = { gutenbergId ->
                     navController.navigate(Route.DiscoverBookDetails(gutenbergId))
                 }
             )

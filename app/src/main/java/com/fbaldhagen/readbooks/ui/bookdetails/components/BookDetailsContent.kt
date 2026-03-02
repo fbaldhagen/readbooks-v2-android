@@ -24,7 +24,8 @@ fun BookDetailsContent(
     onStatusChanged: (ReadingStatus) -> Unit,
     modifier: Modifier = Modifier,
     authorBooks: List<DiscoverBook> = emptyList(),
-    onAuthorBookClick: (Int) -> Unit
+    onAuthorBookClick: (Int) -> Unit,
+    onAuthorClick: (String) -> Unit
 ) {
     Column(
         modifier = modifier
@@ -35,7 +36,8 @@ fun BookDetailsContent(
         BookHeader(
             details = details,
             onRatingChanged = onRatingChanged,
-            )
+            onAuthorClick = onAuthorClick
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 

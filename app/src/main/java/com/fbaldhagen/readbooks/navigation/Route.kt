@@ -27,4 +27,7 @@ sealed interface Route {
 
     @Serializable
     data class DiscoverTopic(val topic: String) : Route
+
+    @Serializable
+    data class Author(val authorName: String, val excludeGutenbergId: Int?) : Route
 }

@@ -38,6 +38,7 @@ fun BookDetailsScreen(
     onNavigateBack: () -> Unit,
     onOpenReader: (Long) -> Unit,
     onAuthorBookClick: (Int) -> Unit,
+    onNavigateToAuthor: (String, Int?) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: BookDetailsViewModel = hiltViewModel()
 ) {
@@ -80,7 +81,14 @@ fun BookDetailsScreen(
                         ) {
                             DropdownMenuItem(
                                 text = { Text("Go to author") },
-                                onClick = { menuExpanded = false }
+                                onClick = {
+                                    menuExpanded = false
+                                    val details = (state as? BookDetailsUiState.Success)?.details
+                                    val authorName = details?.authors?.firstOrNull()
+                                    if (authorName != null) {
+                                        onNavigateToAuthor(authorName, details.gutenbergId)
+                                    }
+                                }
                             )
                             DropdownMenuItem(
                                 text = { Text("Share") },
@@ -136,7 +144,8 @@ fun BookDetailsScreen(
                 onStatusChanged = viewModel::onUpdateReadingStatus,
                 modifier = Modifier.padding(innerPadding),
                 authorBooks = authorBooks,
-                onAuthorBookClick = onAuthorBookClick
+                onAuthorBookClick = onAuthorBookClick,
+                onAuthorClick = { onNavigateToAuthor(current.details.authors.first(), current.details.gutenbergId) }
             )
         }
     }

@@ -1,5 +1,6 @@
 package com.fbaldhagen.readbooks.ui.bookdetails.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,6 +21,7 @@ import com.fbaldhagen.readbooks.ui.components.BookCoverImage
 fun BookHeader(
     details: BookDetails,
     onRatingChanged: (Int?) -> Unit,
+    onAuthorClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(modifier = modifier.fillMaxWidth()) {
@@ -40,9 +42,12 @@ fun BookHeader(
             Text(
                 text = details.authors.joinToString(", "),
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onBackground,
+                color = MaterialTheme.colorScheme.primary,
                 maxLines = 2,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.clickable {
+                    onAuthorClick(details.authors.firstOrNull() ?: return@clickable)
+                }
             )
 
             if (details.state is BookDetailsState.InLibrary) {

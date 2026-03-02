@@ -2,6 +2,7 @@ package com.fbaldhagen.readbooks.data.di
 
 import com.fbaldhagen.readbooks.data.repository.AchievementRepositoryImpl
 import com.fbaldhagen.readbooks.data.repository.AuthRepositoryImpl
+import com.fbaldhagen.readbooks.data.repository.AuthorRepositoryImpl
 import com.fbaldhagen.readbooks.data.repository.BookRepositoryImpl
 import com.fbaldhagen.readbooks.data.repository.BookmarkRepositoryImpl
 import com.fbaldhagen.readbooks.data.repository.CollectionRepositoryImpl
@@ -12,6 +13,7 @@ import com.fbaldhagen.readbooks.data.repository.UserStorageRepositoryImpl
 import com.fbaldhagen.readbooks.data.worker.WorkManagerBookDownloadManager
 import com.fbaldhagen.readbooks.domain.repository.AchievementRepository
 import com.fbaldhagen.readbooks.domain.repository.AuthRepository
+import com.fbaldhagen.readbooks.domain.repository.AuthorRepository
 import com.fbaldhagen.readbooks.domain.repository.BookRepository
 import com.fbaldhagen.readbooks.domain.repository.BookmarkRepository
 import com.fbaldhagen.readbooks.domain.repository.CollectionRepository
@@ -73,4 +75,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindUserStorageRepository(impl: UserStorageRepositoryImpl): UserStorageRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindAuthorRepository(impl: AuthorRepositoryImpl): AuthorRepository
 }

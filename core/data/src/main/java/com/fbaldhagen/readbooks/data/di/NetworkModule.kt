@@ -1,7 +1,9 @@
 package com.fbaldhagen.readbooks.data.di
 
+import com.fbaldhagen.readbooks.data.remote.dto.OpenLibraryBioAdapter
 import com.fbaldhagen.readbooks.data.remote.AuthInterceptor
 import com.fbaldhagen.readbooks.data.remote.api.GutendexApiService
+import com.fbaldhagen.readbooks.data.remote.api.OpenLibraryApiService
 import com.fbaldhagen.readbooks.data.remote.api.ReadBooksApiService
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -23,6 +25,7 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideMoshi(): Moshi = Moshi.Builder()
+        .add(OpenLibraryBioAdapter())
         .addLast(KotlinJsonAdapterFactory())
         .build()
 
@@ -84,4 +87,21 @@ object NetworkModule {
     @Singleton
     fun provideReadBooksApiService(@ReadBooksRetrofit retrofit: Retrofit): ReadBooksApiService =
         retrofit.create(ReadBooksApiService::class.java)
+
+    @Provides
+    @Singleton
+    @OpenLibraryRetrofit
+    fun provideOpenLibraryRetrofit(okHttpClient: OkHttpClient, moshi: Moshi): Retrofit =
+        Retrofit.Builder()
+            .baseUrl(OpenLibraryApiService.BASE_URL)
+            .client(okHttpClient)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .build()
+
+    @Provides
+    @Singleton
+    fun provideOpenLibraryApiService(
+        @OpenLibraryRetrofit retrofit: Retrofit
+    ): OpenLibraryApiService =
+        retrofit.create(OpenLibraryApiService::class.java)
 }
