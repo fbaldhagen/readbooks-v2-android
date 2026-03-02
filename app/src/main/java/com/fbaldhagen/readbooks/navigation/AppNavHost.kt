@@ -8,10 +8,12 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import com.fbaldhagen.readbooks.domain.usecase.AuthStatus
 import com.fbaldhagen.readbooks.ui.auth.AuthScreen
 import com.fbaldhagen.readbooks.ui.bookdetails.BookDetailsScreen
 import com.fbaldhagen.readbooks.ui.discover.DiscoverScreen
+import com.fbaldhagen.readbooks.ui.discover.DiscoverTopicScreen
 import com.fbaldhagen.readbooks.ui.home.HomeScreen
 import com.fbaldhagen.readbooks.ui.library.LibraryScreen
 import com.fbaldhagen.readbooks.ui.profile.ProfileScreen
@@ -62,6 +64,20 @@ fun AppNavHost(
         composable<Route.Discover> {
             DiscoverScreen(
                 modifier = Modifier.padding(innerPadding),
+                onNavigateToBookDetails = { gutenbergId ->
+                    navController.navigate(Route.DiscoverBookDetails(gutenbergId))
+                },
+                onNavigateToTopic = { topic ->
+                    navController.navigate(Route.DiscoverTopic(topic))
+                }
+            )
+        }
+
+        composable<Route.DiscoverTopic> { backStackEntry ->
+            val topic = backStackEntry.toRoute<Route.DiscoverTopic>().topic
+            DiscoverTopicScreen(
+                topic = topic,
+                onNavigateBack = { navController.popBackStack() },
                 onNavigateToBookDetails = { gutenbergId ->
                     navController.navigate(Route.DiscoverBookDetails(gutenbergId))
                 }

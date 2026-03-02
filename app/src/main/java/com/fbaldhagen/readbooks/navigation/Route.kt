@@ -24,4 +24,7 @@ sealed interface Route {
 
     @Serializable
     data class DiscoverBookDetails(val gutenbergId: Int) : Route
+
+    @Serializable
+    data class DiscoverTopic(val topic: String) : Route
 }

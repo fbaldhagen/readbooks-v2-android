@@ -31,6 +31,24 @@ class DiscoverRepositoryImpl @Inject constructor(
         sort = "popular"
     )
 
+    override suspend fun getByTopicPreview(
+        topic: String,
+        limit: Int
+    ): Result<List<DiscoverBook>> = suspendRunCatching {
+        apiService.getBooks(topic = topic)
+            .results
+            .take(limit)
+            .map { it.toDiscoverBook() }
+    }
+
+    override suspend fun getPopularPreview(limit: Int): Result<List<DiscoverBook>> =
+        suspendRunCatching {
+            apiService.getBooks(sort = "popular")
+                .results
+                .take(limit)
+                .map { it.toDiscoverBook() }
+        }
+
     override suspend fun getBookById(gutenbergId: Int): Result<DiscoverBook> =
         suspendRunCatching {
             apiService.getBookById(gutenbergId).toDiscoverBook()

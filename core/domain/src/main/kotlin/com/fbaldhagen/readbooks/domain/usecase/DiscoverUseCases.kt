@@ -19,6 +19,12 @@ class DiscoverUseCases @Inject constructor(
     fun getPopular(): Flow<PagingData<DiscoverBook>> =
         discoverRepository.getPopular()
 
+    suspend fun getByTopicPreview(topic: String, limit: Int): Result<List<DiscoverBook>> =
+        discoverRepository.getByTopicPreview(topic, limit)
+
+    suspend fun getPopularPreview(limit: Int): Result<List<DiscoverBook>> =
+        discoverRepository.getPopularPreview(limit)
+
     suspend fun getBookById(gutenbergId: Int): Result<DiscoverBook> =
         discoverRepository.getBookById(gutenbergId)
 

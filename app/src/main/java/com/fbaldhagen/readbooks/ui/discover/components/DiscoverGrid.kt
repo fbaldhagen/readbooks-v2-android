@@ -27,7 +27,7 @@ fun DiscoverGrid(
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = 100.dp),
+        columns = GridCells.Fixed(4),
         contentPadding = PaddingValues(16.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -41,8 +41,7 @@ fun DiscoverGrid(
                     coverUrl = book.coverUrl,
                     onClick = { onBookClick(book.gutenbergId) },
                     showInLibraryBadge = book.gutenbergId in libraryGutenbergIds,
-                    isArchived = book.gutenbergId in archivedGutenbergIds,
-                    modifier = modifier
+                    isArchived = book.gutenbergId in archivedGutenbergIds
                 )
             }
         }

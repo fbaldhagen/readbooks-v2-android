@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.fbaldhagen.readbooks.common.result.onError
+import com.fbaldhagen.readbooks.common.result.onSuccess
 import com.fbaldhagen.readbooks.domain.model.Book
 import com.fbaldhagen.readbooks.domain.model.DiscoverBook
 import com.fbaldhagen.readbooks.domain.usecase.DiscoverUseCases
@@ -19,6 +21,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -38,58 +41,62 @@ class DiscoverViewModel @Inject constructor(
             when (trigger) {
                 is SearchTrigger.Popular -> discoverUseCases.getPopular()
                 is SearchTrigger.Search -> discoverUseCases.search(trigger.query)
-                is SearchTrigger.Topic -> discoverUseCases.getByTopic(trigger.topic)
             }
         }
         .cachedIn(viewModelScope)
 
+    private val _shelves = MutableStateFlow<Map<String, ShelfState>>(emptyMap())
+    val shelves: StateFlow<Map<String, ShelfState>> = _shelves.asStateFlow()
+
+    val topics = listOf(
+        "Popular",
+        "Philosophy", "Mystery", "Romance", "History",
+        "Science Fiction", "Adventure", "Poetry", "Drama", "Children"
+    )
+
     private val libraryBooks: StateFlow<List<Book>> = libraryUseCases.observeAll()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyList()
-        )
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val libraryGutenbergIds: StateFlow<Set<Int>> = libraryBooks
         .map { books -> books.filter { !it.isArchived }.mapNotNull { it.gutenbergId }.toSet() }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptySet()
-        )
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptySet())
 
     val archivedGutenbergIds: StateFlow<Set<Int>> = libraryBooks
         .map { books -> books.filter { it.isArchived }.mapNotNull { it.gutenbergId }.toSet() }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptySet()
-        )
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptySet())
+
+    fun loadShelf(topic: String) {
+        if (_shelves.value[topic] is ShelfState.Success) return
+        viewModelScope.launch {
+            _shelves.update { it + (topic to ShelfState.Loading) }
+            val result = if (topic == "Popular") {
+                discoverUseCases.getPopularPreview(12)
+            } else {
+                discoverUseCases.getByTopicPreview(topic, 12)
+            }
+            result
+                .onSuccess { books ->
+                    _shelves.update { it + (topic to ShelfState.Success(books)) }
+                }
+                .onError { error ->
+                    _shelves.update { it + (topic to ShelfState.Error(error.message)) }
+                }
+        }
+    }
+
+    fun retryShelf(topic: String) {
+        _shelves.update { it + (topic to ShelfState.Loading) }
+        loadShelf(topic)
+    }
 
     fun onSearchQueryChanged(query: String) {
         _state.update { it.copy(searchQuery = query) }
     }
 
-
     fun onSearchSubmit() {
         val query = _state.value.searchQuery.trim()
         if (query.isNotEmpty()) {
-            _state.update { it.copy(selectedTopic = null) }
             _searchTrigger.value = SearchTrigger.Search(query)
-        }
-    }
-
-    fun onTopicSelected(topic: String) {
-        _state.update {
-            it.copy(
-                selectedTopic = if (it.selectedTopic == topic) null else topic,
-                searchQuery = ""
-            )
-        }
-        _searchTrigger.value = if (_state.value.selectedTopic != null) {
-            SearchTrigger.Topic(topic)
-        } else {
-            SearchTrigger.Popular
         }
     }
 
@@ -97,20 +104,23 @@ class DiscoverViewModel @Inject constructor(
         _state.update { it.copy(isSearchActive = !it.isSearchActive) }
         if (!_state.value.isSearchActive) {
             _state.update { it.copy(searchQuery = "") }
-            if (_state.value.selectedTopic == null) {
-                _searchTrigger.value = SearchTrigger.Popular
-            }
+            _searchTrigger.value = SearchTrigger.Popular
         }
     }
 
     fun onClearSearch() {
-        _state.update { it.copy(searchQuery = "", selectedTopic = null) }
+        _state.update { it.copy(searchQuery = "") }
         _searchTrigger.value = SearchTrigger.Popular
+    }
+
+    sealed interface ShelfState {
+        data object Loading : ShelfState
+        data class Success(val books: List<DiscoverBook>) : ShelfState
+        data class Error(val message: String) : ShelfState
     }
 
     private sealed interface SearchTrigger {
         data object Popular : SearchTrigger
         data class Search(val query: String) : SearchTrigger
-        data class Topic(val topic: String) : SearchTrigger
     }
 }
