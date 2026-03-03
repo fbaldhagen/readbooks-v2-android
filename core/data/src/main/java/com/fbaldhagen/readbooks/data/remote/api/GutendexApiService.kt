@@ -22,6 +22,11 @@ interface GutendexApiService {
         @Path("id") id: Int
     ): GutendexBookDto
 
+    @GET("books/")
+    suspend fun getBooksByIds(
+        @Query("ids") ids: String
+    ): GutendexResponseDto
+
     companion object {
         const val BASE_URL = "https://books.fbaldhagen.dev/"
     }

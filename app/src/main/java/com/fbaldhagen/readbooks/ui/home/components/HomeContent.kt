@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.fbaldhagen.readbooks.domain.model.ShelfState
 import com.fbaldhagen.readbooks.ui.home.HomeState
 import java.util.Calendar
 
@@ -19,6 +20,9 @@ import java.util.Calendar
 fun HomeContent(
     state: HomeState,
     onBookClick: (Long) -> Unit,
+    onDiscoverBookClick: (Int) -> Unit,
+    onRetryPopular: () -> Unit,
+    onRetryTopRated: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -33,7 +37,7 @@ fun HomeContent(
             hour < 4 -> "Late night reading?"
             hour < 12 -> "Good morning"
             hour < 18 -> "Good afternoon"
-            else      -> "Good evening"
+            else -> "Good evening"
         }
 
         Text(
@@ -76,11 +80,11 @@ fun HomeContent(
                 Spacer(modifier = Modifier.height(24.dp))
                 HomeBookRow(
                     title = "Other books you've started",
-                    books = state.currentlyReading.drop(n = 1),
+                    books = state.currentlyReading.drop(1),
                     onBookClick = onBookClick
                 )
-                Spacer(modifier = Modifier.height(24.dp))
             }
+            Spacer(modifier = Modifier.height(24.dp))
         }
 
         if (state.recentBooks.isNotEmpty()) {
@@ -94,6 +98,26 @@ fun HomeContent(
 
         if (state.currentlyReading.isEmpty() && state.recentBooks.isEmpty()) {
             EmptyHomeMessage()
+            Spacer(modifier = Modifier.height(24.dp))
+        }
+
+        DiscoverShelf(
+            title = "Popular on Gutenberg",
+            shelfState = state.popularBooks,
+            onBookClick = onDiscoverBookClick,
+            onRetry = onRetryPopular
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+
+        val topRatedBooks = state.topRatedBooks
+        if (topRatedBooks !is ShelfState.Success || topRatedBooks.books.isNotEmpty()) {
+            DiscoverShelf(
+                title = "Top Rated",
+                shelfState = topRatedBooks,
+                onBookClick = onDiscoverBookClick,
+                onRetry = onRetryTopRated
+            )
+            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }

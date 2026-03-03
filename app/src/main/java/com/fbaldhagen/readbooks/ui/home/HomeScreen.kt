@@ -12,6 +12,7 @@ import com.fbaldhagen.readbooks.ui.home.components.HomeContent
 @Composable
 fun HomeScreen(
     onNavigateToBookDetails: (Long) -> Unit,
+    onNavigateToDiscoverBook: (Int) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -27,6 +28,9 @@ fun HomeScreen(
         else -> HomeContent(
             state = state,
             onBookClick = onNavigateToBookDetails,
+            onDiscoverBookClick = onNavigateToDiscoverBook,
+            onRetryPopular = viewModel::retryPopular,
+            onRetryTopRated = viewModel::retryTopRated,
             modifier = modifier
         )
     }

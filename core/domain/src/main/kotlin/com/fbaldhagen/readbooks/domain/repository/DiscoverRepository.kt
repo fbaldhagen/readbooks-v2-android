@@ -13,4 +13,5 @@ interface DiscoverRepository {
     suspend fun getPopularPreview(limit: Int): Result<List<DiscoverBook>>
     suspend fun getBookById(gutenbergId: Int): Result<DiscoverBook>
     suspend fun getBooksByAuthor(authorName: String, excludeId: Int): Result<List<DiscoverBook>>
+    suspend fun getBooksByIds(ids: String): Result<List<DiscoverBook>>
 }

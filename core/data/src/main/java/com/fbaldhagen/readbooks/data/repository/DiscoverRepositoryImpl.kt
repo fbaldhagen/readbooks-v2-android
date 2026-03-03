@@ -67,6 +67,13 @@ class DiscoverRepositoryImpl @Inject constructor(
             .map { it.toDiscoverBook() }
     }
 
+    override suspend fun getBooksByIds(ids: String): Result<List<DiscoverBook>> =
+        suspendRunCatching {
+            apiService.getBooksByIds(ids)
+                .results
+                .map { it.toDiscoverBook() }
+        }
+
     private fun createPager(
         search: String? = null,
         topic: String? = null,

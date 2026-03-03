@@ -49,6 +49,9 @@ fun AppNavHost(
                 modifier = Modifier.padding(innerPadding),
                 onNavigateToBookDetails = { bookId ->
                     navController.navigate(Route.BookDetails(bookId))
+                },
+                onNavigateToDiscoverBook = { gutenbergId ->
+                    navController.navigate(Route.DiscoverBookDetails(gutenbergId))
                 }
             )
         }

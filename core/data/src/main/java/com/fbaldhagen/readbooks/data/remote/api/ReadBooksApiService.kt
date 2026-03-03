@@ -8,6 +8,7 @@ import com.fbaldhagen.readbooks.data.remote.dto.RegisterRequest
 import com.fbaldhagen.readbooks.data.remote.dto.RegisterResponse
 import com.fbaldhagen.readbooks.data.remote.dto.RemoteBookRequest
 import com.fbaldhagen.readbooks.data.remote.dto.RemoteBookResponse
+import com.fbaldhagen.readbooks.data.remote.dto.TopRatedBookDto
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -53,6 +54,12 @@ interface ReadBooksApiService {
 
     @DELETE("api/books/{gutenbergId}/ratings")
     suspend fun deleteRating(@Path("gutenbergId") gutenbergId: Int)
+
+    @GET("api/books/top-rated")
+    suspend fun getTopRated(
+        @Query("limit") limit: Int,
+        @Query("excludeIds") excludeIds: List<Int>
+    ): List<TopRatedBookDto>
 
     companion object {
         const val BASE_URL = "https://api.fbaldhagen.dev/"

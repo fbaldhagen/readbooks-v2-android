@@ -5,7 +5,9 @@ import com.fbaldhagen.readbooks.common.result.Result
 import com.fbaldhagen.readbooks.data.remote.api.ReadBooksApiService
 import com.fbaldhagen.readbooks.data.remote.dto.RatingRequest
 import com.fbaldhagen.readbooks.data.remote.dto.toRemoteRating
+import com.fbaldhagen.readbooks.data.remote.dto.toTopRatedBook
 import com.fbaldhagen.readbooks.domain.model.RemoteRating
+import com.fbaldhagen.readbooks.domain.model.TopRatedBook
 import com.fbaldhagen.readbooks.domain.repository.RatingRepository
 import javax.inject.Inject
 
@@ -27,4 +29,11 @@ class RatingRepositoryImpl @Inject constructor(
         suspendRunCatching {
             apiService.deleteRating(gutenbergId)
         }
+
+    override suspend fun getTopRated(
+        limit: Int,
+        excludeIds: List<Int>
+    ): Result<List<TopRatedBook>> = suspendRunCatching {
+        apiService.getTopRated(limit, excludeIds).map { it.toTopRatedBook() }
+    }
 }

@@ -8,5 +8,6 @@ data class DiscoverBook(
     val downloadUrl: String?,
     val summary: String?,
     val subjects: List<String> = emptyList(),
-    val downloadCount: Int = 0
+    val downloadCount: Int = 0,
+    val averageRating: Double? = null
 )
