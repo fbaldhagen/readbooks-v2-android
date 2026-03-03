@@ -23,10 +23,14 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -36,6 +40,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.fbaldhagen.readbooks.domain.model.ThemeMode
 
 private val settingsOptions = listOf(
     "Account Settings",
@@ -54,9 +59,12 @@ private val settingsOptionsIcons = listOf(
     Icons.AutoMirrored.Filled.Logout
 )
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsOverlay(
     modifier: Modifier = Modifier,
+    currentTheme: ThemeMode,
+    onThemeChanged: (ThemeMode) -> Unit,
     onClose: () -> Unit,
     onLogout: () -> Unit
 ) {
@@ -67,19 +75,49 @@ fun SettingsOverlay(
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            Text(
+                text = "Settings",
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.padding(bottom = 8.dp)
-            ) {
-                Text(
-                    text = "Settings",
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
+            )
+
+            // Appearance section
+            Text(
+                text = "Appearance",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+
+            val themes = listOf(
+                ThemeMode.SYSTEM to "System",
+                ThemeMode.LIGHT to "Light",
+                ThemeMode.DARK to "Dark",
+                ThemeMode.SEPIA to "Sepia"
+            )
+
+            SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+                themes.forEachIndexed { index, (mode, label) ->
+                    SegmentedButton(
+                        selected = currentTheme == mode,
+                        onClick = { onThemeChanged(mode) },
+                        shape = SegmentedButtonDefaults.itemShape(
+                            index = index,
+                            count = themes.size
+                        ),
+                        label = { Text(label, fontSize = 12.sp) }
+                    )
+                }
             }
 
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 8.dp),
+                color = MaterialTheme.colorScheme.outlineVariant
+            )
+
+            // Existing settings rows
             settingsOptions.forEachIndexed { index, option ->
                 SettingsOptionsRow(
                     name = option,
@@ -89,7 +127,7 @@ fun SettingsOverlay(
             }
 
             HorizontalDivider(
-                color = Color(0xFFF0F0F0),
+                color = MaterialTheme.colorScheme.outlineVariant,
                 thickness = 1.dp,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
@@ -97,7 +135,9 @@ fun SettingsOverlay(
             OutlinedButton(
                 onClick = onClose,
                 shape = RoundedCornerShape(50),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = MaterialTheme.colorScheme.primary
+                ),
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
                 contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
                 modifier = Modifier

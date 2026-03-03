@@ -16,5 +16,6 @@ data class UserPreferences(
 enum class ThemeMode {
     LIGHT,
     DARK,
+    SEPIA,
     SYSTEM
 }

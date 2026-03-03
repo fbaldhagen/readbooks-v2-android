@@ -169,6 +169,8 @@ fun ProfileScreen(
                     viewModel.onLogout()
                     onLogout()
                 },
+                currentTheme = state.preferences.themeMode,
+                onThemeChanged = viewModel::onThemeModeChanged,
                 modifier = Modifier
                     .align(Alignment.Center)
                     .padding(24.dp)

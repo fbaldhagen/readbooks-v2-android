@@ -3,6 +3,7 @@ package com.fbaldhagen.readbooks.ui.profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fbaldhagen.readbooks.common.result.getOrNull
+import com.fbaldhagen.readbooks.domain.model.ThemeMode
 import com.fbaldhagen.readbooks.domain.usecase.GetReadingAnalyticsUseCase
 import com.fbaldhagen.readbooks.domain.usecase.LogoutUseCase
 import com.fbaldhagen.readbooks.domain.usecase.UpdateAvatarUseCase
@@ -106,6 +107,12 @@ class ProfileViewModel @Inject constructor(
     fun onLogout() {
         viewModelScope.launch {
             logout()
+        }
+    }
+
+    fun onThemeModeChanged(mode: ThemeMode) {
+        viewModelScope.launch {
+            preferencesUseCases.setThemeMode(mode)
         }
     }
 
