@@ -69,4 +69,8 @@ class SessionRepositoryImpl @Inject constructor(
         suspendRunCatching {
             sessionDao.getForBook(bookId).map { it.toDomain() }
         }
+
+    override suspend fun getAllSessions(): Result<List<ReadingSession>> = suspendRunCatching {
+        sessionDao.getAll().map { it.toDomain() }
+    }
 }

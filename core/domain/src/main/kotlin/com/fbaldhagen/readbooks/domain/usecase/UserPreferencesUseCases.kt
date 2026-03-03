@@ -32,4 +32,7 @@ class UserPreferencesUseCases @Inject constructor(
 
     suspend fun setGuestMode(isGuest: Boolean) =
         preferencesRepository.setGuestMode(isGuest)
+
+    suspend fun setNotificationsEnabled(enabled: Boolean) =
+        preferencesRepository.setNotificationsEnabled(enabled)
 }

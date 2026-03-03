@@ -17,4 +17,5 @@ interface UserPreferencesRepository {
     suspend fun updateBio(bio: String?)
     suspend fun setYearlyBooksGoal(goal: Int)
     suspend fun setGuestMode(isGuest: Boolean)
+    suspend fun setNotificationsEnabled(enabled: Boolean)
 }

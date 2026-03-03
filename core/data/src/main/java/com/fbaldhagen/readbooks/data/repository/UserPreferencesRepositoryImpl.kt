@@ -34,5 +34,9 @@ class UserPreferencesRepositoryImpl @Inject constructor(
     override suspend fun updateBio(bio: String?) = dataStore.updateBio(bio)
 
     override suspend fun setYearlyBooksGoal(goal: Int) = dataStore.setYearlyBooksGoal(goal)
+
     override suspend fun setGuestMode(isGuest: Boolean) = dataStore.setGuestMode(isGuest)
+
+    override suspend fun setNotificationsEnabled(enabled: Boolean) =
+        dataStore.setNotificationsEnabled(enabled)
 }

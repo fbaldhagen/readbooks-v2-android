@@ -3,6 +3,7 @@ package com.fbaldhagen.readbooks.ui.profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fbaldhagen.readbooks.common.result.getOrNull
+import com.fbaldhagen.readbooks.data.notification.NotificationScheduler
 import com.fbaldhagen.readbooks.domain.model.ThemeMode
 import com.fbaldhagen.readbooks.domain.usecase.GetReadingAnalyticsUseCase
 import com.fbaldhagen.readbooks.domain.usecase.LogoutUseCase
@@ -23,7 +24,8 @@ class ProfileViewModel @Inject constructor(
     private val preferencesUseCases: UserPreferencesUseCases,
     private val getReadingAnalytics: GetReadingAnalyticsUseCase,
     private val logout: LogoutUseCase,
-    private val updateAvatar: UpdateAvatarUseCase
+    private val updateAvatar: UpdateAvatarUseCase,
+    private val notificationScheduler: NotificationScheduler
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ProfileState())
@@ -55,7 +57,11 @@ class ProfileViewModel @Inject constructor(
                     }
                 }
                 .collect { profileState ->
-                    _state.value = profileState
+                    _state.value = profileState.copy(
+                        showSettings = _state.value.showSettings,
+                        showAvatarOptions = _state.value.showAvatarOptions,
+                        showEditProfile = _state.value.showEditProfile
+                    )
                 }
         }
     }
@@ -119,6 +125,17 @@ class ProfileViewModel @Inject constructor(
     fun onNavigateToCreateAccount() {
         viewModelScope.launch {
             logout()
+        }
+    }
+
+    fun onNotificationsToggled(enabled: Boolean) {
+        viewModelScope.launch {
+            preferencesUseCases.setNotificationsEnabled(enabled)
+            if (enabled) {
+                notificationScheduler.schedule()
+            } else {
+                notificationScheduler.cancel()
+            }
         }
     }
 }

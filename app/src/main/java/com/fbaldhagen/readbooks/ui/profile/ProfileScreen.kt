@@ -2,6 +2,7 @@ package com.fbaldhagen.readbooks.ui.profile
 
 import android.Manifest
 import android.net.Uri
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -74,6 +75,12 @@ fun ProfileScreen(
         contract = ActivityResultContracts.RequestPermission()
     ) { granted ->
         if (granted) cameraLauncher.launch(cameraImageUri!!)
+    }
+
+    val notificationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) viewModel.onNotificationsToggled(true)
     }
 
     Box(modifier = modifier.fillMaxSize()) {
@@ -171,6 +178,20 @@ fun ProfileScreen(
                 },
                 currentTheme = state.preferences.themeMode,
                 onThemeChanged = viewModel::onThemeModeChanged,
+                notificationsEnabled = state.preferences.notificationsEnabled,
+                onNotificationsToggled = { enabled ->
+                    if (enabled) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            notificationPermissionLauncher.launch(
+                                Manifest.permission.POST_NOTIFICATIONS
+                            )
+                        } else {
+                            viewModel.onNotificationsToggled(true)
+                        }
+                    } else {
+                        viewModel.onNotificationsToggled(false)
+                    }
+                },
                 modifier = Modifier
                     .align(Alignment.Center)
                     .padding(24.dp)

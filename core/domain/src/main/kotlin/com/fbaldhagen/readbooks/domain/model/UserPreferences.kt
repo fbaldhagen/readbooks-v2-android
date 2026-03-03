@@ -10,7 +10,8 @@ data class UserPreferences(
     val email: String? = null,
     val userId: Long? = null,
     val bio: String? = null,
-    val yearlyBooksGoal: Int = 12
+    val yearlyBooksGoal: Int = 12,
+    val notificationsEnabled: Boolean = false
 )
 
 enum class ThemeMode {

@@ -31,6 +31,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -44,7 +45,6 @@ import com.fbaldhagen.readbooks.domain.model.ThemeMode
 
 private val settingsOptions = listOf(
     "Account Settings",
-    "Notifications",
     "Language & Region",
     "Privacy & Security",
     "Help & Support",
@@ -52,7 +52,6 @@ private val settingsOptions = listOf(
 )
 private val settingsOptionsIcons = listOf(
     Icons.Default.Settings,
-    Icons.Default.Notifications,
     Icons.Default.Language,
     Icons.Default.Security,
     Icons.AutoMirrored.Filled.Help,
@@ -65,6 +64,8 @@ fun SettingsOverlay(
     modifier: Modifier = Modifier,
     currentTheme: ThemeMode,
     onThemeChanged: (ThemeMode) -> Unit,
+    notificationsEnabled: Boolean,
+    onNotificationsToggled: (Boolean) -> Unit,
     onClose: () -> Unit,
     onLogout: () -> Unit
 ) {
@@ -116,6 +117,40 @@ fun SettingsOverlay(
                 modifier = Modifier.padding(vertical = 8.dp),
                 color = MaterialTheme.colorScheme.outlineVariant
             )
+
+            Text(
+                text = "Notifications",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Notifications,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(22.dp)
+                    )
+                    Text(
+                        text = "Daily reminders",
+                        fontSize = 15.sp,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+                Switch(
+                    checked = notificationsEnabled,
+                    onCheckedChange = onNotificationsToggled
+                )
+            }
 
             // Existing settings rows
             settingsOptions.forEachIndexed { index, option ->

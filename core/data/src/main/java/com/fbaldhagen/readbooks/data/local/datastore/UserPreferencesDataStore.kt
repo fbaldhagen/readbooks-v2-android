@@ -34,6 +34,7 @@ class UserPreferencesDataStore @Inject constructor(
         val USER_ID = longPreferencesKey("user_id")
         val BIO = stringPreferencesKey("bio")
         val YEARLY_BOOKS_GOAL = intPreferencesKey("yearly_books_goal")
+        val NOTIFICATIONS_ENABLED = booleanPreferencesKey("notifications_enabled")
     }
 
     val preferences: Flow<UserPreferences> = context.dataStore.data.map { prefs ->
@@ -53,7 +54,8 @@ class UserPreferencesDataStore @Inject constructor(
             email = prefs[Keys.USER_EMAIL],
             userId = prefs[Keys.USER_ID],
             bio = prefs[Keys.BIO],
-            yearlyBooksGoal = prefs[Keys.YEARLY_BOOKS_GOAL] ?: 12
+            yearlyBooksGoal = prefs[Keys.YEARLY_BOOKS_GOAL] ?: 12,
+            notificationsEnabled = prefs[Keys.NOTIFICATIONS_ENABLED] ?: false,
         )
     }
 
@@ -128,6 +130,12 @@ class UserPreferencesDataStore @Inject constructor(
     suspend fun setYearlyBooksGoal(goal: Int) {
         context.dataStore.edit { prefs ->
             prefs[Keys.YEARLY_BOOKS_GOAL] = goal
+        }
+    }
+
+    suspend fun setNotificationsEnabled(enabled: Boolean) {
+        context.dataStore.edit { prefs ->
+            prefs[Keys.NOTIFICATIONS_ENABLED] = enabled
         }
     }
 }
