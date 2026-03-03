@@ -10,11 +10,13 @@ import com.fbaldhagen.readbooks.domain.model.BookDetails
 import com.fbaldhagen.readbooks.domain.model.BookDetailsState
 import com.fbaldhagen.readbooks.domain.model.DiscoverBook
 import com.fbaldhagen.readbooks.domain.model.ReadingStatus
+import com.fbaldhagen.readbooks.domain.model.RemoteRating
 import com.fbaldhagen.readbooks.domain.usecase.DiscoverUseCases
 import com.fbaldhagen.readbooks.domain.usecase.DownloadBookUseCase
 import com.fbaldhagen.readbooks.domain.usecase.DownloadState
 import com.fbaldhagen.readbooks.domain.usecase.GetBookDetailsUseCase
 import com.fbaldhagen.readbooks.domain.usecase.LibraryUseCases
+import com.fbaldhagen.readbooks.domain.usecase.RatingUseCases
 import com.fbaldhagen.readbooks.navigation.Route
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -35,7 +37,8 @@ class BookDetailsViewModel @Inject constructor(
     private val getBookDetails: GetBookDetailsUseCase,
     private val libraryUseCases: LibraryUseCases,
     private val discoverUseCases: DiscoverUseCases,
-    private val downloadBookUseCase: DownloadBookUseCase
+    private val downloadBookUseCase: DownloadBookUseCase,
+    private val ratingUseCases: RatingUseCases
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<BookDetailsUiState>(BookDetailsUiState.Loading)
@@ -43,6 +46,9 @@ class BookDetailsViewModel @Inject constructor(
 
     private val _authorBooks = MutableStateFlow<List<DiscoverBook>>(emptyList())
     val authorBooks: StateFlow<List<DiscoverBook>> = _authorBooks.asStateFlow()
+
+    private val _remoteRating = MutableStateFlow<RemoteRating?>(null)
+    val remoteRating: StateFlow<RemoteRating?> = _remoteRating.asStateFlow()
 
     private val _confirmationDialog = MutableStateFlow(ConfirmationDialog.None)
     val confirmationDialog: StateFlow<ConfirmationDialog> = _confirmationDialog.asStateFlow()
@@ -83,6 +89,7 @@ class BookDetailsViewModel @Inject constructor(
                 .collect { details ->
                     _state.value = BookDetailsUiState.Success(details)
                     if (_authorBooks.value.isEmpty()) loadAuthorBooks(details)
+                    details.gutenbergId?.let { loadRemoteRating(it) }
                 }
         }
     }
@@ -95,6 +102,7 @@ class BookDetailsViewModel @Inject constructor(
                     val details = getBookDetails.fromDiscover(discoverBook)
                     _state.value = BookDetailsUiState.Success(details)
                     loadAuthorBooks(details)
+                    details.gutenbergId?.let { loadRemoteRating(it) }
                 }
                 .onError { error ->
                     _state.value = BookDetailsUiState.Error(error.message)
@@ -102,11 +110,28 @@ class BookDetailsViewModel @Inject constructor(
         }
     }
 
+    private fun loadRemoteRating(gutenbergId: Int) {
+        viewModelScope.launch {
+            ratingUseCases.getRatings(gutenbergId)
+                .onSuccess { _remoteRating.value = it }
+        }
+    }
+
     fun onUpdateRating(rating: Int?) {
         val currentState = _state.value as? BookDetailsUiState.Success ?: return
         val libraryState = currentState.details.state as? BookDetailsState.InLibrary ?: return
+        val gutenbergId = currentState.details.gutenbergId
         viewModelScope.launch {
             libraryUseCases.updateRating(libraryState.bookId, rating)
+            if (gutenbergId != null) {
+                if (rating != null) {
+                    ratingUseCases.submitRating(gutenbergId, rating)
+                        .onSuccess { loadRemoteRating(gutenbergId) }
+                } else {
+                    ratingUseCases.deleteRating(gutenbergId)
+                        .onSuccess { loadRemoteRating(gutenbergId) }
+                }
+            }
         }
     }
 

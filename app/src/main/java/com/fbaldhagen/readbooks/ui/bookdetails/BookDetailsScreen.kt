@@ -46,6 +46,7 @@ fun BookDetailsScreen(
     val authorBooks by viewModel.authorBooks.collectAsStateWithLifecycle()
     val confirmationDialog by viewModel.confirmationDialog.collectAsStateWithLifecycle()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    val remoteRating by viewModel.remoteRating.collectAsStateWithLifecycle()
 
     var menuExpanded by remember { mutableStateOf(false) }
 
@@ -138,6 +139,7 @@ fun BookDetailsScreen(
             )
             is BookDetailsUiState.Success -> BookDetailsContent(
                 details = current.details,
+                remoteRating = remoteRating,
                 onOpenReader = onOpenReader,
                 onDownload = viewModel::onDownloadBook,
                 onRatingChanged = viewModel::onUpdateRating,

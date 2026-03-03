@@ -8,6 +8,7 @@ data class UserPreferences(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val authToken: String? = null,
     val email: String? = null,
+    val userId: Long? = null,
     val bio: String? = null,
     val yearlyBooksGoal: Int = 12
 )

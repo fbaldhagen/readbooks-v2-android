@@ -2,6 +2,8 @@ package com.fbaldhagen.readbooks.data.remote.api
 
 import com.fbaldhagen.readbooks.data.remote.dto.AuthResponse
 import com.fbaldhagen.readbooks.data.remote.dto.LoginRequest
+import com.fbaldhagen.readbooks.data.remote.dto.RatingRequest
+import com.fbaldhagen.readbooks.data.remote.dto.RatingResponseDto
 import com.fbaldhagen.readbooks.data.remote.dto.RegisterRequest
 import com.fbaldhagen.readbooks.data.remote.dto.RegisterResponse
 import com.fbaldhagen.readbooks.data.remote.dto.RemoteBookRequest
@@ -39,6 +41,18 @@ interface ReadBooksApiService {
 
     @DELETE("api/books/{id}")
     suspend fun deleteBook(@Path("id") id: Long)
+
+    @GET("api/books/{gutenbergId}/ratings")
+    suspend fun getRatings(@Path("gutenbergId") gutenbergId: Int): RatingResponseDto
+
+    @POST("api/books/{gutenbergId}/ratings")
+    suspend fun submitRating(
+        @Path("gutenbergId") gutenbergId: Int,
+        @Body request: RatingRequest
+    )
+
+    @DELETE("api/books/{gutenbergId}/ratings")
+    suspend fun deleteRating(@Path("gutenbergId") gutenbergId: Int)
 
     companion object {
         const val BASE_URL = "https://api.fbaldhagen.dev/"

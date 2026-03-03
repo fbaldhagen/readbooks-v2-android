@@ -35,7 +35,7 @@ class AuthRepositoryImpl @Inject constructor(
         return try {
             val response = apiService.login(LoginRequest(email, password))
             userPreferencesRepository.saveAuthToken(response.token)
-            userPreferencesRepository.saveUserInfo(email, 0L)
+            userPreferencesRepository.saveUserInfo(email, response.userId)
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
@@ -59,7 +59,7 @@ class AuthRepositoryImpl @Inject constructor(
         return try {
             val response = apiService.verifyEmail(token)
             userPreferencesRepository.saveAuthToken(response.token)
-            userPreferencesRepository.saveUserInfo(response.email, 0L)
+            userPreferencesRepository.saveUserInfo(response.email, response.userId)
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)

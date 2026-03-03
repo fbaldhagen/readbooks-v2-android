@@ -51,6 +51,7 @@ class UserPreferencesDataStore @Inject constructor(
             } ?: ThemeMode.SYSTEM,
             authToken = prefs[Keys.AUTH_TOKEN],
             email = prefs[Keys.USER_EMAIL],
+            userId = prefs[Keys.USER_ID],
             bio = prefs[Keys.BIO],
             yearlyBooksGoal = prefs[Keys.YEARLY_BOOKS_GOAL] ?: 12
         )

@@ -14,10 +14,12 @@ import com.fbaldhagen.readbooks.domain.model.BookDetails
 import com.fbaldhagen.readbooks.domain.model.BookDetailsState
 import com.fbaldhagen.readbooks.domain.model.DiscoverBook
 import com.fbaldhagen.readbooks.domain.model.ReadingStatus
+import com.fbaldhagen.readbooks.domain.model.RemoteRating
 
 @Composable
 fun BookDetailsContent(
     details: BookDetails,
+    remoteRating: RemoteRating?,
     onOpenReader: (Long) -> Unit,
     onDownload: () -> Unit,
     onRatingChanged: (Int?) -> Unit,
@@ -63,11 +65,7 @@ fun BookDetailsContent(
         }
 
         RatingSection(
-            rating = if (details.state is BookDetailsState.InLibrary) {
-                (details.state as BookDetailsState.InLibrary).rating ?: 0
-            } else {
-                0
-            }
+            remoteRating = remoteRating
         )
 
         if (details.subjects.isNotEmpty()) {
