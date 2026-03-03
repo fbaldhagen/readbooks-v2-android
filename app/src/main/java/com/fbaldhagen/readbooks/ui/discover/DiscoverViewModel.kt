@@ -8,6 +8,7 @@ import com.fbaldhagen.readbooks.common.result.onError
 import com.fbaldhagen.readbooks.common.result.onSuccess
 import com.fbaldhagen.readbooks.domain.model.Book
 import com.fbaldhagen.readbooks.domain.model.DiscoverBook
+import com.fbaldhagen.readbooks.domain.model.ShelfState
 import com.fbaldhagen.readbooks.domain.usecase.DiscoverUseCases
 import com.fbaldhagen.readbooks.domain.usecase.LibraryUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -111,12 +112,6 @@ class DiscoverViewModel @Inject constructor(
     fun onClearSearch() {
         _state.update { it.copy(searchQuery = "") }
         _searchTrigger.value = SearchTrigger.Popular
-    }
-
-    sealed interface ShelfState {
-        data object Loading : ShelfState
-        data class Success(val books: List<DiscoverBook>) : ShelfState
-        data class Error(val message: String) : ShelfState
     }
 
     private sealed interface SearchTrigger {

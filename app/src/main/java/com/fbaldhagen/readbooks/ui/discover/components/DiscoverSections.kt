@@ -7,12 +7,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.fbaldhagen.readbooks.ui.discover.DiscoverViewModel
+import com.fbaldhagen.readbooks.domain.model.ShelfState
 
 @Composable
 fun DiscoverSections(
     topics: List<String>,
-    shelves: Map<String, DiscoverViewModel.ShelfState>,
+    shelves: Map<String, ShelfState>,
     libraryGutenbergIds: Set<Int>,
     archivedGutenbergIds: Set<Int>,
     onBookClick: (Int) -> Unit,

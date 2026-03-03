@@ -19,15 +19,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.fbaldhagen.readbooks.domain.model.ShelfState
 import com.fbaldhagen.readbooks.ui.components.BookItem
 import com.fbaldhagen.readbooks.ui.components.ErrorMessage
 import com.fbaldhagen.readbooks.ui.components.ShimmerBookItem
-import com.fbaldhagen.readbooks.ui.discover.DiscoverViewModel
 
 @Composable
 fun BookShelf(
     topic: String,
-    shelfState: DiscoverViewModel.ShelfState?,
+    shelfState: ShelfState?,
     libraryGutenbergIds: Set<Int>,
     archivedGutenbergIds: Set<Int>,
     onBookClick: (Int) -> Unit,
@@ -60,7 +60,7 @@ fun BookShelf(
         Spacer(modifier = Modifier.height(8.dp))
 
         when (shelfState) {
-            null, is DiscoverViewModel.ShelfState.Loading -> {
+            null, is ShelfState.Loading -> {
                 LazyRow(
                     contentPadding = PaddingValues(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -70,14 +70,14 @@ fun BookShelf(
                     }
                 }
             }
-            is DiscoverViewModel.ShelfState.Error -> {
+            is ShelfState.Error -> {
                 ErrorMessage(
                     message = shelfState.message,
                     onRetry = { onRetry(topic) },
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
             }
-            is DiscoverViewModel.ShelfState.Success -> {
+            is ShelfState.Success -> {
                 LazyRow(
                     contentPadding = PaddingValues(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
