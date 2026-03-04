@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.net.Uri
 import android.os.Build
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -64,6 +65,11 @@ fun ProfileScreen(
     var cameraImageUri by remember { mutableStateOf<Uri?>(null) }
     val context = LocalContext.current
     val isBackendReachable by viewModel.isBackendReachable.collectAsStateWithLifecycle()
+
+    BackHandler(enabled = state.showSettings) {
+        viewModel.onSettingsClosed()
+        viewModel.onToggleSettings()
+    }
 
     val uCropLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
