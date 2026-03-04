@@ -44,6 +44,7 @@ hiltWork = "1.3.0"
 
 # Image
 coil = "3.4.0"
+ucrop = "2.2.10"
 
 # Readium
 readium = "3.1.2"
@@ -123,6 +124,7 @@ tools-desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", versio
 # Image
 coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
 coil-network-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil" }
+ucrop = { group = "com.github.yalantis", name = "ucrop", version.ref = "ucrop" }
 
 # Readium
 readium-shared = { group = "org.readium.kotlin-toolkit", name = "readium-shared", version.ref = "readium" }
@@ -184,6 +186,11 @@ testing = [
     "mockk",
     "turbine",
     "coroutines-test",
+]
+image = [
+    "coil-compose",
+    "coil-network-okhttp",
+    "ucrop"
 ]
 
 [plugins]

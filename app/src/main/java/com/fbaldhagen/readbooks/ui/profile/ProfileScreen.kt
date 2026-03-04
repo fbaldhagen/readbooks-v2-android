@@ -1,6 +1,8 @@
 package com.fbaldhagen.readbooks.ui.profile
 
 import android.Manifest
+import android.app.Activity
+import android.content.Context
 import android.net.Uri
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -47,6 +49,9 @@ import com.fbaldhagen.readbooks.ui.profile.components.QuickActionsCard
 import com.fbaldhagen.readbooks.ui.profile.components.ReadingGoalCard
 import com.fbaldhagen.readbooks.ui.profile.components.SettingsOverlay
 import com.fbaldhagen.readbooks.ui.utils.createTempImageUri
+import com.yalantis.ucrop.UCrop
+import java.io.File
+import androidx.core.graphics.toColorInt
 
 @Composable
 fun ProfileScreen(
@@ -60,16 +65,47 @@ fun ProfileScreen(
     val context = LocalContext.current
     val isBackendReachable by viewModel.isBackendReachable.collectAsStateWithLifecycle()
 
+    val uCropLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val croppedUri = UCrop.getOutput(result.data!!)
+            croppedUri?.let { viewModel.onUpdateAvatarUri(it.toString()) }
+        }
+    }
+
+    fun launchCrop(sourceUri: Uri, context: Context) {
+        val destinationUri = Uri.fromFile(
+            File(context.cacheDir, "cropped_avatar_${System.currentTimeMillis()}.jpg")
+        )
+        val options = UCrop.Options().apply {
+            setCircleDimmedLayer(true)
+            setShowCropGrid(false)
+            setShowCropFrame(false)
+            setHideBottomControls(false)
+            withAspectRatio(1f, 1f)
+            setCompressionQuality(90)
+            setStatusBarColor("#1C1917".toColorInt())
+            setToolbarColor(android.graphics.Color.BLACK)
+            setToolbarWidgetColor(android.graphics.Color.WHITE)
+        }
+        val intent = UCrop.of(sourceUri, destinationUri)
+            .withOptions(options)
+            .withMaxResultSize(512, 512)
+            .getIntent(context)
+        uCropLauncher.launch(intent)
+    }
+
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
     ) { uri ->
-        uri?.let { viewModel.onUpdateAvatarUri(it.toString()) }
+        uri?.let { launchCrop(it, context) }
     }
 
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture()
     ) { success ->
-        if (success) viewModel.onUpdateAvatarUri(cameraImageUri?.toString())
+        if (success) cameraImageUri?.let { launchCrop(it, context) }
     }
 
     val cameraPermissionLauncher = rememberLauncherForActivityResult(
@@ -223,7 +259,8 @@ fun ProfileScreen(
                     cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
                 },
                 onRemovePhoto = { viewModel.onUpdateAvatarUri(null) },
-                hasCurrentAvatar = state.preferences.avatarUri != null
+                hasCurrentAvatar = state.preferences.avatarUri != null,
+                avatarUri = state.preferences.avatarUri
             )
         }
 

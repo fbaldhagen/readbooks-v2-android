@@ -20,6 +20,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ReadBooks">
 
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:theme="@style/UCropTheme" />
+
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"

@@ -79,9 +79,8 @@ dependencies {
     // Paging
     implementation(libs.paging.compose)
 
-    // Image loading
-    implementation(libs.coil.compose)
-    implementation(libs.coil.network.okhttp)
+    // Image
+    implementation(libs.bundles.image)
 
     // Readium
     implementation(libs.bundles.readium)
