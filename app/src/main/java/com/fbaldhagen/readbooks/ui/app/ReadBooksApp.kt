@@ -9,10 +9,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -35,7 +39,9 @@ fun ReadBooksApp(
 ) {
     val navController = rememberNavController()
     val authViewModel: AuthViewModel = hiltViewModel()
+    val achievementViewModel: AchievementViewModel = hiltViewModel()
     val authState by authViewModel.state.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     if (authState.authStatus == AuthStatus.LOADING) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -46,6 +52,19 @@ fun ReadBooksApp(
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
+
+    LaunchedEffect(Unit) {
+        achievementViewModel.newlyUnlocked.collect { achievements ->
+            if (achievements.isNotEmpty()) {
+                achievements.forEach { achievement ->
+                    snackbarHostState.showSnackbar(
+                        message = "🏆 Achievement unlocked: ${achievement.name}",
+                        duration = SnackbarDuration.Short
+                    )
+                }
+            }
+        }
+    }
 
     LaunchedEffect(intent) {
         intent?.data?.let { uri ->
@@ -61,6 +80,7 @@ fun ReadBooksApp(
     }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         bottomBar = {
             if (showBottomBar) {
                 ReadBooksBottomBar(

@@ -1,5 +1,6 @@
 package com.fbaldhagen.readbooks.ui.profile
 
+import com.fbaldhagen.readbooks.domain.model.Achievement
 import com.fbaldhagen.readbooks.domain.model.ReadingAnalytics
 import com.fbaldhagen.readbooks.domain.model.ReadingStreak
 import com.fbaldhagen.readbooks.domain.model.UserPreferences
@@ -15,8 +16,10 @@ data class ProfileState(
         currentStreak = ReadingStreak(currentDays = 0, longestDays = 0),
         weeklyMinutes = emptyList()
     ),
+    val achievements: List<Achievement> = emptyList(),
     val showSettings: Boolean = false,
     val showEditProfile: Boolean = false,
     val showAvatarOptions: Boolean = false,
+    val showAchievements: Boolean = false,
     val error: String? = null
 )

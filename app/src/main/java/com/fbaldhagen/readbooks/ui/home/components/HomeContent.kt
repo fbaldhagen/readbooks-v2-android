@@ -24,6 +24,7 @@ fun HomeContent(
     onRetryPopular: () -> Unit,
     onRetryTopRated: () -> Unit,
     onGoalChanged: (Int) -> Unit,
+    onAchievementTap: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -55,14 +56,6 @@ fun HomeContent(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        state.readingGoalProgress?.let { progress ->
-            ReadingGoalCard(
-                progress = progress,
-                onGoalChanged = onGoalChanged
-            )
-            Spacer(modifier = Modifier.height(24.dp))
-        }
-
         if (state.currentlyReading.isNotEmpty()) {
             Text(
                 text = "Continue Reading",
@@ -79,6 +72,24 @@ fun HomeContent(
                     .padding(horizontal = 16.dp)
                     .glowEffect(color = MaterialTheme.colorScheme.primary)
             )
+
+            Spacer(modifier = Modifier.height(18.dp))
+
+            state.readingGoalProgress?.let { progress ->
+                ReadingGoalCard(
+                    progress = progress,
+                    onGoalChanged = onGoalChanged
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+            }
+
+            if (state.recentAchievements.isNotEmpty()) {
+                AchievementNudgeCard(
+                    achievements = state.recentAchievements,
+                    onTap = onAchievementTap,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+            }
 
             if (state.currentlyReading.size > 1) {
                 Spacer(modifier = Modifier.height(24.dp))

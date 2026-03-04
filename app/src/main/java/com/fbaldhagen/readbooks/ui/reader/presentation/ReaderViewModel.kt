@@ -9,9 +9,11 @@ import com.fbaldhagen.readbooks.domain.model.Bookmark
 import com.fbaldhagen.readbooks.domain.model.ReaderPreferences
 import com.fbaldhagen.readbooks.domain.model.ReadingStatus
 import com.fbaldhagen.readbooks.domain.model.TocEntry
+import com.fbaldhagen.readbooks.domain.usecase.AchievementUseCases
 import com.fbaldhagen.readbooks.domain.usecase.BookmarkUseCases
 import com.fbaldhagen.readbooks.domain.usecase.LibraryUseCases
 import com.fbaldhagen.readbooks.domain.usecase.ReadingSessionUseCases
+import com.fbaldhagen.readbooks.domain.usecase.UpdateConsecutiveGoalDaysUseCase
 import com.fbaldhagen.readbooks.domain.usecase.UserPreferencesUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.NonCancellable
@@ -22,6 +24,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.json.JSONObject
@@ -42,7 +45,9 @@ class ReaderViewModel @Inject constructor(
     private val libraryUseCases: LibraryUseCases,
     private val bookmarkUseCases: BookmarkUseCases,
     private val readingSessionUseCases: ReadingSessionUseCases,
-    private val userPreferencesUseCases: UserPreferencesUseCases
+    private val userPreferencesUseCases: UserPreferencesUseCases,
+    private val achievementUseCases: AchievementUseCases,
+    private val updateConsecutiveGoalDays: UpdateConsecutiveGoalDaysUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ReaderState())
@@ -310,6 +315,11 @@ class ReaderViewModel @Inject constructor(
         val pagesRead = (progressionDelta * estimatedPageCount).toInt()
         viewModelScope.launch(NonCancellable) {
             readingSessionUseCases.end(id, pagesRead)
+            updateConsecutiveGoalDays()
+            val prefs = userPreferencesUseCases.observe().first()
+            achievementUseCases.checkAndUpdate(
+                consecutiveGoalDays = prefs.consecutiveGoalDays
+            )
         }
     }
 

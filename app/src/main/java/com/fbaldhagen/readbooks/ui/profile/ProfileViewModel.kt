@@ -6,6 +6,7 @@ import com.fbaldhagen.readbooks.common.result.getOrNull
 import com.fbaldhagen.readbooks.data.notification.NotificationScheduler
 import com.fbaldhagen.readbooks.domain.model.ThemeMode
 import com.fbaldhagen.readbooks.domain.repository.ConnectivityRepository
+import com.fbaldhagen.readbooks.domain.usecase.AchievementUseCases
 import com.fbaldhagen.readbooks.domain.usecase.GetReadingAnalyticsUseCase
 import com.fbaldhagen.readbooks.domain.usecase.LogoutUseCase
 import com.fbaldhagen.readbooks.domain.usecase.UpdateAvatarUseCase
@@ -29,7 +30,8 @@ class ProfileViewModel @Inject constructor(
     private val logout: LogoutUseCase,
     private val updateAvatar: UpdateAvatarUseCase,
     private val notificationScheduler: NotificationScheduler,
-    private val connectivityRepository: ConnectivityRepository
+    private val connectivityRepository: ConnectivityRepository,
+    private val achievementUseCases: AchievementUseCases
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ProfileState())
@@ -47,37 +49,35 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             combine(
                 preferencesUseCases.observe(),
-                getReadingAnalytics()
-            ) { preferences, analyticsResult ->
+                getReadingAnalytics(),
+                achievementUseCases.observeAll()
+            ) { preferences, analyticsResult, achievements ->
                 val analytics = analyticsResult.getOrNull() ?: _state.value.analytics
                 ProfileState(
                     isLoading = false,
                     preferences = preferences,
-                    analytics = analytics
+                    analytics = analytics,
+                    achievements = achievements
                 )
             }
                 .catch { e ->
                     _state.update {
-                        it.copy(
-                            isLoading = false,
-                            error = e.message ?: "Failed to load profile"
-                        )
+                        it.copy(isLoading = false, error = e.message ?: "Failed to load profile")
                     }
                 }
                 .collect { profileState ->
                     _state.value = profileState.copy(
                         showSettings = _state.value.showSettings,
                         showAvatarOptions = _state.value.showAvatarOptions,
-                        showEditProfile = _state.value.showEditProfile
+                        showEditProfile = _state.value.showEditProfile,
+                        showAchievements = _state.value.showAchievements
                     )
                 }
         }
     }
 
-    fun onUpdateUserName(name: String) {
-        viewModelScope.launch {
-            preferencesUseCases.updateUserName(name)
-        }
+    fun onToggleAchievements() {
+        _state.update { it.copy(showAchievements = !it.showAchievements) }
     }
 
     fun onUpdateAvatarUri(uri: String?) {

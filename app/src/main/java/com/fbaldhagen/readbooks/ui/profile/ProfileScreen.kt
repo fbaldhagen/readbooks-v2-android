@@ -53,6 +53,7 @@ import com.fbaldhagen.readbooks.ui.utils.createTempImageUri
 import com.yalantis.ucrop.UCrop
 import java.io.File
 import androidx.core.graphics.toColorInt
+import com.fbaldhagen.readbooks.ui.profile.components.AchievementsOverlay
 
 @Composable
 fun ProfileScreen(
@@ -190,7 +191,10 @@ fun ProfileScreen(
                     message = "Create an account to unlock achievements"
                 )
             } else {
-                AchievementsCard()
+                AchievementsCard(
+                    achievements = state.achievements,
+                    onSeeAll = { viewModel.onToggleAchievements() }
+                )
             }
 
             if (state.preferences.isGuest) {
@@ -281,6 +285,15 @@ fun ProfileScreen(
                 onSave = { name, bio, goal ->
                     viewModel.onSaveProfile(name, bio, goal)
                 }
+            )
+        }
+
+        if (state.showAchievements) {
+            BackHandler { viewModel.onToggleAchievements() }
+            AchievementsOverlay(
+                achievements = state.achievements,
+                onDismiss = { viewModel.onToggleAchievements() },
+                modifier = Modifier.fillMaxSize()
             )
         }
     }

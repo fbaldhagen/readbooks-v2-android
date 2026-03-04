@@ -13,6 +13,7 @@ import com.fbaldhagen.readbooks.ui.home.components.HomeContent
 fun HomeScreen(
     onNavigateToBookDetails: (Long) -> Unit,
     onNavigateToDiscoverBook: (Int) -> Unit,
+    onAchievementTap: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -32,6 +33,7 @@ fun HomeScreen(
             onRetryPopular = viewModel::retryPopular,
             onRetryTopRated = viewModel::retryTopRated,
             onGoalChanged = viewModel::onGoalChanged,
+            onAchievementTap = onAchievementTap,
             modifier = modifier
         )
     }

@@ -52,6 +52,9 @@ fun AppNavHost(
                 },
                 onNavigateToDiscoverBook = { gutenbergId ->
                     navController.navigate(Route.DiscoverBookDetails(gutenbergId))
+                },
+                onAchievementTap = {
+                    navController.navigate(Route.Profile)
                 }
             )
         }

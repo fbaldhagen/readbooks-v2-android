@@ -11,12 +11,14 @@ import com.fbaldhagen.readbooks.domain.model.BookDetailsState
 import com.fbaldhagen.readbooks.domain.model.DiscoverBook
 import com.fbaldhagen.readbooks.domain.model.ReadingStatus
 import com.fbaldhagen.readbooks.domain.model.RemoteRating
+import com.fbaldhagen.readbooks.domain.usecase.AchievementUseCases
 import com.fbaldhagen.readbooks.domain.usecase.DiscoverUseCases
 import com.fbaldhagen.readbooks.domain.usecase.DownloadBookUseCase
 import com.fbaldhagen.readbooks.domain.usecase.DownloadState
 import com.fbaldhagen.readbooks.domain.usecase.GetBookDetailsUseCase
 import com.fbaldhagen.readbooks.domain.usecase.LibraryUseCases
 import com.fbaldhagen.readbooks.domain.usecase.RatingUseCases
+import com.fbaldhagen.readbooks.domain.usecase.UserPreferencesUseCases
 import com.fbaldhagen.readbooks.navigation.Route
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -26,6 +28,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -38,7 +41,9 @@ class BookDetailsViewModel @Inject constructor(
     private val libraryUseCases: LibraryUseCases,
     private val discoverUseCases: DiscoverUseCases,
     private val downloadBookUseCase: DownloadBookUseCase,
-    private val ratingUseCases: RatingUseCases
+    private val ratingUseCases: RatingUseCases,
+    private val achievementUseCases: AchievementUseCases,
+    private val userPreferencesUseCases: UserPreferencesUseCases
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<BookDetailsUiState>(BookDetailsUiState.Loading)
@@ -132,6 +137,8 @@ class BookDetailsViewModel @Inject constructor(
                         .onSuccess { loadRemoteRating(gutenbergId) }
                 }
             }
+            val prefs = userPreferencesUseCases.observe().first()
+            achievementUseCases.checkAndUpdate(prefs.consecutiveGoalDays)
         }
     }
 
