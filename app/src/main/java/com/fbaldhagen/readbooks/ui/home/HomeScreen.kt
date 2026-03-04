@@ -31,6 +31,7 @@ fun HomeScreen(
             onDiscoverBookClick = onNavigateToDiscoverBook,
             onRetryPopular = viewModel::retryPopular,
             onRetryTopRated = viewModel::retryTopRated,
+            onGoalChanged = viewModel::onGoalChanged,
             modifier = modifier
         )
     }

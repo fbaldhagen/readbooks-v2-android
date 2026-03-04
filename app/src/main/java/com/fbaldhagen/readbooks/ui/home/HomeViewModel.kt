@@ -9,6 +9,7 @@ import com.fbaldhagen.readbooks.domain.usecase.DiscoverUseCases
 import com.fbaldhagen.readbooks.domain.usecase.GetHomeContentUseCase
 import com.fbaldhagen.readbooks.domain.usecase.LibraryUseCases
 import com.fbaldhagen.readbooks.domain.usecase.RatingUseCases
+import com.fbaldhagen.readbooks.domain.usecase.UserPreferencesUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,7 +25,8 @@ class HomeViewModel @Inject constructor(
     private val getHomeContent: GetHomeContentUseCase,
     private val discoverUseCases: DiscoverUseCases,
     private val libraryUseCases: LibraryUseCases,
-    private val ratingUseCases: RatingUseCases
+    private val ratingUseCases: RatingUseCases,
+    private val userPreferencesUseCases: UserPreferencesUseCases
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(HomeState())
@@ -131,5 +133,11 @@ class HomeViewModel @Inject constructor(
 
     fun dismissError() {
         _state.update { it.copy(error = null) }
+    }
+
+    fun onGoalChanged(minutes: Int) {
+        viewModelScope.launch {
+            userPreferencesUseCases.setDailyReadingGoal(minutes)
+        }
     }
 }

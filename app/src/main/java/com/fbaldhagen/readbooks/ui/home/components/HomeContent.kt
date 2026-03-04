@@ -23,6 +23,7 @@ fun HomeContent(
     onDiscoverBookClick: (Int) -> Unit,
     onRetryPopular: () -> Unit,
     onRetryTopRated: () -> Unit,
+    onGoalChanged: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -55,7 +56,10 @@ fun HomeContent(
         Spacer(modifier = Modifier.height(20.dp))
 
         state.readingGoalProgress?.let { progress ->
-            ReadingGoalCard(progress = progress)
+            ReadingGoalCard(
+                progress = progress,
+                onGoalChanged = onGoalChanged
+            )
             Spacer(modifier = Modifier.height(24.dp))
         }
 
