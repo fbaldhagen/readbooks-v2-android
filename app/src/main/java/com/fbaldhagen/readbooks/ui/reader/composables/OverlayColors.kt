@@ -2,7 +2,8 @@ package com.fbaldhagen.readbooks.ui.reader.composables
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import com.fbaldhagen.readbooks.ui.reader.presentation.ReaderTheme
+import com.fbaldhagen.readbooks.domain.model.ReaderTheme
+import com.fbaldhagen.readbooks.ui.reader.presentation.toReadiumTheme
 
 data class OverlayColors(
     val scrim: Color,

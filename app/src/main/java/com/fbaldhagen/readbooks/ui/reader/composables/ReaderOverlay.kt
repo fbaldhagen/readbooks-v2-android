@@ -17,7 +17,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.fbaldhagen.readbooks.ui.reader.presentation.ReaderTheme
+import com.fbaldhagen.readbooks.domain.model.ReaderTheme
 
 @Composable
 fun ReaderOverlay(

@@ -42,7 +42,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.fbaldhagen.readbooks.ui.reader.presentation.ReaderTheme
+import com.fbaldhagen.readbooks.domain.model.ReaderTheme
 
 private val AppBarHeight = 48.dp
 

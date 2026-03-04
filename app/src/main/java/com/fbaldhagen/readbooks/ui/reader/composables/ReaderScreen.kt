@@ -14,9 +14,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.fbaldhagen.readbooks.domain.model.Bookmark
+import com.fbaldhagen.readbooks.domain.model.ReaderPreferences
 import com.fbaldhagen.readbooks.domain.model.TocEntry
 import com.fbaldhagen.readbooks.ui.components.LoadingIndicator
-import com.fbaldhagen.readbooks.ui.reader.presentation.ReaderPreferences
 import com.fbaldhagen.readbooks.ui.reader.presentation.ReaderState
 
 @OptIn(ExperimentalMaterial3Api::class)

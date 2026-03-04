@@ -19,9 +19,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.fbaldhagen.readbooks.ui.reader.presentation.ReaderFontFamily
-import com.fbaldhagen.readbooks.ui.reader.presentation.ReaderPreferences
-import com.fbaldhagen.readbooks.ui.reader.presentation.ReaderTheme
+import com.fbaldhagen.readbooks.domain.model.ReaderFontFamily
+import com.fbaldhagen.readbooks.domain.model.ReaderPreferences
+import com.fbaldhagen.readbooks.domain.model.ReaderTheme
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

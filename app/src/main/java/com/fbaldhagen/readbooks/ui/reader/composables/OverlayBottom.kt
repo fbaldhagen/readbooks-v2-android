@@ -18,7 +18,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.fbaldhagen.readbooks.ui.reader.presentation.ReaderTheme
+import com.fbaldhagen.readbooks.domain.model.ReaderTheme
 
 @Composable
 fun OverlayBottom(

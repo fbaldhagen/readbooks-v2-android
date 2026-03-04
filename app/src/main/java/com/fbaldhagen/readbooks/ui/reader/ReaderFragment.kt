@@ -11,6 +11,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.fbaldhagen.readbooks.ui.reader.presentation.ReaderNavigationEvent
 import com.fbaldhagen.readbooks.ui.reader.presentation.ReaderViewModel
+import com.fbaldhagen.readbooks.ui.reader.presentation.toEpubPreferences
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.launchIn

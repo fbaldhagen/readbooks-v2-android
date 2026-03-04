@@ -1,6 +1,7 @@
 package com.fbaldhagen.readbooks.ui.reader.presentation
 
 import com.fbaldhagen.readbooks.domain.model.Bookmark
+import com.fbaldhagen.readbooks.domain.model.ReaderPreferences
 import com.fbaldhagen.readbooks.domain.model.TocEntry
 import org.readium.r2.shared.publication.Locator
 import org.readium.r2.shared.publication.Publication

@@ -16,8 +16,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.fbaldhagen.readbooks.R
+import com.fbaldhagen.readbooks.domain.model.ReaderTheme
 import com.fbaldhagen.readbooks.ui.reader.composables.ReaderScreen
-import com.fbaldhagen.readbooks.ui.reader.presentation.ReaderTheme
 import com.fbaldhagen.readbooks.ui.reader.presentation.ReaderViewModel
 import com.fbaldhagen.readbooks.ui.theme.ReadBooksTheme
 import dagger.hilt.android.AndroidEntryPoint

@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.fbaldhagen.readbooks.common.result.onError
 import com.fbaldhagen.readbooks.common.result.onSuccess
 import com.fbaldhagen.readbooks.domain.model.Bookmark
+import com.fbaldhagen.readbooks.domain.model.ReaderPreferences
 import com.fbaldhagen.readbooks.domain.model.ReadingStatus
 import com.fbaldhagen.readbooks.domain.model.TocEntry
 import com.fbaldhagen.readbooks.domain.usecase.BookmarkUseCases
