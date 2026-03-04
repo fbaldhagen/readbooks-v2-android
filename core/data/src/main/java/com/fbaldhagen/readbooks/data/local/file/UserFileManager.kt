@@ -13,7 +13,10 @@ class UserFileManager @Inject constructor(
         get() = File(context.filesDir, "avatars").also { it.mkdirs() }
 
     fun saveAvatar(uri: Uri): File {
-        val file = File(avatarsDir, "avatar.jpg")
+        val timestamp = System.currentTimeMillis()
+        val file = File(avatarsDir, "avatar_$timestamp.jpg")
+        avatarsDir.listFiles()?.forEach { it.delete() }
+
         context.contentResolver.openInputStream(uri)?.use { input ->
             file.outputStream().use { output ->
                 input.copyTo(output)
