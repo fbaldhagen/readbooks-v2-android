@@ -11,13 +11,15 @@ import android.os.Build
 import androidx.annotation.RequiresPermission
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.fbaldhagen.readbooks.data.di.NotificationIcon
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class NotificationHelper @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    @NotificationIcon private val notificationIcon: Int
 ) {
     companion object {
         const val CHANNEL_ID = "reading_reminders"
@@ -61,7 +63,7 @@ class NotificationHelper @Inject constructor(
         if (!hasNotificationPermission()) return
         val remaining = goalMinutes - todayMinutes
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .setSmallIcon(notificationIcon)
             .setContentTitle("Reading goal reminder")
             .setContentText("$remaining minutes left to reach your daily goal!")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -75,7 +77,7 @@ class NotificationHelper @Inject constructor(
     fun postStreakReminderNotification(streakDays: Int) {
         if (!hasNotificationPermission()) return
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .setSmallIcon(notificationIcon)
             .setContentTitle("Your streak is at risk!")
             .setContentText("Read today to keep your $streakDays day streak alive 🔥")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
