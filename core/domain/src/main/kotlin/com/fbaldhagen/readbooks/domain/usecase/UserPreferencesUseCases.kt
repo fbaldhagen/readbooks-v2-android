@@ -35,4 +35,7 @@ class UserPreferencesUseCases @Inject constructor(
 
     suspend fun setNotificationsEnabled(enabled: Boolean) =
         preferencesRepository.setNotificationsEnabled(enabled)
+
+    suspend fun setUsePublicGutenberg(enabled: Boolean) =
+        preferencesRepository.setUsePublicGutenberg(enabled)
 }

@@ -11,7 +11,8 @@ data class UserPreferences(
     val userId: Long? = null,
     val bio: String? = null,
     val yearlyBooksGoal: Int = 12,
-    val notificationsEnabled: Boolean = false
+    val notificationsEnabled: Boolean = false,
+    val usePublicGutenberg: Boolean = false
 )
 
 enum class ThemeMode {

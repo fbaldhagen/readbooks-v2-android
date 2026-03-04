@@ -39,4 +39,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
 
     override suspend fun setNotificationsEnabled(enabled: Boolean) =
         dataStore.setNotificationsEnabled(enabled)
+
+    override suspend fun setUsePublicGutenberg(enabled: Boolean) =
+        dataStore.setUsePublicGutenberg(enabled)
 }

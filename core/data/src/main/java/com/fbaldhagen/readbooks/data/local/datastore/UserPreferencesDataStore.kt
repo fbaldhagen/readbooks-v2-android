@@ -35,6 +35,7 @@ class UserPreferencesDataStore @Inject constructor(
         val BIO = stringPreferencesKey("bio")
         val YEARLY_BOOKS_GOAL = intPreferencesKey("yearly_books_goal")
         val NOTIFICATIONS_ENABLED = booleanPreferencesKey("notifications_enabled")
+        val USE_PUBLIC_GUTENBERG = booleanPreferencesKey("use_public_gutenberg")
     }
 
     val preferences: Flow<UserPreferences> = context.dataStore.data.map { prefs ->
@@ -56,6 +57,7 @@ class UserPreferencesDataStore @Inject constructor(
             bio = prefs[Keys.BIO],
             yearlyBooksGoal = prefs[Keys.YEARLY_BOOKS_GOAL] ?: 12,
             notificationsEnabled = prefs[Keys.NOTIFICATIONS_ENABLED] ?: false,
+            usePublicGutenberg = prefs[Keys.USE_PUBLIC_GUTENBERG] ?: false
         )
     }
 
@@ -136,6 +138,12 @@ class UserPreferencesDataStore @Inject constructor(
     suspend fun setNotificationsEnabled(enabled: Boolean) {
         context.dataStore.edit { prefs ->
             prefs[Keys.NOTIFICATIONS_ENABLED] = enabled
+        }
+    }
+
+    suspend fun setUsePublicGutenberg(enabled: Boolean) {
+        context.dataStore.edit { prefs ->
+            prefs[Keys.USE_PUBLIC_GUTENBERG] = enabled
         }
     }
 }

@@ -5,11 +5,14 @@ import androidx.lifecycle.viewModelScope
 import com.fbaldhagen.readbooks.common.result.getOrNull
 import com.fbaldhagen.readbooks.data.notification.NotificationScheduler
 import com.fbaldhagen.readbooks.domain.model.ThemeMode
+import com.fbaldhagen.readbooks.domain.repository.ConnectivityRepository
 import com.fbaldhagen.readbooks.domain.usecase.GetReadingAnalyticsUseCase
 import com.fbaldhagen.readbooks.domain.usecase.LogoutUseCase
 import com.fbaldhagen.readbooks.domain.usecase.UpdateAvatarUseCase
 import com.fbaldhagen.readbooks.domain.usecase.UserPreferencesUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,11 +28,16 @@ class ProfileViewModel @Inject constructor(
     private val getReadingAnalytics: GetReadingAnalyticsUseCase,
     private val logout: LogoutUseCase,
     private val updateAvatar: UpdateAvatarUseCase,
-    private val notificationScheduler: NotificationScheduler
+    private val notificationScheduler: NotificationScheduler,
+    private val connectivityRepository: ConnectivityRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ProfileState())
     val state: StateFlow<ProfileState> = _state.asStateFlow()
+
+    private val _isBackendReachable = MutableStateFlow<Boolean?>(null)
+    val isBackendReachable: StateFlow<Boolean?> = _isBackendReachable.asStateFlow()
+    private var pingJob: Job? = null
 
     init {
         observeProfile()
@@ -136,6 +144,29 @@ class ProfileViewModel @Inject constructor(
             } else {
                 notificationScheduler.cancel()
             }
+        }
+    }
+
+    fun onSettingsOpened() {
+        pingJob?.cancel()
+        pingJob = viewModelScope.launch {
+            while (true) {
+                _isBackendReachable.value = null
+                _isBackendReachable.value = connectivityRepository.pingBackend()
+                delay(15_000)
+            }
+        }
+    }
+
+    fun onSettingsClosed() {
+        pingJob?.cancel()
+        pingJob = null
+        _isBackendReachable.value = null
+    }
+
+    fun onUsePublicGutenbergToggled(enabled: Boolean) {
+        viewModelScope.launch {
+            preferencesUseCases.setUsePublicGutenberg(enabled)
         }
     }
 }

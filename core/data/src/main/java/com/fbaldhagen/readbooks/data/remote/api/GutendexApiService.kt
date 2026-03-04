@@ -29,5 +29,6 @@ interface GutendexApiService {
 
     companion object {
         const val BASE_URL = "https://books.fbaldhagen.dev/"
+        const val PUBLIC_URL = "https://gutendex.com/"
     }
 }

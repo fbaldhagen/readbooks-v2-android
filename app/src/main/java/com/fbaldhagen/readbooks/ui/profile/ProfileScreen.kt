@@ -58,6 +58,7 @@ fun ProfileScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     var cameraImageUri by remember { mutableStateOf<Uri?>(null) }
     val context = LocalContext.current
+    val isBackendReachable by viewModel.isBackendReachable.collectAsStateWithLifecycle()
 
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
@@ -108,7 +109,11 @@ fun ProfileScreen(
                     imageVector = Icons.Default.Settings,
                     contentDescription = "Settings",
                     tint = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.clickable { viewModel.onToggleSettings() }
+                    modifier = Modifier.clickable {
+                        if (!state.showSettings) viewModel.onSettingsOpened()
+                        else viewModel.onSettingsClosed()
+                        viewModel.onToggleSettings()
+                    }
                 )
             }
 
@@ -171,7 +176,10 @@ fun ProfileScreen(
                     .clickable { viewModel.onToggleSettings() }
             )
             SettingsOverlay(
-                onClose = { viewModel.onToggleSettings() },
+                onClose = {
+                    viewModel.onSettingsClosed()
+                    viewModel.onToggleSettings()
+                },
                 onLogout = {
                     viewModel.onLogout()
                     onLogout()
@@ -192,6 +200,9 @@ fun ProfileScreen(
                         viewModel.onNotificationsToggled(false)
                     }
                 },
+                usePublicGutenberg = state.preferences.usePublicGutenberg,
+                onUsePublicGutenbergToggled = viewModel::onUsePublicGutenbergToggled,
+                isBackendReachable = isBackendReachable,
                 modifier = Modifier
                     .align(Alignment.Center)
                     .padding(24.dp)

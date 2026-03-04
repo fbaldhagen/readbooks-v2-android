@@ -6,6 +6,7 @@ import com.fbaldhagen.readbooks.data.repository.AuthorRepositoryImpl
 import com.fbaldhagen.readbooks.data.repository.BookRepositoryImpl
 import com.fbaldhagen.readbooks.data.repository.BookmarkRepositoryImpl
 import com.fbaldhagen.readbooks.data.repository.CollectionRepositoryImpl
+import com.fbaldhagen.readbooks.data.repository.ConnectivityRepositoryImpl
 import com.fbaldhagen.readbooks.data.repository.DiscoverRepositoryImpl
 import com.fbaldhagen.readbooks.data.repository.RatingRepositoryImpl
 import com.fbaldhagen.readbooks.data.repository.SessionRepositoryImpl
@@ -18,6 +19,7 @@ import com.fbaldhagen.readbooks.domain.repository.AuthorRepository
 import com.fbaldhagen.readbooks.domain.repository.BookRepository
 import com.fbaldhagen.readbooks.domain.repository.BookmarkRepository
 import com.fbaldhagen.readbooks.domain.repository.CollectionRepository
+import com.fbaldhagen.readbooks.domain.repository.ConnectivityRepository
 import com.fbaldhagen.readbooks.domain.repository.DiscoverRepository
 import com.fbaldhagen.readbooks.domain.repository.RatingRepository
 import com.fbaldhagen.readbooks.domain.repository.SessionRepository
@@ -85,4 +87,10 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindRatingRepository(impl: RatingRepositoryImpl): RatingRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindConnectivityRepository(
+        impl: ConnectivityRepositoryImpl
+    ): ConnectivityRepository
 }

@@ -18,4 +18,5 @@ interface UserPreferencesRepository {
     suspend fun setYearlyBooksGoal(goal: Int)
     suspend fun setGuestMode(isGuest: Boolean)
     suspend fun setNotificationsEnabled(enabled: Boolean)
+    suspend fun setUsePublicGutenberg(enabled: Boolean)
 }

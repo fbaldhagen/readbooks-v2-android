@@ -61,6 +61,9 @@ interface ReadBooksApiService {
         @Query("excludeIds") excludeIds: List<Int>
     ): List<TopRatedBookDto>
 
+    @GET("api/health")
+    suspend fun health()
+
     companion object {
         const val BASE_URL = "https://api.fbaldhagen.dev/"
     }
