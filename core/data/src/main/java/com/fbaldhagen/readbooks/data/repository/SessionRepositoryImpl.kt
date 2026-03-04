@@ -73,4 +73,14 @@ class SessionRepositoryImpl @Inject constructor(
     override suspend fun getAllSessions(): Result<List<ReadingSession>> = suspendRunCatching {
         sessionDao.getAll().map { it.toDomain() }
     }
+
+    override fun observeTodayMinutes(): Flow<Int> {
+        val todayStart = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.timeInMillis
+        return sessionDao.observeMinutesSince(todayStart)
+    }
 }

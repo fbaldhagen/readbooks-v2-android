@@ -1,6 +1,5 @@
 package com.fbaldhagen.readbooks.domain.usecase
 
-import com.fbaldhagen.readbooks.common.result.getOrNull
 import com.fbaldhagen.readbooks.domain.model.HomeContent
 import com.fbaldhagen.readbooks.domain.model.ReadingGoalProgress
 import com.fbaldhagen.readbooks.domain.model.ReadingStatus
@@ -10,7 +9,6 @@ import com.fbaldhagen.readbooks.domain.repository.SessionRepository
 import com.fbaldhagen.readbooks.domain.repository.UserPreferencesRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import java.util.Calendar
 import javax.inject.Inject
 
 class GetHomeContentUseCase @Inject constructor(
@@ -23,17 +21,9 @@ class GetHomeContentUseCase @Inject constructor(
         bookRepository.observeByStatus(ReadingStatus.READING),
         bookRepository.observeRecent(limit = 6),
         achievementRepository.observeRecent(limit = 3),
-        preferencesRepository.observe()
-    ) { reading, recent, achievements, prefs ->
-        Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }.timeInMillis
-
-        val todayMinutes = sessionRepository.getTodayMinutes().getOrNull() ?: 0
-
+        preferencesRepository.observe(),
+        sessionRepository.observeTodayMinutes()
+    ) { reading, recent, achievements, prefs, todayMinutes ->
         HomeContent(
             currentlyReading = reading,
             recentBooks = recent,

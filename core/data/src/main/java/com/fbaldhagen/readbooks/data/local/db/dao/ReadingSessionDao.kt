@@ -45,4 +45,10 @@ interface ReadingSessionDao {
 
     @Query("SELECT * FROM reading_sessions")
     suspend fun getAll(): List<ReadingSessionEntity>
+
+    @Query(
+        "SELECT COALESCE(SUM(duration_minutes), 0) FROM reading_sessions " +
+                "WHERE start_time >= :dayStart"
+    )
+    fun observeMinutesSince(dayStart: Long): Flow<Int>
 }

@@ -21,4 +21,6 @@ interface SessionRepository {
     suspend fun getForBook(bookId: Long): Result<List<ReadingSession>>
 
     suspend fun getAllSessions(): Result<List<ReadingSession>>
+
+    fun observeTodayMinutes(): Flow<Int>
 }
