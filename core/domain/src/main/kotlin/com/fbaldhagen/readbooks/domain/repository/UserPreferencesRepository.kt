@@ -22,4 +22,6 @@ interface UserPreferencesRepository {
     suspend fun setUsePublicGutenberg(enabled: Boolean)
     suspend fun setSyncReaderTheme(sync: Boolean)
     suspend fun saveReaderPreferences(preferences: ReaderPreferences)
+    suspend fun setConsecutiveGoalDays(days: Int)
+    suspend fun setLastGoalMetDate(date: Long?)
 }

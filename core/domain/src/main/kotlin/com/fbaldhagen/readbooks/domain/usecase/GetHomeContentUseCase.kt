@@ -20,7 +20,7 @@ class GetHomeContentUseCase @Inject constructor(
     operator fun invoke(): Flow<HomeContent> = combine(
         bookRepository.observeByStatus(ReadingStatus.READING),
         bookRepository.observeRecent(limit = 6),
-        achievementRepository.observeRecent(limit = 3),
+        achievementRepository.observeAll(),
         preferencesRepository.observe(),
         sessionRepository.observeTodayMinutes()
     ) { reading, recent, achievements, prefs, todayMinutes ->

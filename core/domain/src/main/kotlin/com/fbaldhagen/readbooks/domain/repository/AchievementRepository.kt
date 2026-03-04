@@ -6,15 +6,13 @@ import kotlinx.coroutines.flow.Flow
 
 interface AchievementRepository {
 
+    suspend fun initializeCatalog(): Result<Unit>
     fun observeAll(): Flow<List<Achievement>>
-
     fun observeRecent(limit: Int): Flow<List<Achievement>>
-
     suspend fun getById(achievementId: String): Result<Achievement>
-
     suspend fun updateProgress(achievementId: String, progress: Int): Result<Unit>
-
     suspend fun unlock(achievementId: String, timestamp: Long = System.currentTimeMillis()): Result<Unit>
-
     suspend fun resetAll(): Result<Unit>
+    fun observeNewlyUnlocked(): Flow<List<Achievement>>
+    suspend fun emitNewlyUnlocked(achievements: List<Achievement>)
 }

@@ -33,4 +33,7 @@ interface UserAchievementDao {
 
     @Query("UPDATE user_achievements SET current_progress = 0, unlocked_at = NULL")
     suspend fun resetAll()
+
+    @Query("SELECT id FROM user_achievements")
+    suspend fun getAllIds(): List<String>
 }

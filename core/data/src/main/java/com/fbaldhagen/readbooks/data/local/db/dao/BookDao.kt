@@ -94,4 +94,10 @@ interface BookDao {
 
     @Query("UPDATE books SET is_archived = 1, file_path = NULL WHERE id = :bookId")
     suspend fun archiveBook(bookId: Long)
+
+    @Query("SELECT authors FROM books WHERE reading_status = 'FINISHED'")
+    suspend fun getFinishedAuthorsJson(): List<String>
+
+    @Query("SELECT COUNT(*) FROM books WHERE rating IS NOT NULL")
+    suspend fun getRatedBookCount(): Int
 }

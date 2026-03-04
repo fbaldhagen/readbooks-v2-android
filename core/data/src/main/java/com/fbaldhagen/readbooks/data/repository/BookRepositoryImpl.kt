@@ -99,4 +99,19 @@ class BookRepositoryImpl @Inject constructor(
     override suspend fun resetProgress(bookId: Long): Result<Unit> = suspendRunCatching {
         bookDao.resetProgress(bookId)
     }
+
+    override suspend fun getFinishedAuthorCount(): Int {
+        val authorsJson = bookDao.getFinishedAuthorsJson()
+        return authorsJson
+            .flatMap { json ->
+                try {
+                    val array = org.json.JSONArray(json)
+                    (0 until array.length()).map { array.getString(it) }
+                } catch (_: Exception) { emptyList() }
+            }
+            .distinct()
+            .size
+    }
+
+    override suspend fun getRatedBookCount(): Int = bookDao.getRatedBookCount()
 }

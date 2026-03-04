@@ -5,6 +5,7 @@ data class Achievement(
     val name: String,
     val description: String,
     val tier: AchievementTier,
+    val category: AchievementCategory,
     val currentProgress: Int,
     val targetProgress: Int,
     val unlockedAt: Long? = null

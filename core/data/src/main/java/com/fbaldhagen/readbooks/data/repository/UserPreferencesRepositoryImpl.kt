@@ -49,4 +49,10 @@ class UserPreferencesRepositoryImpl @Inject constructor(
 
     override suspend fun saveReaderPreferences(preferences: ReaderPreferences) =
         dataStore.saveReaderPreferences(preferences)
+
+    override suspend fun setConsecutiveGoalDays(days: Int) =
+        dataStore.setConsecutiveGoalDays(days)
+
+    override suspend fun setLastGoalMetDate(date: Long?) =
+        dataStore.setLastGoalMetDate(date)
 }

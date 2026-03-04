@@ -5,6 +5,8 @@ data class UserPreferences(
     val userName: String = "",
     val avatarUri: String? = null,
     val dailyReadingGoalMinutes: Int = 30,
+    val consecutiveGoalDays: Int = 0,
+    val lastGoalMetDate: Long? = null,
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val authToken: String? = null,
     val email: String? = null,

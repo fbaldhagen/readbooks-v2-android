@@ -43,4 +43,8 @@ interface BookRepository {
     suspend fun archiveBook(bookId: Long): Result<Unit>
 
     suspend fun resetProgress(bookId: Long): Result<Unit>
+
+    suspend fun getFinishedAuthorCount(): Int
+
+    suspend fun getRatedBookCount(): Int
 }

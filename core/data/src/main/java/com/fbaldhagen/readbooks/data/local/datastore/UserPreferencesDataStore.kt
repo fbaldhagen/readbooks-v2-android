@@ -47,6 +47,8 @@ class UserPreferencesDataStore @Inject constructor(
         val READER_PAGE_MARGINS = floatPreferencesKey("reader_page_margins")
         val READER_LINE_HEIGHT = floatPreferencesKey("reader_line_height")
         val READER_LETTER_SPACING = floatPreferencesKey("reader_letter_spacing")
+        val CONSECUTIVE_GOAL_DAYS = intPreferencesKey("consecutive_goal_days")
+        val LAST_GOAL_MET_DATE = longPreferencesKey("last_goal_met_date")
     }
 
     val preferences: Flow<UserPreferences> = context.dataStore.data.map { prefs ->
@@ -55,6 +57,8 @@ class UserPreferencesDataStore @Inject constructor(
             userName = prefs[Keys.USER_NAME] ?: "",
             avatarUri = prefs[Keys.AVATAR_URI],
             dailyReadingGoalMinutes = prefs[Keys.DAILY_READING_GOAL] ?: 30,
+            consecutiveGoalDays = prefs[Keys.CONSECUTIVE_GOAL_DAYS] ?: 0,
+            lastGoalMetDate = prefs[Keys.LAST_GOAL_MET_DATE],
             themeMode = prefs[Keys.THEME_MODE]?.let {
                 try {
                     ThemeMode.valueOf(it)
@@ -193,6 +197,19 @@ class UserPreferencesDataStore @Inject constructor(
             prefs[Keys.READER_PAGE_MARGINS] = preferences.pageMargins.toFloat()
             prefs[Keys.READER_LINE_HEIGHT] = preferences.lineHeight.toFloat()
             prefs[Keys.READER_LETTER_SPACING] = preferences.letterSpacing.toFloat()
+        }
+    }
+
+    suspend fun setConsecutiveGoalDays(days: Int) {
+        context.dataStore.edit { prefs ->
+            prefs[Keys.CONSECUTIVE_GOAL_DAYS] = days
+        }
+    }
+
+    suspend fun setLastGoalMetDate(date: Long?) {
+        context.dataStore.edit { prefs ->
+            if (date != null) prefs[Keys.LAST_GOAL_MET_DATE] = date
+            else prefs.remove(Keys.LAST_GOAL_MET_DATE)
         }
     }
 }

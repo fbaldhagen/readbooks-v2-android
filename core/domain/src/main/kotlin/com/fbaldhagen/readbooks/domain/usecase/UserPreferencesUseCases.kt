@@ -45,4 +45,10 @@ class UserPreferencesUseCases @Inject constructor(
 
     suspend fun saveReaderPreferences(preferences: ReaderPreferences) =
         preferencesRepository.saveReaderPreferences(preferences)
+
+    suspend fun setConsecutiveGoalDays(days: Int) =
+        preferencesRepository.setConsecutiveGoalDays(days)
+
+    suspend fun setLastGoalMetDate(date: Long?) =
+        preferencesRepository.setLastGoalMetDate(date)
 }

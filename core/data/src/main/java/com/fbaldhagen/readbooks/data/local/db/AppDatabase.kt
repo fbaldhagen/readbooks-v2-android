@@ -23,7 +23,7 @@ import com.fbaldhagen.readbooks.data.local.db.entity.UserAchievementEntity
         ReadingSessionEntity::class,
         UserAchievementEntity::class
     ],
-    version = 1,
+    version = 3,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
