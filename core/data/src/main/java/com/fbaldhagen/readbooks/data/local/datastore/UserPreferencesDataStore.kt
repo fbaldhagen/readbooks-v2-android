@@ -5,10 +5,14 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.fbaldhagen.readbooks.domain.model.ReaderFontFamily
+import com.fbaldhagen.readbooks.domain.model.ReaderPreferences
+import com.fbaldhagen.readbooks.domain.model.ReaderTheme
 import com.fbaldhagen.readbooks.domain.model.ThemeMode
 import com.fbaldhagen.readbooks.domain.model.UserPreferences
 import kotlinx.coroutines.flow.Flow
@@ -36,6 +40,13 @@ class UserPreferencesDataStore @Inject constructor(
         val YEARLY_BOOKS_GOAL = intPreferencesKey("yearly_books_goal")
         val NOTIFICATIONS_ENABLED = booleanPreferencesKey("notifications_enabled")
         val USE_PUBLIC_GUTENBERG = booleanPreferencesKey("use_public_gutenberg")
+        val SYNC_READER_THEME = booleanPreferencesKey("sync_reader_theme")
+        val READER_FONT_SIZE = floatPreferencesKey("reader_font_size")
+        val READER_FONT_FAMILY = stringPreferencesKey("reader_font_family")
+        val READER_THEME = stringPreferencesKey("reader_theme")
+        val READER_PAGE_MARGINS = floatPreferencesKey("reader_page_margins")
+        val READER_LINE_HEIGHT = floatPreferencesKey("reader_line_height")
+        val READER_LETTER_SPACING = floatPreferencesKey("reader_letter_spacing")
     }
 
     val preferences: Flow<UserPreferences> = context.dataStore.data.map { prefs ->
@@ -57,7 +68,28 @@ class UserPreferencesDataStore @Inject constructor(
             bio = prefs[Keys.BIO],
             yearlyBooksGoal = prefs[Keys.YEARLY_BOOKS_GOAL] ?: 12,
             notificationsEnabled = prefs[Keys.NOTIFICATIONS_ENABLED] ?: false,
-            usePublicGutenberg = prefs[Keys.USE_PUBLIC_GUTENBERG] ?: false
+            usePublicGutenberg = prefs[Keys.USE_PUBLIC_GUTENBERG] ?: false,
+            syncReaderTheme = prefs[Keys.SYNC_READER_THEME] ?: false,
+            readerPreferences = ReaderPreferences(
+                fontSize = (prefs[Keys.READER_FONT_SIZE] ?: 1.0f).toDouble(),
+                fontFamily = prefs[Keys.READER_FONT_FAMILY]?.let {
+                    try {
+                        ReaderFontFamily.valueOf(it)
+                    } catch (_: Exception) {
+                        ReaderFontFamily.DEFAULT
+                    }
+                } ?: ReaderFontFamily.DEFAULT,
+                theme = prefs[Keys.READER_THEME]?.let {
+                    try {
+                        ReaderTheme.valueOf(it)
+                    } catch (_: Exception) {
+                        ReaderTheme.LIGHT
+                    }
+                } ?: ReaderTheme.LIGHT,
+                pageMargins = (prefs[Keys.READER_PAGE_MARGINS] ?: 1.5f).toDouble(),
+                lineHeight = (prefs[Keys.READER_LINE_HEIGHT] ?: 1.5f).toDouble(),
+                letterSpacing = (prefs[Keys.READER_LETTER_SPACING] ?: 0.0f).toDouble()
+            )
         )
     }
 
@@ -144,6 +176,23 @@ class UserPreferencesDataStore @Inject constructor(
     suspend fun setUsePublicGutenberg(enabled: Boolean) {
         context.dataStore.edit { prefs ->
             prefs[Keys.USE_PUBLIC_GUTENBERG] = enabled
+        }
+    }
+
+    suspend fun setSyncReaderTheme(sync: Boolean) {
+        context.dataStore.edit { prefs ->
+            prefs[Keys.SYNC_READER_THEME] = sync
+        }
+    }
+
+    suspend fun saveReaderPreferences(preferences: ReaderPreferences) {
+        context.dataStore.edit { prefs ->
+            prefs[Keys.READER_FONT_SIZE] = preferences.fontSize.toFloat()
+            prefs[Keys.READER_FONT_FAMILY] = preferences.fontFamily.name
+            prefs[Keys.READER_THEME] = preferences.theme.name
+            prefs[Keys.READER_PAGE_MARGINS] = preferences.pageMargins.toFloat()
+            prefs[Keys.READER_LINE_HEIGHT] = preferences.lineHeight.toFloat()
+            prefs[Keys.READER_LETTER_SPACING] = preferences.letterSpacing.toFloat()
         }
     }
 }

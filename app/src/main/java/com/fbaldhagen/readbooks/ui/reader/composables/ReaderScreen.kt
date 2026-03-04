@@ -75,7 +75,8 @@ fun ReaderScreen(
         ReaderSettingsSheet(
             preferences = state.preferences,
             onPreferencesChanged = onUpdatePreferences,
-            onDismiss = @Suppress("AssignedValueIsNeverRead"){ showSettings = false }
+            onDismiss = @Suppress("AssignedValueIsNeverRead"){ showSettings = false },
+            syncReaderTheme = state.syncReaderTheme
         )
     }
 

@@ -12,7 +12,9 @@ data class UserPreferences(
     val bio: String? = null,
     val yearlyBooksGoal: Int = 12,
     val notificationsEnabled: Boolean = false,
-    val usePublicGutenberg: Boolean = false
+    val usePublicGutenberg: Boolean = false,
+    val syncReaderTheme: Boolean = false,
+    val readerPreferences: ReaderPreferences = ReaderPreferences()
 )
 
 enum class ThemeMode {

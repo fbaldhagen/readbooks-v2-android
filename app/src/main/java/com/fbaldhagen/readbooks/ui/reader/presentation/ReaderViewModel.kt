@@ -12,6 +12,7 @@ import com.fbaldhagen.readbooks.domain.model.TocEntry
 import com.fbaldhagen.readbooks.domain.usecase.BookmarkUseCases
 import com.fbaldhagen.readbooks.domain.usecase.LibraryUseCases
 import com.fbaldhagen.readbooks.domain.usecase.ReadingSessionUseCases
+import com.fbaldhagen.readbooks.domain.usecase.UserPreferencesUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -40,7 +41,8 @@ class ReaderViewModel @Inject constructor(
     private val publicationOpener: PublicationOpener,
     private val libraryUseCases: LibraryUseCases,
     private val bookmarkUseCases: BookmarkUseCases,
-    private val readingSessionUseCases: ReadingSessionUseCases
+    private val readingSessionUseCases: ReadingSessionUseCases,
+    private val userPreferencesUseCases: UserPreferencesUseCases
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ReaderState())
@@ -56,10 +58,25 @@ class ReaderViewModel @Inject constructor(
     val bookId: Long = savedStateHandle.get<Long>("book_id") ?: 0
 
     init {
+        loadPreferences()
         if (bookId > 0) {
             openBook(bookId)
         } else {
             _state.update { it.copy(isLoading = false, error = "Invalid book ID") }
+        }
+    }
+
+    private fun loadPreferences() {
+        viewModelScope.launch {
+            userPreferencesUseCases.observe().collect { userPrefs ->
+                val readerTheme = if (userPrefs.syncReaderTheme) {
+                    userPrefs.themeMode.toReaderTheme()
+                } else {
+                    userPrefs.readerPreferences.theme
+                }
+                val preferences = userPrefs.readerPreferences.copy(theme = readerTheme)
+                _state.update { it.copy(preferences = preferences, syncReaderTheme = userPrefs.syncReaderTheme) }
+            }
         }
     }
 
@@ -181,7 +198,16 @@ class ReaderViewModel @Inject constructor(
     }
 
     fun onUpdatePreferences(preferences: ReaderPreferences) {
-        _state.update { it.copy(preferences = preferences) }
+        viewModelScope.launch {
+            val syncReaderTheme = _state.value.syncReaderTheme
+            val toSave = if (syncReaderTheme) {
+                preferences.copy(theme = _state.value.preferences.theme)
+            } else {
+                preferences
+            }
+            userPreferencesUseCases.saveReaderPreferences(toSave)
+            _state.update { it.copy(preferences = preferences) }
+        }
     }
 
     fun onLocatorChanged(locator: Locator) {

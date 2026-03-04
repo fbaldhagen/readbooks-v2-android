@@ -19,5 +19,6 @@ data class ReaderState(
     val currentChapterTitle: String? = null,
     val totalProgression: Float = 0f,
     val barsVisible: Boolean = true,
-    val tableOfContents: List<TocEntry> = emptyList()
+    val tableOfContents: List<TocEntry> = emptyList(),
+    val syncReaderTheme: Boolean = false
 )

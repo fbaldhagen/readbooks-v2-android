@@ -169,4 +169,10 @@ class ProfileViewModel @Inject constructor(
             preferencesUseCases.setUsePublicGutenberg(enabled)
         }
     }
+
+    fun onSyncReaderThemeChanged(sync: Boolean) {
+        viewModelScope.launch {
+            preferencesUseCases.setSyncReaderTheme(sync)
+        }
+    }
 }

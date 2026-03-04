@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Language
@@ -75,7 +76,9 @@ fun SettingsOverlay(
     onUsePublicGutenbergToggled: (Boolean) -> Unit,
     isBackendReachable: Boolean?,
     onClose: () -> Unit,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    syncReaderTheme: Boolean,
+    onSyncReaderThemeChanged: (Boolean) -> Unit,
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -119,6 +122,33 @@ fun SettingsOverlay(
                         label = { Text(label, fontSize = 12.sp) }
                     )
                 }
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.AutoAwesome,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(22.dp)
+                    )
+                    Text(
+                        text = "Sync reader theme",
+                        fontSize = 15.sp,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+                Switch(
+                    checked = syncReaderTheme,
+                    onCheckedChange = onSyncReaderThemeChanged
+                )
             }
 
             HorizontalDivider(

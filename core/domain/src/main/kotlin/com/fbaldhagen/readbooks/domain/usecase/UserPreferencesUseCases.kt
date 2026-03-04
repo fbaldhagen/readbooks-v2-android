@@ -1,5 +1,6 @@
 package com.fbaldhagen.readbooks.domain.usecase
 
+import com.fbaldhagen.readbooks.domain.model.ReaderPreferences
 import com.fbaldhagen.readbooks.domain.model.ThemeMode
 import com.fbaldhagen.readbooks.domain.model.UserPreferences
 import com.fbaldhagen.readbooks.domain.repository.UserPreferencesRepository
@@ -38,4 +39,10 @@ class UserPreferencesUseCases @Inject constructor(
 
     suspend fun setUsePublicGutenberg(enabled: Boolean) =
         preferencesRepository.setUsePublicGutenberg(enabled)
+
+    suspend fun setSyncReaderTheme(sync: Boolean) =
+        preferencesRepository.setSyncReaderTheme(sync)
+
+    suspend fun saveReaderPreferences(preferences: ReaderPreferences) =
+        preferencesRepository.saveReaderPreferences(preferences)
 }

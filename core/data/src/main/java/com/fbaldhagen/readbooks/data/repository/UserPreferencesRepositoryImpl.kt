@@ -1,6 +1,7 @@
 package com.fbaldhagen.readbooks.data.repository
 
 import com.fbaldhagen.readbooks.data.local.datastore.UserPreferencesDataStore
+import com.fbaldhagen.readbooks.domain.model.ReaderPreferences
 import com.fbaldhagen.readbooks.domain.model.ThemeMode
 import com.fbaldhagen.readbooks.domain.model.UserPreferences
 import com.fbaldhagen.readbooks.domain.repository.UserPreferencesRepository
@@ -42,4 +43,10 @@ class UserPreferencesRepositoryImpl @Inject constructor(
 
     override suspend fun setUsePublicGutenberg(enabled: Boolean) =
         dataStore.setUsePublicGutenberg(enabled)
+
+    override suspend fun setSyncReaderTheme(sync: Boolean) =
+        dataStore.setSyncReaderTheme(sync)
+
+    override suspend fun saveReaderPreferences(preferences: ReaderPreferences) =
+        dataStore.saveReaderPreferences(preferences)
 }

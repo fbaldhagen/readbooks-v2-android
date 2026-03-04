@@ -245,6 +245,8 @@ fun ProfileScreen(
                 usePublicGutenberg = state.preferences.usePublicGutenberg,
                 onUsePublicGutenbergToggled = viewModel::onUsePublicGutenbergToggled,
                 isBackendReachable = isBackendReachable,
+                syncReaderTheme = state.preferences.syncReaderTheme,
+                onSyncReaderThemeChanged = viewModel::onSyncReaderThemeChanged,
                 modifier = Modifier
                     .align(Alignment.Center)
                     .padding(24.dp)

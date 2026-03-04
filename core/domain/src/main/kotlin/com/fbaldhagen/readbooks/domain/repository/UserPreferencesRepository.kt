@@ -1,5 +1,6 @@
 package com.fbaldhagen.readbooks.domain.repository
 
+import com.fbaldhagen.readbooks.domain.model.ReaderPreferences
 import com.fbaldhagen.readbooks.domain.model.ThemeMode
 import com.fbaldhagen.readbooks.domain.model.UserPreferences
 import kotlinx.coroutines.flow.Flow
@@ -19,4 +20,6 @@ interface UserPreferencesRepository {
     suspend fun setGuestMode(isGuest: Boolean)
     suspend fun setNotificationsEnabled(enabled: Boolean)
     suspend fun setUsePublicGutenberg(enabled: Boolean)
+    suspend fun setSyncReaderTheme(sync: Boolean)
+    suspend fun saveReaderPreferences(preferences: ReaderPreferences)
 }

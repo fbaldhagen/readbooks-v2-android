@@ -28,6 +28,7 @@ import com.fbaldhagen.readbooks.domain.model.ReaderTheme
 @Composable
 fun ReaderSettingsSheet(
     preferences: ReaderPreferences,
+    syncReaderTheme: Boolean,
     onPreferencesChanged: (ReaderPreferences) -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -100,17 +101,21 @@ fun ReaderSettingsSheet(
             // Theme
             Text("Theme", style = MaterialTheme.typography.titleSmall)
             Spacer(modifier = Modifier.height(8.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                ReaderTheme.entries.forEach { theme ->
-                    FilterChip(
-                        selected = preferences.theme == theme,
-                        onClick = {
-                            onPreferencesChanged(
-                                preferences.copy(theme = theme)
-                            )
-                        },
-                        label = { Text(theme.displayName) }
-                    )
+            if (syncReaderTheme) {
+                Text(
+                    text = "Theme is synced with app theme",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            } else {
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    ReaderTheme.entries.forEach { theme ->
+                        FilterChip(
+                            selected = preferences.theme == theme,
+                            onClick = { onPreferencesChanged(preferences.copy(theme = theme)) },
+                            label = { Text(theme.displayName) }
+                        )
+                    }
                 }
             }
 
