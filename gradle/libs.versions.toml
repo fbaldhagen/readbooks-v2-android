@@ -130,6 +130,7 @@ ucrop = { group = "com.github.yalantis", name = "ucrop", version.ref = "ucrop" }
 readium-shared = { group = "org.readium.kotlin-toolkit", name = "readium-shared", version.ref = "readium" }
 readium-streamer = { group = "org.readium.kotlin-toolkit", name = "readium-streamer", version.ref = "readium" }
 readium-navigator = { group = "org.readium.kotlin-toolkit", name = "readium-navigator", version.ref = "readium" }
+readium-navigator-media-tts = { group = "org.readium.kotlin-toolkit", name = "readium-navigator-media-tts", version.ref = "readium" }
 
 # Testing
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -176,6 +177,7 @@ readium = [
     "readium-shared",
     "readium-streamer",
     "readium-navigator",
+    "readium-navigator-media-tts"
 ]
 media3 = [
     "media3-session",

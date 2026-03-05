@@ -9,6 +9,7 @@ import com.fbaldhagen.readbooks.data.repository.CollectionRepositoryImpl
 import com.fbaldhagen.readbooks.data.repository.ConnectivityRepositoryImpl
 import com.fbaldhagen.readbooks.data.repository.DiscoverRepositoryImpl
 import com.fbaldhagen.readbooks.data.repository.RatingRepositoryImpl
+import com.fbaldhagen.readbooks.data.repository.ReadiumTtsPlayerFactory
 import com.fbaldhagen.readbooks.data.repository.SessionRepositoryImpl
 import com.fbaldhagen.readbooks.data.repository.UserPreferencesRepositoryImpl
 import com.fbaldhagen.readbooks.data.repository.UserStorageRepositoryImpl
@@ -23,6 +24,7 @@ import com.fbaldhagen.readbooks.domain.repository.ConnectivityRepository
 import com.fbaldhagen.readbooks.domain.repository.DiscoverRepository
 import com.fbaldhagen.readbooks.domain.repository.RatingRepository
 import com.fbaldhagen.readbooks.domain.repository.SessionRepository
+import com.fbaldhagen.readbooks.domain.repository.TtsPlayerFactory
 import com.fbaldhagen.readbooks.domain.repository.UserPreferencesRepository
 import com.fbaldhagen.readbooks.domain.repository.UserStorageRepository
 import com.fbaldhagen.readbooks.domain.usecase.BookDownloadManager
@@ -93,4 +95,8 @@ abstract class RepositoryModule {
     abstract fun bindConnectivityRepository(
         impl: ConnectivityRepositoryImpl
     ): ConnectivityRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindTtsPlayerFactory(impl: ReadiumTtsPlayerFactory): TtsPlayerFactory
 }
