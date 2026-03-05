@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.fbaldhagen.readbooks.domain.model.ReaderTheme
+import com.fbaldhagen.readbooks.domain.model.TtsPlaybackState
 
 @Composable
 fun ReaderOverlay(
@@ -26,10 +27,15 @@ fun ReaderOverlay(
     chapterTitle: String?,
     bookProgress: Float,
     isCurrentPageBookmarked: Boolean,
+    ttsState: TtsPlaybackState,
     onToggleBookmark: () -> Unit,
     onOpenBookmarks: () -> Unit,
     onOpenToc: () -> Unit,
     onOpenSettings: () -> Unit,
+    onTtsStart: () -> Unit,
+    onTtsPlayPause: () -> Unit,
+    onTtsSkipNext: () -> Unit,
+    onTtsSkipPrevious: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val view = LocalView.current
@@ -59,13 +65,17 @@ fun ReaderOverlay(
             onOpenBookmarks = onOpenBookmarks,
             onOpenToc = onOpenToc,
             onOpenSettings = onOpenSettings,
+            onTtsStart = onTtsStart,
             modifier = Modifier.align(Alignment.TopCenter)
         )
-
         OverlayBottom(
             bookProgress = bookProgress,
             theme = theme,
             isBarsVisible = barsVisible,
+            ttsState = ttsState,
+            onTtsPlayPause = onTtsPlayPause,
+            onTtsSkipNext = onTtsSkipNext,
+            onTtsSkipPrevious = onTtsSkipPrevious,
             modifier = Modifier.align(Alignment.BottomCenter)
         )
     }

@@ -57,6 +57,7 @@ fun OverlayTop(
     onOpenBookmarks: () -> Unit,
     onOpenToc: () -> Unit,
     onOpenSettings: () -> Unit,
+    onTtsStart: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var showOverflowMenu by remember { mutableStateOf(false) }
@@ -182,12 +183,12 @@ fun OverlayTop(
                                 )
                                 DropdownMenuItem(
                                     text = { Text("Text to Speech") },
-                                    onClick = { showOverflowMenu = false },
+                                    onClick = {
+                                        showOverflowMenu = false
+                                        onTtsStart()
+                                    },
                                     leadingIcon = {
-                                        Icon(
-                                            Icons.AutoMirrored.Outlined.VolumeUp,
-                                            contentDescription = null
-                                        )
+                                        Icon(Icons.AutoMirrored.Outlined.VolumeUp, contentDescription = null)
                                     }
                                 )
                                 DropdownMenuItem(

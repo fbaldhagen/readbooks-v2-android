@@ -57,7 +57,6 @@ class ReaderActivity : AppCompatActivity() {
                 }
 
                 ReaderScreen(
-                    state = state,
                     fragmentContainerId = fragmentContainerId,
                     onToggleBookmark = viewModel::toggleBookmark,
                     onUpdatePreferences = viewModel::onUpdatePreferences,

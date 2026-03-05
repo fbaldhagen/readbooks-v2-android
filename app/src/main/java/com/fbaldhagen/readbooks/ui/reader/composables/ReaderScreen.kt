@@ -13,16 +13,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fbaldhagen.readbooks.domain.model.Bookmark
+import com.fbaldhagen.readbooks.domain.model.DomainLocator
 import com.fbaldhagen.readbooks.domain.model.ReaderPreferences
 import com.fbaldhagen.readbooks.domain.model.TocEntry
 import com.fbaldhagen.readbooks.ui.components.LoadingIndicator
-import com.fbaldhagen.readbooks.ui.reader.presentation.ReaderState
+import com.fbaldhagen.readbooks.ui.reader.presentation.ReaderViewModel
+import com.fbaldhagen.readbooks.ui.reader.presentation.TtsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReaderScreen(
-    state: ReaderState,
+    viewModel: ReaderViewModel = hiltViewModel(),
+    ttsViewModel: TtsViewModel = hiltViewModel(),
     fragmentContainerId: Int,
     onToggleBookmark: () -> Unit,
     onUpdatePreferences: (ReaderPreferences) -> Unit,
@@ -31,6 +36,9 @@ fun ReaderScreen(
     onNavigateToBookmark: (Bookmark) -> Unit,
     onUpdateBookmarkNote: (Bookmark, String) -> Unit
 ) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val ttsState by ttsViewModel.ttsState.collectAsStateWithLifecycle()
+
     var showSettings by remember { mutableStateOf(false) }
     var showBookmarks by remember { mutableStateOf(false) }
     var showToc by remember { mutableStateOf(false) }
@@ -46,7 +54,7 @@ fun ReaderScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(state.error)
+            Text(state.error ?: "An error occurred.")
         }
         return
     }
@@ -67,7 +75,20 @@ fun ReaderScreen(
             onToggleBookmark = onToggleBookmark,
             onOpenBookmarks = { showBookmarks = true },
             onOpenToc = { showToc = true },
-            onOpenSettings = { showSettings = true }
+            onOpenSettings = { showSettings = true },
+            ttsState = ttsState,
+            onTtsStart = {
+                val domainLocator = state.currentLocator?.let {
+                    DomainLocator(
+                        href = it.href.toString(),
+                        progression = it.locations.progression ?: 0.0
+                    )
+                }
+                ttsViewModel.onStartTts(state.bookId, domainLocator)
+            },
+            onTtsPlayPause = ttsViewModel::onPlayPause,
+            onTtsSkipNext = ttsViewModel::onSkipNext,
+            onTtsSkipPrevious = ttsViewModel::onSkipPrevious
         )
     }
 

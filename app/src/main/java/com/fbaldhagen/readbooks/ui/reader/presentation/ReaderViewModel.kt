@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fbaldhagen.readbooks.common.result.onError
 import com.fbaldhagen.readbooks.common.result.onSuccess
+import com.fbaldhagen.readbooks.data.repository.PublicationHolder
 import com.fbaldhagen.readbooks.domain.model.Bookmark
 import com.fbaldhagen.readbooks.domain.model.ReaderPreferences
 import com.fbaldhagen.readbooks.domain.model.ReadingStatus
@@ -47,7 +48,8 @@ class ReaderViewModel @Inject constructor(
     private val readingSessionUseCases: ReadingSessionUseCases,
     private val userPreferencesUseCases: UserPreferencesUseCases,
     private val achievementUseCases: AchievementUseCases,
-    private val updateConsecutiveGoalDays: UpdateConsecutiveGoalDaysUseCase
+    private val updateConsecutiveGoalDays: UpdateConsecutiveGoalDaysUseCase,
+    private val publicationHolder: PublicationHolder
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ReaderState())
@@ -87,7 +89,7 @@ class ReaderViewModel @Inject constructor(
 
     private fun openBook(bookId: Long) {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
+            _state.update { it.copy(isLoading = true, bookId = bookId) }
 
             libraryUseCases.getById(bookId)
                 .onSuccess { book ->
@@ -124,6 +126,8 @@ class ReaderViewModel @Inject constructor(
                         }
                         return@launch
                     }
+
+                    publicationHolder.set(bookId, publication)
 
                     val initialLocator = book.currentLocator?.let {
                         parseLocator(it)
@@ -343,6 +347,7 @@ class ReaderViewModel @Inject constructor(
     override fun onCleared() {
         super.onCleared()
         endSession()
+        publicationHolder.clear()
     }
 }
 
