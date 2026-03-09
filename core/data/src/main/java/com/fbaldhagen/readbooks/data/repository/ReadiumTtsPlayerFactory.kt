@@ -12,7 +12,9 @@ import org.readium.navigator.media.tts.TtsNavigator
 import org.readium.navigator.media.tts.TtsNavigatorFactory
 import org.readium.r2.shared.ExperimentalReadiumApi
 import org.readium.r2.shared.publication.Locator
+import org.readium.r2.shared.util.Url
 import org.readium.r2.shared.util.getOrElse
+import org.readium.r2.shared.util.mediatype.MediaType
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -32,7 +34,7 @@ class ReadiumTtsPlayerFactory @Inject constructor(
 
         val application = context.applicationContext as Application
 
-        val navigatorFactory = TtsNavigatorFactory(
+        val navigatorFactory = TtsNavigatorFactory.Companion(
             application = application,
             publication = publication
         ) ?: throw IllegalStateException("Publication does not support TTS")
@@ -52,8 +54,8 @@ class ReadiumTtsPlayerFactory @Inject constructor(
     }
 
     private fun DomainLocator.toReadium(): Locator = Locator(
-        href = org.readium.r2.shared.util.Url(href)!!,
-        mediaType = org.readium.r2.shared.util.mediatype.MediaType.EPUB,
+        href = Url(href)!!,
+        mediaType = MediaType.EPUB,
         locations = Locator.Locations(progression = progression)
     )
 }

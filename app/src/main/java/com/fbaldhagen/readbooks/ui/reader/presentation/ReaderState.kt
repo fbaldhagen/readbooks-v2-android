@@ -11,6 +11,8 @@ data class ReaderState(
     val publication: Publication? = null,
     val initialLocator: Locator? = null,
     val bookTitle: String = "",
+    val bookAuthor: String = "",
+    val coverUri: String? = "",
     val isLoading: Boolean = true,
     val error: String? = null,
     val bookmarks: List<Bookmark> = emptyList(),

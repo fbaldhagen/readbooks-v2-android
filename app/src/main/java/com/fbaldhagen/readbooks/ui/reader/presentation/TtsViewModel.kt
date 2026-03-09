@@ -1,87 +1,59 @@
 package com.fbaldhagen.readbooks.ui.reader.presentation
 
+import android.content.Context
+import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fbaldhagen.readbooks.common.result.onError
 import com.fbaldhagen.readbooks.common.result.onSuccess
+import com.fbaldhagen.readbooks.data.tts.TtsController
 import com.fbaldhagen.readbooks.domain.model.DomainLocator
 import com.fbaldhagen.readbooks.domain.model.TtsPlaybackState
 import com.fbaldhagen.readbooks.domain.model.TtsSettings
-import com.fbaldhagen.readbooks.domain.repository.TtsPlayer
-import com.fbaldhagen.readbooks.domain.usecase.TtsUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class TtsViewModel @Inject constructor(
-    private val ttsUseCases: TtsUseCases
+    private val ttsController: TtsController,
+    @param:ApplicationContext private val context: Context
 ) : ViewModel() {
 
-    private val _player = MutableStateFlow<TtsPlayer?>(null)
+    val ttsState: StateFlow<TtsPlaybackState> = ttsController.ttsState
+    val bookTitle: StateFlow<String?> = ttsController.bookTitle
+    val bookAuthor: StateFlow<String?> = ttsController.bookAuthor
+    val coverUri: StateFlow<String?> = ttsController.coverUri
 
-    val ttsState: StateFlow<TtsPlaybackState> = _player
-        .flatMapLatest { it?.state ?: flowOf(TtsPlaybackState.Idle) }
-        .let { flow ->
-            val stateFlow = MutableStateFlow<TtsPlaybackState>(TtsPlaybackState.Idle)
-            viewModelScope.launch { flow.collect { stateFlow.value = it } }
-            stateFlow.asStateFlow()
-        }
-
-    fun onStartTts(bookId: Long, startLocator: DomainLocator? = null) {
+    fun onStartTts(
+        bookId: Long,
+        bookTitle: String,
+        bookAuthor: String?,
+        coverUri: String?,
+        startLocator: DomainLocator? = null
+    ) {
         viewModelScope.launch {
-            ttsUseCases.createPlayer(bookId, startLocator)
-                .onSuccess { player ->
-                    _player.value?.close()
-                    _player.value = player
-                    player.play()
-                }
-                .onError { error ->
-                    // TODO: expose error to UI
+            ttsController.startPlayer(bookId, bookTitle, bookAuthor, coverUri, startLocator)
+                .onSuccess {
+                    context.startForegroundService(Intent(context, TtsService::class.java))
                 }
         }
-    }
-
-    fun onPlayPause() {
-        viewModelScope.launch {
-            val player = _player.value ?: return@launch
-            when (ttsState.value) {
-                is TtsPlaybackState.Playing -> player.pause()
-                is TtsPlaybackState.Paused -> player.play()
-                else -> player.play()
-            }
-        }
-    }
-
-    fun onSkipNext() {
-        viewModelScope.launch { _player.value?.skipNext() }
-    }
-
-    fun onSkipPrevious() {
-        viewModelScope.launch { _player.value?.skipPrevious() }
     }
 
     fun onStop() {
         viewModelScope.launch {
-            _player.value?.stop()
-            _player.value = null
+            ttsController.stop()
+            context.stopService(Intent(context, TtsService::class.java))
         }
     }
 
+    fun onPlayPause() { viewModelScope.launch { ttsController.playPause() } }
+    fun onSkipNext() = ttsController.skipNext()
+    fun onSkipPrevious() = ttsController.skipPrevious()
     fun onUpdateSettings(settings: TtsSettings) {
-        viewModelScope.launch { _player.value?.updateSettings(settings) }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        _player.value?.close()
-        _player.value = null
+        viewModelScope.launch { ttsController.updateSettings(settings) }
     }
 }

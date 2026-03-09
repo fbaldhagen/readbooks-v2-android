@@ -141,6 +141,8 @@ class ReaderViewModel @Inject constructor(
                             publication = publication,
                             initialLocator = initialLocator,
                             bookTitle = book.title,
+                            bookAuthor = book.authors.first(),
+                            coverUri = book.coverUri,
                             isLoading = false,
                             tableOfContents = publication.tableOfContents.map { link -> link.toTocEntry() }
                         )

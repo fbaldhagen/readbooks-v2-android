@@ -1,5 +1,6 @@
 package com.fbaldhagen.readbooks.data.repository
 
+import androidx.media3.common.Player
 import com.fbaldhagen.readbooks.data.mapper.toDomain
 import com.fbaldhagen.readbooks.domain.model.TtsPlaybackState
 import com.fbaldhagen.readbooks.domain.model.TtsSettings
@@ -24,6 +25,7 @@ class ReadiumTtsPlayer(
     scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 ) : TtsPlayer {
 
+    fun asMedia3Player(): Player = navigator.asMedia3Player()
     private val _state = MutableStateFlow<TtsPlaybackState>(TtsPlaybackState.Idle)
     override val state: StateFlow<TtsPlaybackState> = _state.asStateFlow()
 
@@ -38,7 +40,6 @@ class ReadiumTtsPlayer(
                 _state.value = playback.toDomain(currentSettings)
             }
         }
-        // Load available voices
         _availableVoices.value = navigator.voices.map { voice ->
             TtsVoice(
                 id = voice.id.value,

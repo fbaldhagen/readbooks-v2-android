@@ -50,6 +50,7 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.media3.common.ktx)
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)

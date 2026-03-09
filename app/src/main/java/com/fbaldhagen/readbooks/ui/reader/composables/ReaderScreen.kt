@@ -84,7 +84,13 @@ fun ReaderScreen(
                         progression = it.locations.progression ?: 0.0
                     )
                 }
-                ttsViewModel.onStartTts(state.bookId, domainLocator)
+                ttsViewModel.onStartTts(
+                    bookId = state.bookId,
+                    bookTitle = state.bookTitle,
+                    bookAuthor = state.bookAuthor,
+                    coverUri = state.coverUri,
+                    startLocator = domainLocator
+                )
             },
             onTtsPlayPause = ttsViewModel::onPlayPause,
             onTtsSkipNext = ttsViewModel::onSkipNext,
