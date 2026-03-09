@@ -28,13 +28,15 @@ fun BookDetailsContent(
     authorBooks: List<DiscoverBook> = emptyList(),
     onAuthorBookClick: (Int) -> Unit,
     onAuthorClick: (String) -> Unit,
-    onStartTts: (() -> Unit)? = null
+    onStartTts: (() -> Unit)? = null,
+    isTtsActive: Boolean = false
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 16.dp)
+            .padding(bottom = if (isTtsActive) 72.dp else 0.dp)
     ) {
         BookHeader(
             details = details,

@@ -30,9 +30,11 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fbaldhagen.readbooks.domain.model.BookDetailsState
 import com.fbaldhagen.readbooks.domain.model.DomainLocator
+import com.fbaldhagen.readbooks.domain.model.isActive
 import com.fbaldhagen.readbooks.ui.bookdetails.components.BookDetailsContent
 import com.fbaldhagen.readbooks.ui.components.ErrorMessage
 import com.fbaldhagen.readbooks.ui.components.LoadingIndicator
+import com.fbaldhagen.readbooks.ui.tts.TtsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,13 +45,16 @@ fun BookDetailsScreen(
     onAuthorBookClick: (Int) -> Unit,
     onNavigateToAuthor: (String, Int?) -> Unit,
     onStartTts: ((bookId: Long, title: String, author: String?, coverUri: String?, filePath: String?, locator: DomainLocator?) -> Unit)? = null,
-    viewModel: BookDetailsViewModel = hiltViewModel()
+    viewModel: BookDetailsViewModel = hiltViewModel(),
+    ttsViewModel: TtsViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val authorBooks by viewModel.authorBooks.collectAsStateWithLifecycle()
     val confirmationDialog by viewModel.confirmationDialog.collectAsStateWithLifecycle()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val remoteRating by viewModel.remoteRating.collectAsStateWithLifecycle()
+    val ttsState by ttsViewModel.ttsState.collectAsStateWithLifecycle()
+    val isTtsActive = ttsState.isActive
 
     var menuExpanded by remember { mutableStateOf(false) }
 
@@ -198,7 +203,8 @@ fun BookDetailsScreen(
                             )
                         }
                     }
-                } else null
+                } else null,
+                isTtsActive = isTtsActive
             )
         }
     }
