@@ -1,4 +1,4 @@
-package com.fbaldhagen.readbooks.data.repository
+package com.fbaldhagen.readbooks.data.tts
 
 import androidx.media3.common.Player
 import com.fbaldhagen.readbooks.data.mapper.toDomain

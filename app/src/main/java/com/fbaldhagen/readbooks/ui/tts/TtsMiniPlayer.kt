@@ -1,4 +1,4 @@
-package com.fbaldhagen.readbooks.ui.reader.presentation
+package com.fbaldhagen.readbooks.ui.tts
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement

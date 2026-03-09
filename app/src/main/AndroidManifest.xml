@@ -22,7 +22,7 @@
         android:theme="@style/Theme.ReadBooks">
 
         <service
-            android:name=".ui.reader.presentation.TtsService"
+            android:name=".ui.tts.TtsService"
             android:exported="true"
             android:foregroundServiceType="mediaPlayback"
             tools:ignore="ExportedService">

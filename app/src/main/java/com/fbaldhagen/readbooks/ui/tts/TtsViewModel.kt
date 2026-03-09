@@ -1,4 +1,4 @@
-package com.fbaldhagen.readbooks.ui.reader.presentation
+package com.fbaldhagen.readbooks.ui.tts
 
 import android.content.Context
 import android.content.Intent

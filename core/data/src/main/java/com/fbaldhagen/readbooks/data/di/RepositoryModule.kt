@@ -9,10 +9,10 @@ import com.fbaldhagen.readbooks.data.repository.CollectionRepositoryImpl
 import com.fbaldhagen.readbooks.data.repository.ConnectivityRepositoryImpl
 import com.fbaldhagen.readbooks.data.repository.DiscoverRepositoryImpl
 import com.fbaldhagen.readbooks.data.repository.RatingRepositoryImpl
-import com.fbaldhagen.readbooks.data.repository.ReadiumTtsPlayerFactory
 import com.fbaldhagen.readbooks.data.repository.SessionRepositoryImpl
 import com.fbaldhagen.readbooks.data.repository.UserPreferencesRepositoryImpl
 import com.fbaldhagen.readbooks.data.repository.UserStorageRepositoryImpl
+import com.fbaldhagen.readbooks.data.tts.ReadiumTtsPlayerFactory
 import com.fbaldhagen.readbooks.data.worker.WorkManagerBookDownloadManager
 import com.fbaldhagen.readbooks.domain.repository.AchievementRepository
 import com.fbaldhagen.readbooks.domain.repository.AuthRepository

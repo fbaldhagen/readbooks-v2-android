@@ -1,4 +1,4 @@
-package com.fbaldhagen.readbooks.data.repository
+package com.fbaldhagen.readbooks.data.tts
 
 import android.app.Application
 import android.content.Context

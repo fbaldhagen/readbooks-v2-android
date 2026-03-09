@@ -21,7 +21,7 @@ import com.fbaldhagen.readbooks.domain.model.ReaderPreferences
 import com.fbaldhagen.readbooks.domain.model.TocEntry
 import com.fbaldhagen.readbooks.ui.components.LoadingIndicator
 import com.fbaldhagen.readbooks.ui.reader.presentation.ReaderViewModel
-import com.fbaldhagen.readbooks.ui.reader.presentation.TtsViewModel
+import com.fbaldhagen.readbooks.ui.tts.TtsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

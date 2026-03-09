@@ -42,9 +42,9 @@ import com.fbaldhagen.readbooks.domain.usecase.AuthStatus
 import com.fbaldhagen.readbooks.navigation.AppNavHost
 import com.fbaldhagen.readbooks.navigation.TopLevelDestination
 import com.fbaldhagen.readbooks.ui.auth.AuthViewModel
-import com.fbaldhagen.readbooks.ui.reader.presentation.TtsMiniPlayer
-import com.fbaldhagen.readbooks.ui.reader.presentation.TtsPlayerSheet
-import com.fbaldhagen.readbooks.ui.reader.presentation.TtsViewModel
+import com.fbaldhagen.readbooks.ui.tts.TtsMiniPlayer
+import com.fbaldhagen.readbooks.ui.tts.TtsPlayerSheet
+import com.fbaldhagen.readbooks.ui.tts.TtsViewModel
 
 @Composable
 fun ReadBooksApp(

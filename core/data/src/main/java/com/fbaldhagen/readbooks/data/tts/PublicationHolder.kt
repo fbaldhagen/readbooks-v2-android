@@ -1,4 +1,4 @@
-package com.fbaldhagen.readbooks.data.repository
+package com.fbaldhagen.readbooks.data.tts
 
 import org.readium.r2.shared.publication.Publication
 import javax.inject.Inject
