@@ -27,10 +27,14 @@ class ReadiumTtsPlayerFactory @Inject constructor(
 
     override suspend fun create(
         bookId: Long,
+        filePath: String?,
         startLocator: DomainLocator?
     ): Result<TtsPlayer> = suspendRunCatching {
-        val publication = publicationHolder.get(bookId)
-            ?: throw IllegalStateException("No open publication for bookId $bookId")
+        val publication = if (filePath != null) {
+            publicationHolder.getOrOpen(bookId, filePath)
+        } else {
+            publicationHolder.get(bookId)
+        } ?: throw IllegalStateException("No open publication for bookId $bookId")
 
         val application = context.applicationContext as Application
 

@@ -68,10 +68,11 @@ class TtsController @Inject constructor(
         bookTitle: String,
         bookAuthor: String?,
         coverUri: String?,
+        filePath: String? = null,
         startLocator: DomainLocator? = null
     ): Result<Unit> = suspendRunCatching {
         _player.value?.close()
-        val player = factory.create(bookId, startLocator).getOrThrow()
+        val player = factory.create(bookId, filePath, startLocator).getOrThrow()
         _player.value = player
         _bookId.value = bookId
         _bookTitle.value = bookTitle

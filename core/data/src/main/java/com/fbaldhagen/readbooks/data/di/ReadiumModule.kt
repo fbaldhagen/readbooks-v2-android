@@ -1,4 +1,4 @@
-package com.fbaldhagen.readbooks.di
+package com.fbaldhagen.readbooks.data.di
 
 import android.content.Context
 import dagger.Module

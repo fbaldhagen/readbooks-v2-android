@@ -3,6 +3,7 @@ package com.fbaldhagen.readbooks.ui.bookdetails
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Headphones
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
@@ -28,6 +29,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fbaldhagen.readbooks.domain.model.BookDetailsState
+import com.fbaldhagen.readbooks.domain.model.DomainLocator
 import com.fbaldhagen.readbooks.ui.bookdetails.components.BookDetailsContent
 import com.fbaldhagen.readbooks.ui.components.ErrorMessage
 import com.fbaldhagen.readbooks.ui.components.LoadingIndicator
@@ -35,11 +37,12 @@ import com.fbaldhagen.readbooks.ui.components.LoadingIndicator
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookDetailsScreen(
+    modifier: Modifier = Modifier,
     onNavigateBack: () -> Unit,
     onOpenReader: (Long) -> Unit,
     onAuthorBookClick: (Int) -> Unit,
     onNavigateToAuthor: (String, Int?) -> Unit,
-    modifier: Modifier = Modifier,
+    onStartTts: ((bookId: Long, title: String, author: String?, coverUri: String?, filePath: String?, locator: DomainLocator?) -> Unit)? = null,
     viewModel: BookDetailsViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -57,6 +60,7 @@ fun BookDetailsScreen(
     val inLibraryState = (state as? BookDetailsUiState.Success)
         ?.details?.state as? BookDetailsState.InLibrary
 
+    @Suppress("AssignedValueIsNeverRead")
     Scaffold(
         topBar = {
             TopAppBar(
@@ -96,6 +100,33 @@ fun BookDetailsScreen(
                                 onClick = { menuExpanded = false }
                             )
                             if (inLibraryState != null) {
+                                if (inLibraryState.filePath != null) {
+                                    DropdownMenuItem(
+                                        text = { Text("Listen to book") },
+                                        leadingIcon = {
+                                            Icon(
+                                                imageVector = Icons.Default.Headphones,
+                                                contentDescription = null
+                                            )
+                                        },
+                                        onClick = {
+                                            menuExpanded = false
+                                            val details = (state as? BookDetailsUiState.Success)?.details
+                                                ?: return@DropdownMenuItem
+                                            val locator = inLibraryState.currentLocator?.let {
+                                                DomainLocator(href = "", progression = 0.0)
+                                            }
+                                            onStartTts?.invoke(
+                                                inLibraryState.bookId,
+                                                details.title,
+                                                details.authors.firstOrNull(),
+                                                details.coverUrl,
+                                                inLibraryState.filePath,
+                                                locator
+                                            )
+                                        }
+                                    )
+                                }
                                 if (!inLibraryState.isArchived) {
                                     DropdownMenuItem(
                                         text = { Text("Archive book") },
@@ -147,7 +178,27 @@ fun BookDetailsScreen(
                 modifier = Modifier.padding(innerPadding),
                 authorBooks = authorBooks,
                 onAuthorBookClick = onAuthorBookClick,
-                onAuthorClick = { onNavigateToAuthor(current.details.authors.first(), current.details.gutenbergId) }
+                onAuthorClick = {
+                    onNavigateToAuthor(
+                        current.details.authors.first(),
+                        current.details.gutenbergId
+                    )
+                },
+                onStartTts = if (onStartTts != null) {
+                    {
+                        val inLib = current.details.state as? BookDetailsState.InLibrary
+                        if (inLib?.filePath != null) {
+                            onStartTts.invoke(
+                                inLib.bookId,
+                                current.details.title,
+                                current.details.authors.firstOrNull(),
+                                current.details.coverUrl,
+                                inLib.filePath,
+                                null
+                            )
+                        }
+                    }
+                } else null
             )
         }
     }

@@ -149,7 +149,17 @@ fun ReadBooksApp(
             navController = navController,
             innerPadding = innerPadding,
             authStatus = authState.authStatus,
-            onLogoPositioned = onLogoPositioned
+            onLogoPositioned = onLogoPositioned,
+            onStartTts = { bookId, title, author, coverUri, filePath, locator ->
+                ttsViewModel.onStartTts(
+                    bookId = bookId,
+                    bookTitle = title,
+                    bookAuthor = author,
+                    coverUri = coverUri,
+                    filePath = filePath,
+                    startLocator = locator
+                )
+            }
         )
 
         if (showTtsPlayer) {

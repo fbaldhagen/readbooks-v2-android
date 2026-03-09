@@ -32,17 +32,11 @@ import org.json.JSONObject
 import org.readium.r2.shared.publication.Link
 import org.readium.r2.shared.publication.Locator
 import org.readium.r2.shared.publication.services.positions
-import org.readium.r2.shared.util.AbsoluteUrl
-import org.readium.r2.shared.util.asset.AssetRetriever
-import org.readium.r2.shared.util.getOrElse
-import org.readium.r2.streamer.PublicationOpener
 import javax.inject.Inject
 
 @HiltViewModel
 class ReaderViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val assetRetriever: AssetRetriever,
-    private val publicationOpener: PublicationOpener,
     private val libraryUseCases: LibraryUseCases,
     private val bookmarkUseCases: BookmarkUseCases,
     private val readingSessionUseCases: ReadingSessionUseCases,
@@ -101,33 +95,13 @@ class ReaderViewModel @Inject constructor(
                         return@launch
                     }
 
-                    val url = AbsoluteUrl("file://$filePath")
-                    if (url == null) {
+                    val publication = publicationHolder.getOrOpen(bookId, filePath)
+                    if (publication == null) {
                         _state.update {
-                            it.copy(isLoading = false, error = "Invalid file path")
+                            it.copy(isLoading = false, error = "Failed to open book")
                         }
                         return@launch
                     }
-
-                    val asset = assetRetriever.retrieve(url)
-                        .getOrElse { error ->
-                            _state.update {
-                                it.copy(isLoading = false, error = "Failed to retrieve asset: $error")
-                            }
-                            return@launch
-                        }
-
-                    val publication = publicationOpener.open(
-                        asset = asset,
-                        allowUserInteraction = false
-                    ).getOrElse { error ->
-                        _state.update {
-                            it.copy(isLoading = false, error = "Failed to open book: $error")
-                        }
-                        return@launch
-                    }
-
-                    publicationHolder.set(bookId, publication)
 
                     val initialLocator = book.currentLocator?.let {
                         parseLocator(it)

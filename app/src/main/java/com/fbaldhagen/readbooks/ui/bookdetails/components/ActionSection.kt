@@ -1,16 +1,20 @@
 package com.fbaldhagen.readbooks.ui.bookdetails.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.Headphones
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -22,7 +26,8 @@ fun ActionSection(
     state: BookDetailsState,
     onOpenReader: (Long) -> Unit,
     onDownload: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onStartTts: (() -> Unit)? = null,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         when (state) {
@@ -74,19 +79,38 @@ fun ActionSection(
                         )
                     }
                 } else {
-                    Button(
-                        onClick = { onOpenReader(state.bookId) },
-                        modifier = Modifier.fillMaxWidth()
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.MenuBook,
-                            contentDescription = null
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = if (state.progress > 0f) "Continue Reading" else "Start Reading",
-                            color = MaterialTheme.colorScheme.onPrimary
-                        )
+                        Button(
+                            onClick = { onOpenReader(state.bookId) },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.MenuBook,
+                                contentDescription = null
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = if (state.progress > 0f) "Continue" else "Read",
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
+
+                        if (onStartTts != null && state.filePath != null) {
+                            OutlinedButton(
+                                onClick = onStartTts,
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Headphones,
+                                    contentDescription = null
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(text = "Listen")
+                            }
+                        }
                     }
                 }
             }

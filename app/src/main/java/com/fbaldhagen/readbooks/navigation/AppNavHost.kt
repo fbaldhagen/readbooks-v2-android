@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.fbaldhagen.readbooks.domain.model.DomainLocator
 import com.fbaldhagen.readbooks.domain.usecase.AuthStatus
 import com.fbaldhagen.readbooks.ui.auth.AuthScreen
 import com.fbaldhagen.readbooks.ui.author.AuthorScreen
@@ -25,6 +26,7 @@ fun AppNavHost(
     navController: NavHostController,
     innerPadding: PaddingValues,
     authStatus: AuthStatus,
+    onStartTts: (bookId: Long, title: String, author: String?, coverUri: String?, filePath: String?, locator: DomainLocator?) -> Unit,
     modifier: Modifier = Modifier,
     onLogoPositioned: ((Rect) -> Unit)? = null
 ) {
@@ -119,7 +121,8 @@ fun AppNavHost(
                 },
                 onNavigateToAuthor = { authorName, gutenbergId ->
                     navController.navigate(Route.Author(authorName, gutenbergId))
-                }
+                },
+                onStartTts = onStartTts
             )
         }
 
@@ -135,7 +138,8 @@ fun AppNavHost(
                 },
                 onNavigateToAuthor = { authorName, gutenbergId ->
                     navController.navigate(Route.Author(authorName, gutenbergId))
-                }
+                },
+                onStartTts = onStartTts
             )
         }
 

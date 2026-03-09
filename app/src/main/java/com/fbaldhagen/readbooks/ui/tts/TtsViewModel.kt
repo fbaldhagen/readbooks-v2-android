@@ -33,10 +33,11 @@ class TtsViewModel @Inject constructor(
         bookTitle: String,
         bookAuthor: String?,
         coverUri: String?,
+        filePath: String? = null,
         startLocator: DomainLocator? = null
     ) {
         viewModelScope.launch {
-            ttsController.startPlayer(bookId, bookTitle, bookAuthor, coverUri, startLocator)
+            ttsController.startPlayer(bookId, bookTitle, bookAuthor, coverUri, filePath, startLocator)
                 .onSuccess {
                     context.startForegroundService(Intent(context, TtsService::class.java))
                 }

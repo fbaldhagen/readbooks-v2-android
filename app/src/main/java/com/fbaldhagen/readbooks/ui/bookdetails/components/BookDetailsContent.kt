@@ -27,7 +27,8 @@ fun BookDetailsContent(
     modifier: Modifier = Modifier,
     authorBooks: List<DiscoverBook> = emptyList(),
     onAuthorBookClick: (Int) -> Unit,
-    onAuthorClick: (String) -> Unit
+    onAuthorClick: (String) -> Unit,
+    onStartTts: (() -> Unit)? = null
 ) {
     Column(
         modifier = modifier
@@ -46,7 +47,8 @@ fun BookDetailsContent(
         ActionSection(
             state = details.state,
             onOpenReader = onOpenReader,
-            onDownload = onDownload
+            onDownload = onDownload,
+            onStartTts = onStartTts
         )
 
         Spacer(modifier = Modifier.height(16.dp))
